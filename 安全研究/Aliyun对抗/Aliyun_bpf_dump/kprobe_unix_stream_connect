@@ -1,0 +1,200 @@
+int kprobe_unix_stream_connect(struct pt_regs * ctx):
+; int kprobe_unix_stream_connect(struct pt_regs *ctx)
+   0: (bf) r9 = r1
+   1: (b7) r6 = 0
+; int map_id = 0;
+   2: (63) *(u32 *)(r10 -12) = r6
+   3: (bf) r2 = r10
+; 
+   4: (07) r2 += -12
+; map_value = bpf_map_lookup_elem(&data_tmp_store_map, &map_id);
+   5: (18) r1 = map[id:1]
+   7: (85) call percpu_array_map_lookup_elem#149152
+   8: (bf) r7 = r0
+; if (!map_value) {
+   9: (15) if r7 == 0x0 goto pc+152
+  10: (b7) r1 = 3
+; pSockState-&gt;header.minor_cmd = MDCMD_SOCKET_UNIX_CONNECT; 
+  11: (73) *(u8 *)(r7 +7) = r1
+  12: (b7) r1 = 2
+; pSockState-&gt;header.major_cmd = MULTIDATA_NETINFO;
+  13: (73) *(u8 *)(r7 +6) = r1
+; pSockState-&gt;header.protover = PROTOCOL_VERSION;
+  14: (73) *(u8 *)(r7 +5) = r6
+  15: (b7) r1 = 1
+  16: (73) *(u8 *)(r7 +4) = r1
+  17: (b7) r1 = 77
+; pSockState-&gt;header.magic = HEADER_MAGIC;
+  18: (73) *(u8 *)(r7 +3) = r1
+  19: (b7) r1 = 68
+  20: (73) *(u8 *)(r7 +1) = r1
+  21: (b7) r1 = 84
+  22: (73) *(u8 *)(r7 +2) = r1
+  23: (73) *(u8 *)(r7 +0) = r1
+; struct sockaddr * sock = (struct sockaddr*)PT_REGS_PARM2(ctx);
+  24: (79) r8 = *(u64 *)(r9 +104)
+; if(sock == NULL)
+  25: (15) if r8 == 0x0 goto pc+136
+  26: (7b) *(u64 *)(r10 -24) = r9
+; int len = PT_REGS_PARM3(ctx);
+  27: (79) r6 = *(u64 *)(r9 +96)
+  28: (b7) r1 = 2
+  29: (bf) r3 = r8
+  30: (0f) r3 += r1
+; int size = bpf_core_read_str(pSockState-&gt;path, UNIX_PATH_MAX, &sock-&gt;sa_data);
+  31: (bf) r1 = r7
+  32: (07) r1 += 36
+  33: (b7) r2 = 108
+  34: (85) call bpf_probe_read_kernel_str#-51856
+  35: (bf) r9 = r0
+  36: (b7) r1 = 3
+  37: (0f) r8 += r1
+; int abs_size = bpf_core_read_str(pSockState-&gt;abs_path, UNIX_PATH_MAX, &sock-&gt;sa_data[1]);
+  38: (bf) r1 = r7
+  39: (07) r1 += 144
+  40: (b7) r2 = 108
+  41: (bf) r3 = r8
+  42: (85) call bpf_probe_read_kernel_str#-51856
+; pSockState-&gt;path_len = size;
+  43: (bf) r1 = r9
+  44: (77) r1 &gt;&gt;= 8
+  45: (73) *(u8 *)(r7 +33) = r1
+  46: (73) *(u8 *)(r7 +32) = r9
+; pSockState-&gt;len = len;
+  47: (bf) r1 = r6
+  48: (77) r1 &gt;&gt;= 24
+  49: (73) *(u8 *)(r7 +31) = r1
+  50: (bf) r1 = r6
+  51: (77) r1 &gt;&gt;= 16
+  52: (73) *(u8 *)(r7 +30) = r1
+  53: (bf) r1 = r6
+  54: (77) r1 &gt;&gt;= 8
+  55: (73) *(u8 *)(r7 +29) = r1
+  56: (73) *(u8 *)(r7 +28) = r6
+; pSockState-&gt;abs_path_len = abs_size;
+  57: (73) *(u8 *)(r7 +34) = r0
+  58: (77) r0 &gt;&gt;= 8
+  59: (73) *(u8 *)(r7 +35) = r0
+; u32 tgid = bpf_get_current_pid_tgid() &gt;&gt; 32;
+  60: (85) call bpf_get_current_pid_tgid#124560
+  61: (bf) r8 = r0
+; u32 tid = bpf_get_current_pid_tgid();
+  62: (85) call bpf_get_current_pid_tgid#124560
+  63: (bf) r9 = r0
+; pSockState-&gt;ktime_event = bpf_ktime_get_ns();
+  64: (85) call bpf_ktime_get_ns#124928
+  65: (b7) r1 = 0
+; pSockState-&gt;ktime_proc = 0;
+  66: (73) *(u8 *)(r7 +23) = r1
+  67: (73) *(u8 *)(r7 +22) = r1
+  68: (73) *(u8 *)(r7 +21) = r1
+  69: (73) *(u8 *)(r7 +20) = r1
+  70: (73) *(u8 *)(r7 +19) = r1
+  71: (73) *(u8 *)(r7 +18) = r1
+  72: (73) *(u8 *)(r7 +17) = r1
+  73: (73) *(u8 *)(r7 +16) = r1
+; pSockState-&gt;ktime_event = bpf_ktime_get_ns();
+  74: (bf) r1 = r0
+  75: (77) r1 &gt;&gt;= 56
+  76: (73) *(u8 *)(r7 +15) = r1
+  77: (bf) r1 = r0
+  78: (77) r1 &gt;&gt;= 48
+  79: (73) *(u8 *)(r7 +14) = r1
+  80: (bf) r1 = r0
+  81: (77) r1 &gt;&gt;= 40
+  82: (73) *(u8 *)(r7 +13) = r1
+  83: (bf) r1 = r0
+  84: (77) r1 &gt;&gt;= 32
+  85: (73) *(u8 *)(r7 +12) = r1
+  86: (bf) r1 = r0
+  87: (77) r1 &gt;&gt;= 24
+  88: (73) *(u8 *)(r7 +11) = r1
+  89: (bf) r1 = r0
+  90: (77) r1 &gt;&gt;= 16
+  91: (73) *(u8 *)(r7 +10) = r1
+  92: (73) *(u8 *)(r7 +8) = r0
+  93: (77) r0 &gt;&gt;= 8
+  94: (73) *(u8 *)(r7 +9) = r0
+; u32 tgid = bpf_get_current_pid_tgid() &gt;&gt; 32;
+  95: (77) r8 &gt;&gt;= 32
+; struct task_struct *task = bpf_get_current_task();
+  96: (85) call bpf_get_current_task#-55200
+; if(task)
+  97: (15) if r0 == 0x0 goto pc+47
+; u32 tid = bpf_get_current_pid_tgid();
+  98: (67) r9 &lt;&lt;= 32
+  99: (77) r9 &gt;&gt;= 32
+; if(tgid != tid)
+ 100: (1d) if r8 == r9 goto pc+10
+ 101: (b7) r1 = 0
+; struct task_struct *group_leader = READ_KERN(task-&gt;group_leader);
+ 102: (7b) *(u64 *)(r10 -8) = r1
+ 103: (b7) r1 = 2368
+ 104: (0f) r0 += r1
+ 105: (bf) r1 = r10
+; 
+ 106: (07) r1 += -8
+; struct task_struct *group_leader = READ_KERN(task-&gt;group_leader);
+ 107: (b7) r2 = 8
+ 108: (bf) r3 = r0
+ 109: (85) call bpf_probe_read_kernel#-51920
+ 110: (79) r0 = *(u64 *)(r10 -8)
+ 111: (b7) r1 = 0
+; if(task == NULL)
+ 112: (15) if r0 == 0x0 goto pc+11
+ 113: (b7) r1 = 0
+; stime = READ_KERN(new_task-&gt;start_boottime);
+ 114: (b7) r1 = 0
+; stime = READ_KERN(task-&gt;real_start_time);
+ 115: (7b) *(u64 *)(r10 -8) = r1
+ 116: (b7) r1 = 2664
+ 117: (0f) r0 += r1
+ 118: (bf) r1 = r10
+; 
+ 119: (07) r1 += -8
+ 120: (b7) r2 = 8
+ 121: (bf) r3 = r0
+ 122: (85) call bpf_probe_read_kernel#-51920
+ 123: (79) r1 = *(u64 *)(r10 -8)
+; pSockState-&gt;ktime_proc = get_task_start_time(task);
+ 124: (bf) r2 = r1
+ 125: (77) r2 &gt;&gt;= 56
+ 126: (73) *(u8 *)(r7 +23) = r2
+ 127: (bf) r2 = r1
+ 128: (77) r2 &gt;&gt;= 48
+ 129: (73) *(u8 *)(r7 +22) = r2
+ 130: (bf) r2 = r1
+ 131: (77) r2 &gt;&gt;= 40
+ 132: (73) *(u8 *)(r7 +21) = r2
+ 133: (bf) r2 = r1
+ 134: (77) r2 &gt;&gt;= 32
+ 135: (73) *(u8 *)(r7 +20) = r2
+ 136: (bf) r2 = r1
+ 137: (77) r2 &gt;&gt;= 24
+ 138: (73) *(u8 *)(r7 +19) = r2
+ 139: (bf) r2 = r1
+ 140: (77) r2 &gt;&gt;= 16
+ 141: (73) *(u8 *)(r7 +18) = r2
+ 142: (73) *(u8 *)(r7 +16) = r1
+ 143: (77) r1 &gt;&gt;= 8
+ 144: (73) *(u8 *)(r7 +17) = r1
+; pSockState-&gt;pid = tgid;
+ 145: (bf) r1 = r8
+ 146: (77) r1 &gt;&gt;= 24
+ 147: (73) *(u8 *)(r7 +27) = r1
+ 148: (bf) r1 = r8
+ 149: (77) r1 &gt;&gt;= 16
+ 150: (73) *(u8 *)(r7 +26) = r1
+ 151: (73) *(u8 *)(r7 +24) = r8
+ 152: (77) r8 &gt;&gt;= 8
+ 153: (73) *(u8 *)(r7 +25) = r8
+; bpf_perf_event_output(ctx, &perf_event_array_map, BPF_F_CURRENT_CPU, map_value, sizeof(struct UnixConnectData));
+ 154: (79) r1 = *(u64 *)(r10 -24)
+ 155: (18) r2 = map[id:2]
+ 157: (18) r3 = 0xffffffff
+ 159: (bf) r4 = r7
+ 160: (b7) r5 = 252
+ 161: (85) call bpf_perf_event_output#-50016
+; }
+ 162: (b7) r0 = 0
+ 163: (95) exit

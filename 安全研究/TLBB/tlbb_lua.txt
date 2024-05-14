@@ -1,0 +1,189 @@
+//打开背包
+setmetatable(_G, {__index = Packet_Env});
+Packet_OnEvent("TOGLE_CONTAINER");
+
+//整理背包
+Packet_PackUp_Clicked();
+
+//使用背包物品
+setmetatable(_G, {__index = Packet_Env});
+Packet_ItemBtnClicked(1,5);
+
+//快捷键
+MainMenuBar_Clicked(6);
+
+//打印消息
+PushDebugMessage("aaa");
+
+//获取背包信息
+bb = EnumAction(0,"packageitem");
+str = bb:GetName();
+PushDebugMessage(str);
+
+//获取游戏名
+str = Player:GetName();
+PushDebugMessage(str);
+
+//获取人物等级
+local nLevel = Player:GetLevel()
+PushDebugMessage(nLevel)
+
+//获取交子
+local jz = Player:GetData("MONEY_JZ")
+PushDebugMessage(jz)
+
+//获取金币
+local jb = Player:GetData("MONEY")
+PushDebugMessage(jb)
+
+//获取元宝
+local yb = Player:GetData("YUANBAO")
+PushDebugMessage(yb)
+
+//获取性别
+local sex = Player:GetMySex()
+PushDebugMessage(sex)
+
+//获取当前经验
+local nExpNow= Player:GetData("EXP")
+PushDebugMessage(nExpNow)
+//升级所需经验
+Player:GetData("NEEDEXP");
+
+//获取装备评分
+Player:GetData("EQUIPSCOREHH")
+
+//获取当前坐标
+local x,z = Player:GetPos()
+PushDebugMessage(x)
+PushDebugMessage(z)
+
+//人物是否在坐标中
+PushDebugMessage(Player:IsInTeam())
+
+//门派
+local nMenpai = tonumber(Player:GetData("MEMPAI")) + 1;
+PushDebugMessage(nMenpai)
+
+//创建队伍
+Player:CreateTeamSelf()
+
+//离开队伍
+Player:LeaveTeam();
+
+//判断是否是队长
+local leader = Player:IsLeader();
+PushDebugMessage(leader)
+
+//当前最大血上限 以及当前血
+local nMaxHp = Player:GetData( "MAXHP" );
+PushDebugMessage(nMaxHp)
+local nHp = Player:GetData( "HP" );
+PushDebugMessage(nHp)
+
+local nMaxMp = Player:GetData( "MAXMP" );
+PushDebugMessage(nMaxMp)
+local nMp = Player:GetData( "MP" );
+PushDebugMessage(nMp)
+
+//获取当前场景名
+local scenename = GetCurrentSceneName()
+PushDebugMessage(scenename)
+//从场景ID到场景名
+local scenename = GetSceneMapByID(tonumber(18))
+PushDebugMessage(scenename)
+
+//移动到指定目标
+AutoRunToTarget(163, 70)
+AutoRunToTargetEx(coordinatex,coordinatey,tonumber(g_CurSelectSceneID))
+
+//打开自动寻径
+ToggleAutoSearch(1)
+
+//自动寻径(AutoSeach.lua)
+local nStart, nEnd = DataPool:GetAutoSearchSceneStartEnd( GetSceneID() )
+PushDebugMessage(nStart)
+PushDebugMessage(nEnd)
+if nStart == -1 then
+	return
+end
+local x, y, name, tooltips, info, tabtype = DataPool:GetAutoSearch( nStart );
+PushDebugMessage(name)
+PushDebugMessage(info)
+PushDebugMessage(tooltips)
+
+
+//打开附近玩家列表
+MiniMap_LiebiaoFunc();
+
+
+//遍历附近玩家列表并选中一个玩家（貌似可以看到天山隐身）
+UpdatePlayerListCustom();
+local  id , name ,level,guild,menpai,iconstr,enemyFlag,teamPower,alliance = GetPlayerFromList(15);
+PushDebugMessage(id);
+PushDebugMessage(name);
+PushDebugMessage(menpai);
+SetMainTargetFromList(id , true ,false) //选择目标
+
+
+//对目标宣战
+Player:PVP_Challenge( 2 );//宣战
+
+
+//查询心法等级信息
+local theAction = EnumAction(0, "xinfa");
+local nXinfaId = LifeAbility : GetLifeAbility_Number(theAction:GetID());
+
+local nXinfa_level = Player:GetXinfaInfo(nXinfaId,"level");
+local strName = Player:GetXinfaInfo(nXinfaId,"name");
+PushDebugMessage(nXinfa_level);
+PushDebugMessage(strName);
+
+
+//技能信息获取
+local nSumSkill = GetActionNum("skill"); -- 获取技能数
+local theAction = EnumAction(0, "xinfa"); -- 获取第一本心法 
+local nXinfaIdx = theAction:GetID();
+
+for i=1, nSumSkill do
+    local theAction = EnumAction(i-1, "skill");
+    if theAction:GetOwnerXinfa() == nXinfaIdx then -- 本门技能判断
+
+        local nSkillId = LifeAbility : GetLifeAbility_Number(theAction:GetID());
+
+        local strName = Player:GetSkillInfo(nSkillId,"name");
+
+        PushDebugMessage(strName);
+
+        local strName = Player:GetSkillInfo(nSkillId,"skilldata");
+        PushDebugMessage(strName);
+
+        local strName = Player:GetSkillInfo(nSkillId,"explain");
+        PushDebugMessage(strName);
+
+        if( Player:GetSkillInfo(nSkillId,"learn") ) then
+            PushDebugMessage("已经学会");
+        else
+            PushDebugMessage("尚未学会");
+        end
+    end
+end
+
+
+//技能使用
+setmetatable(_G, {__index = ActionSkill_Env});
+local nSumSkill = GetActionNum("skill"); -- 获取技能数
+local theAction = EnumAction(0, "xinfa"); -- 获取第一本心法 
+local nXinfaIdx = theAction:GetID();
+
+for i=1, nSumSkill do
+    local theAction = EnumAction(i-1, "skill");
+    if theAction:GetOwnerXinfa() == nXinfaIdx then -- 本门技能判断
+        local nSkillId = LifeAbility : GetLifeAbility_Number(theAction:GetID());
+        local strName = Player:GetSkillInfo(nSkillId,"name");
+        PushDebugMessage(strName);
+        ActionSkill_ZhaoshiTarget:SetActionItem(theAction:GetID());
+        ActionSkill_ZhaoshiTarget:DoAction();
+        break;
+    end
+end

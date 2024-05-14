@@ -1,0 +1,7 @@
+int kprobe_do_sys_openat2(struct pt_regs * ctx):
+; int kprobe_do_sys_openat2(struct pt_regs* ctx)
+   0: (bf) r7 = r1
+   1: (b7) r1 = 0
+; return get_open_event(ctx, dfd, filename, flags);
+   2: (b7) r0 = 0
+   3: (95) exit

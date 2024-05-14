@@ -1,0 +1,460 @@
+int kretprobe_inet_csk_accept(struct pt_regs * ctx):
+; int kretprobe_inet_csk_accept(struct pt_regs* ctx)
+   0: (bf) r6 = r1
+   1: (b7) r9 = 0
+; int map_id = 0;
+   2: (63) *(u32 *)(r10 -196) = r9
+   3: (bf) r2 = r10
+; 
+   4: (07) r2 += -196
+; map_value = bpf_map_lookup_elem(&data_tmp_store_map, &map_id);
+   5: (18) r1 = map[id:1]
+   7: (85) call percpu_array_map_lookup_elem#149152
+   8: (bf) r7 = r0
+; if (!map_value) {
+   9: (15) if r7 == 0x0 goto pc+375
+  10: (b7) r1 = 1
+; pSockState-&gt;header.protover = PROTOCOL_VERSION;
+  11: (73) *(u8 *)(r7 +4) = r1
+  12: (b7) r1 = 77
+; pSockState-&gt;header.magic = HEADER_MAGIC;
+  13: (73) *(u8 *)(r7 +3) = r1
+  14: (b7) r1 = 68
+  15: (73) *(u8 *)(r7 +1) = r1
+  16: (b7) r1 = 84
+  17: (73) *(u8 *)(r7 +2) = r1
+  18: (73) *(u8 *)(r7 +0) = r1
+  19: (b7) r1 = 2
+; pSockState-&gt;header.major_cmd = MULTIDATA_NETINFO;
+  20: (73) *(u8 *)(r7 +6) = r1
+; pSockState-&gt;header.protover = PROTOCOL_VERSION;
+  21: (73) *(u8 *)(r7 +5) = r9
+; 
+  22: (79) r3 = *(u64 *)(r6 +80)
+; struct sock_common sk_comm = {};
+  23: (7b) *(u64 *)(r10 -208) = r9
+  24: (7b) *(u64 *)(r10 -216) = r9
+  25: (7b) *(u64 *)(r10 -224) = r9
+  26: (7b) *(u64 *)(r10 -232) = r9
+  27: (7b) *(u64 *)(r10 -240) = r9
+  28: (7b) *(u64 *)(r10 -248) = r9
+  29: (7b) *(u64 *)(r10 -256) = r9
+  30: (7b) *(u64 *)(r10 -264) = r9
+  31: (7b) *(u64 *)(r10 -272) = r9
+  32: (7b) *(u64 *)(r10 -280) = r9
+  33: (7b) *(u64 *)(r10 -288) = r9
+  34: (7b) *(u64 *)(r10 -296) = r9
+  35: (7b) *(u64 *)(r10 -304) = r9
+  36: (7b) *(u64 *)(r10 -312) = r9
+  37: (7b) *(u64 *)(r10 -320) = r9
+  38: (7b) *(u64 *)(r10 -328) = r9
+  39: (7b) *(u64 *)(r10 -336) = r9
+; sk_comm = READ_KERN(psock-&gt;__sk_common);
+  40: (7b) *(u64 *)(r10 -64) = r9
+  41: (7b) *(u64 *)(r10 -72) = r9
+  42: (7b) *(u64 *)(r10 -80) = r9
+  43: (7b) *(u64 *)(r10 -88) = r9
+  44: (7b) *(u64 *)(r10 -96) = r9
+  45: (7b) *(u64 *)(r10 -104) = r9
+  46: (7b) *(u64 *)(r10 -112) = r9
+  47: (7b) *(u64 *)(r10 -120) = r9
+  48: (7b) *(u64 *)(r10 -128) = r9
+  49: (7b) *(u64 *)(r10 -136) = r9
+  50: (7b) *(u64 *)(r10 -144) = r9
+  51: (7b) *(u64 *)(r10 -152) = r9
+  52: (7b) *(u64 *)(r10 -160) = r9
+  53: (7b) *(u64 *)(r10 -168) = r9
+  54: (7b) *(u64 *)(r10 -176) = r9
+  55: (7b) *(u64 *)(r10 -184) = r9
+  56: (7b) *(u64 *)(r10 -192) = r9
+  57: (b7) r1 = 0
+  58: (0f) r3 += r1
+  59: (bf) r1 = r10
+; 
+  60: (07) r1 += -192
+; sk_comm = READ_KERN(psock-&gt;__sk_common);
+  61: (b7) r2 = 136
+  62: (85) call bpf_probe_read_kernel#-51920
+  63: (79) r1 = *(u64 *)(r10 -192)
+  64: (7b) *(u64 *)(r10 -336) = r1
+  65: (79) r1 = *(u64 *)(r10 -184)
+  66: (7b) *(u64 *)(r10 -328) = r1
+  67: (79) r1 = *(u64 *)(r10 -176)
+  68: (7b) *(u64 *)(r10 -320) = r1
+  69: (79) r1 = *(u64 *)(r10 -168)
+  70: (7b) *(u64 *)(r10 -312) = r1
+  71: (79) r1 = *(u64 *)(r10 -160)
+  72: (7b) *(u64 *)(r10 -304) = r1
+  73: (79) r1 = *(u64 *)(r10 -152)
+  74: (7b) *(u64 *)(r10 -296) = r1
+  75: (79) r1 = *(u64 *)(r10 -144)
+  76: (7b) *(u64 *)(r10 -288) = r1
+  77: (79) r1 = *(u64 *)(r10 -136)
+  78: (7b) *(u64 *)(r10 -280) = r1
+  79: (79) r1 = *(u64 *)(r10 -128)
+  80: (7b) *(u64 *)(r10 -272) = r1
+  81: (79) r1 = *(u64 *)(r10 -120)
+  82: (7b) *(u64 *)(r10 -264) = r1
+  83: (79) r1 = *(u64 *)(r10 -112)
+  84: (7b) *(u64 *)(r10 -256) = r1
+  85: (79) r1 = *(u64 *)(r10 -104)
+  86: (7b) *(u64 *)(r10 -248) = r1
+  87: (79) r1 = *(u64 *)(r10 -96)
+  88: (7b) *(u64 *)(r10 -240) = r1
+  89: (79) r1 = *(u64 *)(r10 -88)
+  90: (7b) *(u64 *)(r10 -232) = r1
+  91: (79) r1 = *(u64 *)(r10 -80)
+  92: (7b) *(u64 *)(r10 -224) = r1
+  93: (79) r1 = *(u64 *)(r10 -72)
+  94: (7b) *(u64 *)(r10 -216) = r1
+  95: (79) r1 = *(u64 *)(r10 -64)
+  96: (7b) *(u64 *)(r10 -208) = r1
+; pSockState-&gt;dport = READ_KERN(sk_comm.skc_dport);
+  97: (6b) *(u16 *)(r10 -192) = r9
+  98: (b7) r1 = 12
+  99: (bf) r8 = r10
+; 
+ 100: (07) r8 += -336
+ 101: (bf) r3 = r8
+ 102: (0f) r3 += r1
+ 103: (bf) r1 = r10
+ 104: (07) r1 += -192
+; pSockState-&gt;dport = READ_KERN(sk_comm.skc_dport);
+ 105: (b7) r2 = 2
+ 106: (85) call bpf_probe_read_kernel#-51920
+ 107: (69) r1 = *(u16 *)(r10 -192)
+; pSockState-&gt;dport = READ_KERN(sk_comm.skc_dport);
+ 108: (bf) r2 = r1
+ 109: (77) r2 &gt;&gt;= 8
+ 110: (73) *(u8 *)(r7 +67) = r2
+ 111: (73) *(u8 *)(r7 +66) = r1
+; pSockState-&gt;sport = READ_KERN(sk_comm.skc_num);
+ 112: (6b) *(u16 *)(r10 -192) = r9
+ 113: (b7) r1 = 14
+ 114: (bf) r3 = r8
+ 115: (0f) r3 += r1
+ 116: (bf) r1 = r10
+; 
+ 117: (07) r1 += -192
+; pSockState-&gt;sport = READ_KERN(sk_comm.skc_num);
+ 118: (b7) r2 = 2
+ 119: (85) call bpf_probe_read_kernel#-51920
+ 120: (69) r1 = *(u16 *)(r10 -192)
+; pSockState-&gt;sport = READ_KERN(sk_comm.skc_num);
+ 121: (bf) r2 = r1
+ 122: (77) r2 &gt;&gt;= 8
+ 123: (73) *(u8 *)(r7 +65) = r2
+ 124: (73) *(u8 *)(r7 +64) = r1
+; pSockState-&gt;dport = bpf_ntohs(pSockState-&gt;dport);
+ 125: (71) r1 = *(u8 *)(r7 +67)
+ 126: (67) r1 &lt;&lt;= 8
+ 127: (71) r2 = *(u8 *)(r7 +66)
+ 128: (4f) r1 |= r2
+ 129: (bf) r2 = r1
+ 130: (dc) r2 = be16 r2
+; pSockState-&gt;dport = bpf_ntohs(pSockState-&gt;dport);
+ 131: (73) *(u8 *)(r7 +66) = r2
+; pSockState-&gt;dport = bpf_ntohs(pSockState-&gt;dport);
+ 132: (dc) r1 = be64 r1
+; pSockState-&gt;dport = bpf_ntohs(pSockState-&gt;dport);
+ 133: (77) r1 &gt;&gt;= 56
+ 134: (73) *(u8 *)(r7 +67) = r1
+; pSockState-&gt;family = READ_KERN(sk_comm.skc_family);
+ 135: (6b) *(u16 *)(r10 -192) = r9
+ 136: (b7) r1 = 16
+ 137: (0f) r8 += r1
+ 138: (bf) r1 = r10
+; 
+ 139: (07) r1 += -192
+; pSockState-&gt;family = READ_KERN(sk_comm.skc_family);
+ 140: (b7) r2 = 2
+ 141: (bf) r3 = r8
+ 142: (85) call bpf_probe_read_kernel#-51920
+ 143: (69) r1 = *(u16 *)(r10 -192)
+; pSockState-&gt;family = READ_KERN(sk_comm.skc_family);
+ 144: (bf) r2 = r1
+ 145: (77) r2 &gt;&gt;= 8
+ 146: (73) *(u8 *)(r7 +69) = r2
+ 147: (73) *(u8 *)(r7 +68) = r1
+; if(pSockState-&gt;family == AF_INET)
+ 148: (15) if r1 == 0xa goto pc+17
+ 149: (55) if r1 != 0x2 goto pc+235
+ 150: (7b) *(u64 *)(r10 -344) = r6
+ 151: (b7) r1 = 0
+ 152: (bf) r8 = r10
+; bpf_core_read(pSockState-&gt;daddr, 4, &sk_comm.skc_daddr);
+ 153: (07) r8 += -336
+ 154: (bf) r3 = r8
+ 155: (0f) r3 += r1
+ 156: (bf) r1 = r7
+ 157: (07) r1 += 48
+ 158: (b7) r2 = 4
+ 159: (85) call bpf_probe_read_kernel#-51920
+ 160: (b7) r1 = 4
+ 161: (0f) r8 += r1
+; bpf_core_read(pSockState-&gt;saddr, 4, &sk_comm.skc_rcv_saddr);
+ 162: (bf) r1 = r7
+ 163: (07) r1 += 32
+ 164: (b7) r2 = 4
+ 165: (05) goto pc+15
+ 166: (7b) *(u64 *)(r10 -344) = r6
+ 167: (b7) r1 = 56
+ 168: (bf) r8 = r10
+; bpf_core_read(pSockState-&gt;daddr, 16, &sk_comm.skc_v6_daddr);
+ 169: (07) r8 += -336
+ 170: (bf) r3 = r8
+ 171: (0f) r3 += r1
+ 172: (bf) r1 = r7
+ 173: (07) r1 += 48
+ 174: (b7) r2 = 16
+ 175: (85) call bpf_probe_read_kernel#-51920
+ 176: (b7) r1 = 72
+ 177: (0f) r8 += r1
+; bpf_core_read(pSockState-&gt;saddr, 16, &sk_comm.skc_v6_rcv_saddr);
+ 178: (bf) r1 = r7
+ 179: (07) r1 += 32
+ 180: (b7) r2 = 16
+; 
+ 181: (bf) r3 = r8
+ 182: (85) call bpf_probe_read_kernel#-51920
+ 183: (b7) r1 = 1
+; pSockState-&gt;dir_in = 1;
+ 184: (73) *(u8 *)(r7 +70) = r1
+ 185: (b7) r1 = 2
+; pSockState-&gt;header.minor_cmd = MDCMD_SOCKET_TCP_ACCEPT;
+ 186: (73) *(u8 *)(r7 +7) = r1
+ 187: (b7) r6 = 0
+; pSockState-&gt;dir_in = 1;
+ 188: (73) *(u8 *)(r7 +71) = r6
+ 189: (79) r1 = *(u64 *)(r10 -208)
+ 190: (7b) *(u64 *)(r10 -64) = r1
+ 191: (79) r1 = *(u64 *)(r10 -216)
+ 192: (7b) *(u64 *)(r10 -72) = r1
+ 193: (79) r1 = *(u64 *)(r10 -224)
+ 194: (7b) *(u64 *)(r10 -80) = r1
+ 195: (79) r1 = *(u64 *)(r10 -232)
+ 196: (7b) *(u64 *)(r10 -88) = r1
+ 197: (79) r1 = *(u64 *)(r10 -240)
+ 198: (7b) *(u64 *)(r10 -96) = r1
+ 199: (79) r1 = *(u64 *)(r10 -248)
+ 200: (7b) *(u64 *)(r10 -104) = r1
+ 201: (79) r1 = *(u64 *)(r10 -256)
+ 202: (7b) *(u64 *)(r10 -112) = r1
+ 203: (79) r1 = *(u64 *)(r10 -264)
+ 204: (7b) *(u64 *)(r10 -120) = r1
+ 205: (79) r1 = *(u64 *)(r10 -272)
+ 206: (7b) *(u64 *)(r10 -128) = r1
+ 207: (79) r1 = *(u64 *)(r10 -280)
+ 208: (7b) *(u64 *)(r10 -136) = r1
+ 209: (79) r1 = *(u64 *)(r10 -288)
+ 210: (7b) *(u64 *)(r10 -144) = r1
+ 211: (79) r1 = *(u64 *)(r10 -296)
+ 212: (7b) *(u64 *)(r10 -152) = r1
+ 213: (79) r1 = *(u64 *)(r10 -304)
+ 214: (7b) *(u64 *)(r10 -160) = r1
+ 215: (79) r1 = *(u64 *)(r10 -312)
+ 216: (7b) *(u64 *)(r10 -168) = r1
+ 217: (79) r1 = *(u64 *)(r10 -320)
+ 218: (7b) *(u64 *)(r10 -176) = r1
+ 219: (79) r1 = *(u64 *)(r10 -328)
+ 220: (7b) *(u64 *)(r10 -184) = r1
+ 221: (79) r1 = *(u64 *)(r10 -336)
+ 222: (7b) *(u64 *)(r10 -192) = r1
+ 223: (b7) r1 = 48
+ 224: (bf) r3 = r10
+ 225: (07) r3 += -192
+ 226: (0f) r3 += r1
+; possible_net_t skc_net = READ_KERN(sk_comm.skc_net);	
+ 227: (7b) *(u64 *)(r10 -32) = r6
+ 228: (bf) r1 = r10
+; pSockState-&gt;dir_in = 1;
+ 229: (07) r1 += -32
+; possible_net_t skc_net = READ_KERN(sk_comm.skc_net);	
+ 230: (b7) r2 = 8
+ 231: (85) call bpf_probe_read_kernel#-51920
+ 232: (79) r1 = *(u64 *)(r10 -32)
+ 233: (7b) *(u64 *)(r10 -8) = r1
+ 234: (b7) r1 = 0
+ 235: (bf) r3 = r10
+; pSockState-&gt;dir_in = 1;
+ 236: (07) r3 += -8
+ 237: (0f) r3 += r1
+; struct net *net = READ_KERN(skc_net.net);
+ 238: (7b) *(u64 *)(r10 -32) = r6
+ 239: (bf) r1 = r10
+; pSockState-&gt;dir_in = 1;
+ 240: (07) r1 += -32
+; struct net *net = READ_KERN(skc_net.net);
+ 241: (b7) r2 = 8
+ 242: (85) call bpf_probe_read_kernel#-51920
+ 243: (79) r3 = *(u64 *)(r10 -32)
+; 
+ 244: (b7) r1 = 0
+; if(net == NULL)
+ 245: (15) if r3 == 0x0 goto pc+26
+ 246: (b7) r1 = 120
+ 247: (0f) r3 += r1
+ 248: (b7) r8 = 0
+; struct ns_common ns = READ_KERN(net-&gt;ns);
+ 249: (7b) *(u64 *)(r10 -40) = r8
+ 250: (7b) *(u64 *)(r10 -48) = r8
+ 251: (7b) *(u64 *)(r10 -56) = r8
+ 252: (bf) r1 = r10
+ 253: (07) r1 += -56
+ 254: (b7) r2 = 24
+ 255: (85) call bpf_probe_read_kernel#-51920
+ 256: (79) r1 = *(u64 *)(r10 -56)
+ 257: (7b) *(u64 *)(r10 -32) = r1
+ 258: (79) r1 = *(u64 *)(r10 -48)
+ 259: (7b) *(u64 *)(r10 -24) = r1
+ 260: (79) r1 = *(u64 *)(r10 -40)
+ 261: (7b) *(u64 *)(r10 -16) = r1
+; return READ_KERN(ns.inum);
+ 262: (63) *(u32 *)(r10 -56) = r8
+ 263: (b7) r1 = 16
+ 264: (bf) r3 = r10
+; struct ns_common ns = READ_KERN(net-&gt;ns);
+ 265: (07) r3 += -32
+ 266: (0f) r3 += r1
+ 267: (bf) r1 = r10
+ 268: (07) r1 += -56
+; return READ_KERN(ns.inum);
+ 269: (b7) r2 = 4
+ 270: (85) call bpf_probe_read_kernel#-51920
+ 271: (61) r1 = *(u32 *)(r10 -56)
+; pSockState-&gt;nsnum = get_sock_nsnum(sk_comm);
+ 272: (bf) r2 = r1
+ 273: (77) r2 &gt;&gt;= 24
+ 274: (73) *(u8 *)(r7 +31) = r2
+ 275: (bf) r2 = r1
+ 276: (77) r2 &gt;&gt;= 16
+ 277: (73) *(u8 *)(r7 +30) = r2
+ 278: (bf) r2 = r1
+ 279: (77) r2 &gt;&gt;= 8
+ 280: (73) *(u8 *)(r7 +29) = r2
+ 281: (73) *(u8 *)(r7 +28) = r1
+; u32 tgid = bpf_get_current_pid_tgid() &gt;&gt; 32;
+ 282: (85) call bpf_get_current_pid_tgid#124560
+ 283: (bf) r8 = r0
+; u32 tid = bpf_get_current_pid_tgid();
+ 284: (85) call bpf_get_current_pid_tgid#124560
+ 285: (bf) r9 = r0
+; pSockState-&gt;ktime_event = bpf_ktime_get_ns();
+ 286: (85) call bpf_ktime_get_ns#124928
+; pSockState-&gt;ktime_proc = 0;
+ 287: (73) *(u8 *)(r7 +23) = r6
+ 288: (73) *(u8 *)(r7 +22) = r6
+ 289: (73) *(u8 *)(r7 +21) = r6
+ 290: (73) *(u8 *)(r7 +20) = r6
+ 291: (73) *(u8 *)(r7 +19) = r6
+ 292: (73) *(u8 *)(r7 +18) = r6
+ 293: (73) *(u8 *)(r7 +17) = r6
+ 294: (73) *(u8 *)(r7 +16) = r6
+; pSockState-&gt;ktime_event = bpf_ktime_get_ns();
+ 295: (bf) r1 = r0
+ 296: (77) r1 &gt;&gt;= 56
+ 297: (73) *(u8 *)(r7 +15) = r1
+ 298: (bf) r1 = r0
+ 299: (77) r1 &gt;&gt;= 48
+ 300: (73) *(u8 *)(r7 +14) = r1
+ 301: (bf) r1 = r0
+ 302: (77) r1 &gt;&gt;= 40
+ 303: (73) *(u8 *)(r7 +13) = r1
+ 304: (bf) r1 = r0
+ 305: (77) r1 &gt;&gt;= 32
+ 306: (73) *(u8 *)(r7 +12) = r1
+ 307: (bf) r1 = r0
+ 308: (77) r1 &gt;&gt;= 24
+ 309: (73) *(u8 *)(r7 +11) = r1
+ 310: (bf) r1 = r0
+ 311: (77) r1 &gt;&gt;= 16
+ 312: (73) *(u8 *)(r7 +10) = r1
+ 313: (73) *(u8 *)(r7 +8) = r0
+ 314: (77) r0 &gt;&gt;= 8
+ 315: (73) *(u8 *)(r7 +9) = r0
+; u32 tgid = bpf_get_current_pid_tgid() &gt;&gt; 32;
+ 316: (77) r8 &gt;&gt;= 32
+; struct task_struct *task = bpf_get_current_task();
+ 317: (85) call bpf_get_current_task#-55200
+ 318: (79) r6 = *(u64 *)(r10 -344)
+; if(task)
+ 319: (15) if r0 == 0x0 goto pc+47
+; u32 tid = bpf_get_current_pid_tgid();
+ 320: (67) r9 &lt;&lt;= 32
+ 321: (77) r9 &gt;&gt;= 32
+; if(tgid != tid)
+ 322: (1d) if r8 == r9 goto pc+10
+ 323: (b7) r1 = 0
+; struct task_struct *group_leader = READ_KERN(task-&gt;group_leader);
+ 324: (7b) *(u64 *)(r10 -192) = r1
+ 325: (b7) r1 = 2368
+ 326: (0f) r0 += r1
+ 327: (bf) r1 = r10
+; 
+ 328: (07) r1 += -192
+; struct task_struct *group_leader = READ_KERN(task-&gt;group_leader);
+ 329: (b7) r2 = 8
+ 330: (bf) r3 = r0
+ 331: (85) call bpf_probe_read_kernel#-51920
+ 332: (79) r0 = *(u64 *)(r10 -192)
+ 333: (b7) r1 = 0
+; if(task == NULL)
+ 334: (15) if r0 == 0x0 goto pc+11
+ 335: (b7) r1 = 0
+; stime = READ_KERN(new_task-&gt;start_boottime);
+ 336: (b7) r1 = 0
+; stime = READ_KERN(task-&gt;real_start_time);
+ 337: (7b) *(u64 *)(r10 -192) = r1
+ 338: (b7) r1 = 2664
+ 339: (0f) r0 += r1
+ 340: (bf) r1 = r10
+; 
+ 341: (07) r1 += -192
+ 342: (b7) r2 = 8
+ 343: (bf) r3 = r0
+ 344: (85) call bpf_probe_read_kernel#-51920
+ 345: (79) r1 = *(u64 *)(r10 -192)
+; pSockState-&gt;ktime_proc = get_task_start_time(task);
+ 346: (bf) r2 = r1
+ 347: (77) r2 &gt;&gt;= 56
+ 348: (73) *(u8 *)(r7 +23) = r2
+ 349: (bf) r2 = r1
+ 350: (77) r2 &gt;&gt;= 48
+ 351: (73) *(u8 *)(r7 +22) = r2
+ 352: (bf) r2 = r1
+ 353: (77) r2 &gt;&gt;= 40
+ 354: (73) *(u8 *)(r7 +21) = r2
+ 355: (bf) r2 = r1
+ 356: (77) r2 &gt;&gt;= 32
+ 357: (73) *(u8 *)(r7 +20) = r2
+ 358: (bf) r2 = r1
+ 359: (77) r2 &gt;&gt;= 24
+ 360: (73) *(u8 *)(r7 +19) = r2
+ 361: (bf) r2 = r1
+ 362: (77) r2 &gt;&gt;= 16
+ 363: (73) *(u8 *)(r7 +18) = r2
+ 364: (73) *(u8 *)(r7 +16) = r1
+ 365: (77) r1 &gt;&gt;= 8
+ 366: (73) *(u8 *)(r7 +17) = r1
+; pSockState-&gt;pid = tgid;
+ 367: (bf) r1 = r8
+ 368: (77) r1 &gt;&gt;= 24
+ 369: (73) *(u8 *)(r7 +27) = r1
+ 370: (bf) r1 = r8
+ 371: (77) r1 &gt;&gt;= 16
+ 372: (73) *(u8 *)(r7 +26) = r1
+ 373: (73) *(u8 *)(r7 +24) = r8
+ 374: (77) r8 &gt;&gt;= 8
+ 375: (73) *(u8 *)(r7 +25) = r8
+; u64 uid_gid = bpf_get_current_uid_gid();
+ 376: (85) call bpf_get_current_uid_gid#124960
+; bpf_perf_event_output(ctx, &perf_event_array_map, BPF_F_CURRENT_CPU, map_value, sizeof(struct SocketStateData));
+ 377: (bf) r1 = r6
+ 378: (18) r2 = map[id:2]
+ 380: (18) r3 = 0xffffffff
+ 382: (bf) r4 = r7
+ 383: (b7) r5 = 72
+ 384: (85) call bpf_perf_event_output#-50016
+; return get_tcp_event(ctx, true);	
+ 385: (b7) r0 = 0
+ 386: (95) exit

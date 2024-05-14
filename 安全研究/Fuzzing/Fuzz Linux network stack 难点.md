@@ -1,0 +1,1 @@
+1.The Frame/packet/whatever is placed on a queue and then processed asynchronously by a different thread/workqueue/softirq/tasklet.(and thus won't contribute to the instrumentation feedback to AFL)(move various asynronous processing to the syscall exit path to make it deterministic)

@@ -1,0 +1,276 @@
+int kprobe_proc_fork_connector(struct pt_regs * ctx):
+; int kprobe_proc_fork_connector(struct pt_regs *ctx)
+   0: (bf) r6 = r1
+   1: (b7) r1 = 0
+; int map_id = 0;
+   2: (63) *(u32 *)(r10 -12) = r1
+   3: (bf) r2 = r10
+; 
+   4: (07) r2 += -12
+; map_value = bpf_map_lookup_elem(&data_tmp_store_map, &map_id);
+   5: (18) r1 = map[id:1]
+   7: (85) call percpu_array_map_lookup_elem#149152
+   8: (bf) r8 = r0
+; if (!map_value)
+   9: (15) if r8 == 0x0 goto pc+211
+; struct task_struct *pfork_task = (struct task_struct *)PT_REGS_PARM1(ctx);
+  10: (79) r9 = *(u64 *)(r6 +112)
+; if (NULL == pfork_task)
+  11: (15) if r9 == 0x0 goto pc+209
+; 
+  12: (bf) r7 = r8
+; pForkInfo-&gt;ktime_event = bpf_ktime_get_ns();   
+  13: (85) call bpf_ktime_get_ns#124928
+; pForkInfo-&gt;ktime_event = bpf_ktime_get_ns();   
+  14: (bf) r1 = r0
+  15: (77) r1 &gt;&gt;= 56
+  16: (73) *(u8 *)(r7 +15) = r1
+  17: (bf) r1 = r0
+  18: (77) r1 &gt;&gt;= 48
+  19: (73) *(u8 *)(r7 +14) = r1
+  20: (bf) r1 = r0
+  21: (77) r1 &gt;&gt;= 40
+  22: (73) *(u8 *)(r7 +13) = r1
+  23: (bf) r1 = r0
+  24: (77) r1 &gt;&gt;= 32
+  25: (73) *(u8 *)(r7 +12) = r1
+  26: (bf) r1 = r0
+  27: (77) r1 &gt;&gt;= 24
+  28: (73) *(u8 *)(r7 +11) = r1
+  29: (bf) r1 = r0
+  30: (77) r1 &gt;&gt;= 16
+  31: (73) *(u8 *)(r7 +10) = r1
+  32: (73) *(u8 *)(r7 +8) = r0
+  33: (77) r0 &gt;&gt;= 8
+  34: (73) *(u8 *)(r7 +9) = r0
+  35: (7b) *(u64 *)(r10 -24) = r6
+  36: (b7) r6 = 0
+; u32 fork_tid = READ_KERN(pfork_task-&gt;pid);
+  37: (63) *(u32 *)(r10 -8) = r6
+  38: (b7) r1 = 2304
+  39: (bf) r3 = r9
+  40: (0f) r3 += r1
+  41: (bf) r1 = r10
+; 
+  42: (07) r1 += -8
+; u32 fork_tid = READ_KERN(pfork_task-&gt;pid);
+  43: (b7) r2 = 4
+  44: (85) call bpf_probe_read_kernel#-51920
+  45: (61) r1 = *(u32 *)(r10 -8)
+; pForkInfo-&gt;pid = READ_KERN(pfork_task-&gt;tgid);
+  46: (7b) *(u64 *)(r10 -32) = r1
+  47: (63) *(u32 *)(r10 -8) = r6
+  48: (b7) r1 = 2308
+  49: (bf) r3 = r9
+  50: (0f) r3 += r1
+  51: (bf) r1 = r10
+; 
+  52: (07) r1 += -8
+; pForkInfo-&gt;pid = READ_KERN(pfork_task-&gt;tgid);
+  53: (b7) r2 = 4
+  54: (85) call bpf_probe_read_kernel#-51920
+  55: (61) r1 = *(u32 *)(r10 -8)
+; pForkInfo-&gt;pid = READ_KERN(pfork_task-&gt;tgid);
+  56: (bf) r2 = r1
+  57: (77) r2 &gt;&gt;= 24
+  58: (73) *(u8 *)(r7 +27) = r2
+  59: (bf) r2 = r1
+  60: (77) r2 &gt;&gt;= 16
+  61: (73) *(u8 *)(r7 +26) = r2
+  62: (bf) r2 = r1
+  63: (77) r2 &gt;&gt;= 8
+  64: (73) *(u8 *)(r7 +25) = r2
+  65: (73) *(u8 *)(r7 +24) = r1
+; struct mm_struct * pmm = READ_KERN(pfork_task-&gt;mm);
+  66: (7b) *(u64 *)(r10 -8) = r6
+  67: (79) r6 = *(u64 *)(r10 -24)
+  68: (b7) r1 = 2128
+  69: (bf) r3 = r9
+  70: (0f) r3 += r1
+  71: (bf) r1 = r10
+; 
+  72: (07) r1 += -8
+; struct mm_struct * pmm = READ_KERN(pfork_task-&gt;mm);
+  73: (b7) r2 = 8
+  74: (85) call bpf_probe_read_kernel#-51920
+; if (pForkInfo-&gt;pid == 0 || pForkInfo-&gt;pid != fork_tid || pmm == NULL)
+  75: (71) r2 = *(u8 *)(r7 +25)
+  76: (67) r2 &lt;&lt;= 8
+  77: (71) r1 = *(u8 *)(r7 +24)
+  78: (4f) r2 |= r1
+  79: (71) r3 = *(u8 *)(r7 +26)
+  80: (71) r1 = *(u8 *)(r7 +27)
+  81: (67) r1 &lt;&lt;= 8
+  82: (4f) r1 |= r3
+  83: (67) r1 &lt;&lt;= 16
+  84: (4f) r1 |= r2
+; if (pForkInfo-&gt;pid == 0 || pForkInfo-&gt;pid != fork_tid || pmm == NULL)
+  85: (15) if r1 == 0x0 goto pc+135
+; 
+  86: (79) r2 = *(u64 *)(r10 -8)
+; if (pForkInfo-&gt;pid == 0 || pForkInfo-&gt;pid != fork_tid || pmm == NULL)
+  87: (15) if r2 == 0x0 goto pc+133
+  88: (79) r2 = *(u64 *)(r10 -32)
+  89: (5d) if r1 != r2 goto pc+131
+  90: (b7) r1 = 0
+; stime = READ_KERN(new_task-&gt;start_boottime);
+  91: (b7) r1 = 0
+; stime = READ_KERN(task-&gt;real_start_time);
+  92: (7b) *(u64 *)(r10 -8) = r1
+  93: (b7) r1 = 2664
+  94: (0f) r9 += r1
+  95: (bf) r1 = r10
+; 
+  96: (07) r1 += -8
+  97: (b7) r2 = 8
+  98: (bf) r3 = r9
+  99: (85) call bpf_probe_read_kernel#-51920
+ 100: (79) r1 = *(u64 *)(r10 -8)
+; pForkInfo-&gt;ktime_proc = get_task_start_time(pfork_task);
+ 101: (bf) r2 = r1
+ 102: (77) r2 &gt;&gt;= 56
+ 103: (73) *(u8 *)(r7 +23) = r2
+ 104: (bf) r2 = r1
+ 105: (77) r2 &gt;&gt;= 48
+ 106: (73) *(u8 *)(r7 +22) = r2
+ 107: (bf) r2 = r1
+ 108: (77) r2 &gt;&gt;= 40
+ 109: (73) *(u8 *)(r7 +21) = r2
+ 110: (bf) r2 = r1
+ 111: (77) r2 &gt;&gt;= 32
+ 112: (73) *(u8 *)(r7 +20) = r2
+ 113: (bf) r2 = r1
+ 114: (77) r2 &gt;&gt;= 24
+ 115: (73) *(u8 *)(r7 +19) = r2
+ 116: (bf) r2 = r1
+ 117: (77) r2 &gt;&gt;= 16
+ 118: (73) *(u8 *)(r7 +18) = r2
+ 119: (73) *(u8 *)(r7 +16) = r1
+ 120: (77) r1 &gt;&gt;= 8
+ 121: (73) *(u8 *)(r7 +17) = r1
+; bpf_get_current_comm(pForkInfo-&gt;comm, TASK_COMM_LEN);
+ 122: (07) r8 += 28
+; bpf_get_current_comm(pForkInfo-&gt;comm, TASK_COMM_LEN);
+ 123: (bf) r1 = r8
+ 124: (b7) r2 = 16
+ 125: (85) call bpf_get_current_comm#125056
+; pForkInfo-&gt;ppid = (bpf_get_current_pid_tgid() &gt;&gt; 32) & 0xFFFFFFFF;
+ 126: (85) call bpf_get_current_pid_tgid#124560
+; pForkInfo-&gt;ppid = (bpf_get_current_pid_tgid() &gt;&gt; 32) & 0xFFFFFFFF;
+ 127: (bf) r1 = r0
+ 128: (77) r1 &gt;&gt;= 56
+ 129: (73) *(u8 *)(r7 +55) = r1
+ 130: (bf) r1 = r0
+ 131: (77) r1 &gt;&gt;= 48
+ 132: (73) *(u8 *)(r7 +54) = r1
+ 133: (bf) r1 = r0
+ 134: (77) r1 &gt;&gt;= 40
+ 135: (73) *(u8 *)(r7 +53) = r1
+; pForkInfo-&gt;ppid = (bpf_get_current_pid_tgid() &gt;&gt; 32) & 0xFFFFFFFF;
+ 136: (77) r0 &gt;&gt;= 32
+; pForkInfo-&gt;ppid = (bpf_get_current_pid_tgid() &gt;&gt; 32) & 0xFFFFFFFF;
+ 137: (73) *(u8 *)(r7 +52) = r0
+; struct task_struct *ptask = bpf_get_current_task();
+ 138: (85) call bpf_get_current_task#-55200
+ 139: (bf) r8 = r0
+; if (NULL != ptask)
+ 140: (15) if r8 == 0x0 goto pc+58
+; u32 tid = bpf_get_current_pid_tgid();
+ 141: (85) call bpf_get_current_pid_tgid#124560
+; if(tid != pForkInfo-&gt;ppid)
+ 142: (71) r1 = *(u8 *)(r7 +53)
+ 143: (67) r1 &lt;&lt;= 8
+ 144: (71) r2 = *(u8 *)(r7 +52)
+ 145: (4f) r1 |= r2
+ 146: (71) r2 = *(u8 *)(r7 +54)
+ 147: (71) r3 = *(u8 *)(r7 +55)
+ 148: (67) r3 &lt;&lt;= 8
+ 149: (4f) r3 |= r2
+ 150: (67) r3 &lt;&lt;= 16
+ 151: (4f) r3 |= r1
+; u32 tid = bpf_get_current_pid_tgid();
+ 152: (67) r0 &lt;&lt;= 32
+ 153: (77) r0 &gt;&gt;= 32
+; if(tid != pForkInfo-&gt;ppid)
+ 154: (1d) if r3 == r0 goto pc+10
+ 155: (b7) r1 = 0
+; struct task_struct *group_leader = READ_KERN(task-&gt;group_leader);
+ 156: (7b) *(u64 *)(r10 -8) = r1
+ 157: (b7) r1 = 2368
+ 158: (0f) r8 += r1
+ 159: (bf) r1 = r10
+; 
+ 160: (07) r1 += -8
+; struct task_struct *group_leader = READ_KERN(task-&gt;group_leader);
+ 161: (b7) r2 = 8
+ 162: (bf) r3 = r8
+ 163: (85) call bpf_probe_read_kernel#-51920
+ 164: (79) r8 = *(u64 *)(r10 -8)
+ 165: (b7) r1 = 0
+; if(task == NULL)
+ 166: (15) if r8 == 0x0 goto pc+11
+ 167: (b7) r1 = 0
+; stime = READ_KERN(new_task-&gt;start_boottime);
+ 168: (b7) r1 = 0
+; stime = READ_KERN(task-&gt;real_start_time);
+ 169: (7b) *(u64 *)(r10 -8) = r1
+ 170: (b7) r1 = 2664
+ 171: (0f) r8 += r1
+ 172: (bf) r1 = r10
+; 
+ 173: (07) r1 += -8
+ 174: (b7) r2 = 8
+ 175: (bf) r3 = r8
+ 176: (85) call bpf_probe_read_kernel#-51920
+ 177: (79) r1 = *(u64 *)(r10 -8)
+; pForkInfo-&gt;ktime_parent = get_task_start_time(ptask);
+ 178: (bf) r2 = r1
+ 179: (77) r2 &gt;&gt;= 56
+ 180: (73) *(u8 *)(r7 +51) = r2
+ 181: (bf) r2 = r1
+ 182: (77) r2 &gt;&gt;= 48
+ 183: (73) *(u8 *)(r7 +50) = r2
+ 184: (bf) r2 = r1
+ 185: (77) r2 &gt;&gt;= 40
+ 186: (73) *(u8 *)(r7 +49) = r2
+ 187: (bf) r2 = r1
+ 188: (77) r2 &gt;&gt;= 32
+ 189: (73) *(u8 *)(r7 +48) = r2
+ 190: (bf) r2 = r1
+ 191: (77) r2 &gt;&gt;= 24
+ 192: (73) *(u8 *)(r7 +47) = r2
+ 193: (bf) r2 = r1
+ 194: (77) r2 &gt;&gt;= 16
+ 195: (73) *(u8 *)(r7 +46) = r2
+ 196: (73) *(u8 *)(r7 +44) = r1
+ 197: (77) r1 &gt;&gt;= 8
+ 198: (73) *(u8 *)(r7 +45) = r1
+ 199: (b7) r1 = 0
+; pForkInfo-&gt;header.protover = PROTOCOL_VERSION;
+ 200: (73) *(u8 *)(r7 +5) = r1
+ 201: (b7) r1 = 77
+; pForkInfo-&gt;header.magic = HEADER_MAGIC;
+ 202: (73) *(u8 *)(r7 +3) = r1
+ 203: (b7) r1 = 68
+ 204: (73) *(u8 *)(r7 +1) = r1
+ 205: (b7) r1 = 84
+ 206: (73) *(u8 *)(r7 +2) = r1
+ 207: (73) *(u8 *)(r7 +0) = r1
+ 208: (b7) r1 = 2
+; pForkInfo-&gt;header.minor_cmd = MDCMD_PROCESS_FORKDATA;
+ 209: (73) *(u8 *)(r7 +7) = r1
+ 210: (b7) r1 = 1
+; pForkInfo-&gt;header.protover = PROTOCOL_VERSION;
+ 211: (73) *(u8 *)(r7 +4) = r1
+; pForkInfo-&gt;header.major_cmd = MULTIDATA_PROCESS;
+ 212: (73) *(u8 *)(r7 +6) = r1
+; bpf_perf_event_output(ctx, &perf_event_array_map, BPF_F_CURRENT_CPU, map_value, sizeof(struct ProcForkInfo));
+ 213: (bf) r1 = r6
+ 214: (18) r2 = map[id:2]
+ 216: (18) r3 = 0xffffffff
+ 218: (bf) r4 = r7
+ 219: (b7) r5 = 56
+ 220: (85) call bpf_perf_event_output#-50016
+; }
+ 221: (b7) r0 = 0
+ 222: (95) exit

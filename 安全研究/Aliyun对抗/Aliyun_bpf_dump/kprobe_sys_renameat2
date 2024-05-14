@@ -1,0 +1,364 @@
+int kprobe_sys_renameat2(struct pt_regs * ctx):
+; int kprobe_sys_renameat2(struct pt_regs* ctx)
+   0: (bf) r8 = r1
+; bpf_probe_read(&real_ctx, sizeof(struct pt_regs), (void *)PT_REGS_PARM1(ctx));
+   1: (79) r3 = *(u64 *)(r8 +112)
+   2: (bf) r7 = r10
+; 
+   3: (07) r7 += -184
+; bpf_probe_read(&real_ctx, sizeof(struct pt_regs), (void *)PT_REGS_PARM1(ctx));
+   4: (bf) r1 = r7
+   5: (b7) r2 = 168
+   6: (85) call bpf_probe_read_compat#-45600
+   7: (b7) r6 = 0
+; char *newname = (char*)PT_REGS_PARM4_SYSCALL(preal_ctx);
+   8: (79) r9 = *(u64 *)(r7 +56)
+; int flags = PT_REGS_PARM5(preal_ctx);
+   9: (79) r3 = *(u64 *)(r7 +72)
+; int newdfd = PT_REGS_PARM3(preal_ctx);
+  10: (79) r2 = *(u64 *)(r7 +96)
+; int olddfd = PT_REGS_PARM1(preal_ctx);
+  11: (79) r1 = *(u64 *)(r7 +112)
+; char *oldname = (char*)PT_REGS_PARM2(preal_ctx);
+  12: (79) r7 = *(u64 *)(r7 +104)
+; if(oldname == NULL || newname == NULL)
+  13: (15) if r7 == 0x0 goto pc+264
+  14: (15) if r9 == 0x0 goto pc+263
+  15: (7b) *(u64 *)(r10 -216) = r3
+  16: (7b) *(u64 *)(r10 -208) = r2
+  17: (7b) *(u64 *)(r10 -200) = r1
+  18: (7b) *(u64 *)(r10 -192) = r8
+  19: (b7) r6 = 0
+; int map_id = 0;
+  20: (63) *(u32 *)(r10 -16) = r6
+  21: (bf) r2 = r10
+; 
+  22: (07) r2 += -16
+; map_value = bpf_map_lookup_elem(&data_tmp_store_map, &map_id);
+  23: (18) r1 = map[id:1]
+  25: (85) call percpu_array_map_lookup_elem#149152
+  26: (bf) r8 = r0
+; if (!map_value) {
+  27: (15) if r8 == 0x0 goto pc+250
+  28: (b7) r6 = 0
+; pFileData-&gt;pathlen = 0;	
+  29: (73) *(u8 *)(r8 +47) = r6
+  30: (73) *(u8 *)(r8 +46) = r6
+  31: (73) *(u8 *)(r8 +45) = r6
+  32: (73) *(u8 *)(r8 +44) = r6
+  33: (63) *(u32 *)(r10 -8) = r6
+; u32 ret = save_str_to_buf(pFileData-&gt;filepath, pFileData-&gt;pathlen, oldname, 0);
+  34: (bf) r1 = r8
+  35: (07) r1 += 48
+  36: (bf) r3 = r10
+; 
+  37: (07) r3 += -8
+  38: (7b) *(u64 *)(r10 -224) = r1
+; bpf_probe_read(&buf[buf_off & (MAX_PERCPU_BUFSIZE - 1)], sizeof(enType), &enType);
+  39: (b7) r2 = 4
+  40: (85) call bpf_probe_read_compat#-45600
+; int sz = bpf_probe_read_str(&(buf[buf_off + sizeof(enType) + sizeof(int)]), MAX_STRING_SIZE, ptr);
+  41: (bf) r1 = r8
+  42: (07) r1 += 56
+; int sz = bpf_probe_read_str(&(buf[buf_off + sizeof(enType) + sizeof(int)]), MAX_STRING_SIZE, ptr);
+  43: (b7) r2 = 4096
+  44: (bf) r3 = r7
+  45: (85) call bpf_probe_read_compat_str#-46512
+; int sz = bpf_probe_read_str(&(buf[buf_off + sizeof(enType) + sizeof(int)]), MAX_STRING_SIZE, ptr);
+  46: (63) *(u32 *)(r10 -12) = r0
+; int sz = bpf_probe_read_str(&(buf[buf_off + sizeof(enType) + sizeof(int)]), MAX_STRING_SIZE, ptr);
+  47: (67) r0 &lt;&lt;= 32
+  48: (c7) r0 s&gt;&gt;= 32
+; if (sz &gt; 0) {
+  49: (65) if r0 s&gt; 0x0 goto pc+1
+  50: (05) goto pc+227
+; bpf_probe_read(&(buf[buf_off + sizeof(enType)]), sizeof(int), &sz);		
+  51: (bf) r1 = r8
+  52: (07) r1 += 52
+  53: (bf) r3 = r10
+; 
+  54: (07) r3 += -12
+; bpf_probe_read(&(buf[buf_off + sizeof(enType)]), sizeof(int), &sz);		
+  55: (b7) r2 = 4
+  56: (85) call bpf_probe_read_compat#-45600
+; buf_off += sz + sizeof(enType) + sizeof(int);
+  57: (61) r3 = *(u32 *)(r10 -12)
+; buf_off += sz + sizeof(enType) + sizeof(int);
+  58: (bf) r1 = r3
+  59: (07) r1 += 8
+  60: (bf) r7 = r1
+  61: (67) r7 &lt;&lt;= 32
+  62: (77) r7 &gt;&gt;= 32
+; if(!ret)
+  63: (15) if r7 == 0x0 goto pc+214
+; pFileData-&gt;pathlen = ret;
+  64: (bf) r2 = r1
+  65: (77) r2 &gt;&gt;= 24
+  66: (73) *(u8 *)(r8 +47) = r2
+  67: (bf) r2 = r1
+  68: (77) r2 &gt;&gt;= 16
+  69: (73) *(u8 *)(r8 +46) = r2
+  70: (bf) r2 = r1
+  71: (77) r2 &gt;&gt;= 8
+  72: (73) *(u8 *)(r8 +45) = r2
+  73: (73) *(u8 *)(r8 +44) = r1
+  74: (b7) r1 = 1
+  75: (63) *(u32 *)(r10 -8) = r1
+; if (buf_off &gt; MAX_VALID_BUFSIZE - MAX_STRING_SIZE - sizeof(int) - sizeof(enType))
+  76: (25) if r7 &gt; 0x2ff8 goto pc+17
+  77: (7b) *(u64 *)(r10 -240) = r3
+  78: (79) r1 = *(u64 *)(r10 -224)
+; bpf_probe_read(&buf[buf_off & (MAX_PERCPU_BUFSIZE - 1)], sizeof(enType), &enType);
+  79: (0f) r1 += r7
+; bpf_probe_read(&buf[buf_off & (MAX_PERCPU_BUFSIZE - 1)], sizeof(enType), &enType);
+  80: (7b) *(u64 *)(r10 -232) = r1
+  81: (bf) r3 = r10
+; bpf_probe_read(&buf[buf_off & (MAX_PERCPU_BUFSIZE - 1)], sizeof(enType), &enType);
+  82: (07) r3 += -8
+; bpf_probe_read(&buf[buf_off & (MAX_PERCPU_BUFSIZE - 1)], sizeof(enType), &enType);
+  83: (b7) r2 = 4
+  84: (85) call bpf_probe_read_compat#-45600
+  85: (79) r1 = *(u64 *)(r10 -232)
+; int sz = bpf_probe_read_str(&(buf[buf_off + sizeof(enType) + sizeof(int)]), MAX_STRING_SIZE, ptr);
+  86: (07) r1 += 8
+; int sz = bpf_probe_read_str(&(buf[buf_off + sizeof(enType) + sizeof(int)]), MAX_STRING_SIZE, ptr);
+  87: (b7) r2 = 4096
+  88: (bf) r3 = r9
+  89: (85) call bpf_probe_read_compat_str#-46512
+; int sz = bpf_probe_read_str(&(buf[buf_off + sizeof(enType) + sizeof(int)]), MAX_STRING_SIZE, ptr);
+  90: (63) *(u32 *)(r10 -12) = r0
+; int sz = bpf_probe_read_str(&(buf[buf_off + sizeof(enType) + sizeof(int)]), MAX_STRING_SIZE, ptr);
+  91: (67) r0 &lt;&lt;= 32
+  92: (c7) r0 s&gt;&gt;= 32
+; if (sz &gt; 0) {
+  93: (65) if r0 s&gt; 0x0 goto pc+1
+  94: (05) goto pc+183
+; if ((buf_off + sizeof(enType)) &lt;= MAX_VALID_BUFSIZE - MAX_STRING_SIZE - sizeof(int)) 
+  95: (79) r1 = *(u64 *)(r10 -224)
+  96: (0f) r7 += r1
+; bpf_probe_read(&(buf[buf_off + sizeof(enType)]), sizeof(int), &sz);		
+  97: (07) r7 += 4
+  98: (bf) r3 = r10
+; if ((buf_off + sizeof(enType)) &lt;= MAX_VALID_BUFSIZE - MAX_STRING_SIZE - sizeof(int)) 
+  99: (07) r3 += -12
+; bpf_probe_read(&(buf[buf_off + sizeof(enType)]), sizeof(int), &sz);		
+ 100: (bf) r1 = r7
+ 101: (b7) r2 = 4
+ 102: (85) call bpf_probe_read_compat#-45600
+; buf_off += sz + sizeof(enType) + sizeof(int);
+ 103: (61) r1 = *(u32 *)(r10 -12)
+ 104: (79) r3 = *(u64 *)(r10 -240)
+; buf_off += sz + sizeof(enType) + sizeof(int);
+ 105: (0f) r3 += r1
+; buf_off += sz + sizeof(enType) + sizeof(int);
+ 106: (07) r3 += 16
+ 107: (bf) r1 = r3
+ 108: (67) r1 &lt;&lt;= 32
+ 109: (77) r1 &gt;&gt;= 32
+; if(ret)
+ 110: (15) if r1 == 0x0 goto pc+167
+ 111: (b7) r6 = 1
+; pFileData-&gt;header.protover = PROTOCOL_VERSION;
+ 112: (73) *(u8 *)(r8 +4) = r6
+ 113: (b7) r1 = 77
+; pFileData-&gt;header.magic = HEADER_MAGIC;
+ 114: (73) *(u8 *)(r8 +3) = r1
+ 115: (b7) r1 = 68
+ 116: (73) *(u8 *)(r8 +1) = r1
+ 117: (b7) r1 = 84
+ 118: (73) *(u8 *)(r8 +2) = r1
+ 119: (73) *(u8 *)(r8 +0) = r1
+ 120: (b7) r1 = 2
+; pFileData-&gt;type = type;
+ 121: (73) *(u8 *)(r8 +28) = r1
+; pFileData-&gt;header.minor_cmd = MDCMD_FILEEVENT_RENAME;
+ 122: (73) *(u8 *)(r8 +7) = r1
+ 123: (b7) r1 = 3
+; pFileData-&gt;header.major_cmd = MULTIDATA_FILEEVENT;
+ 124: (73) *(u8 *)(r8 +6) = r1
+ 125: (79) r2 = *(u64 *)(r10 -216)
+; pFileData-&gt;flags = flags;
+ 126: (bf) r1 = r2
+ 127: (77) r1 &gt;&gt;= 24
+ 128: (73) *(u8 *)(r8 +43) = r1
+ 129: (bf) r1 = r2
+ 130: (77) r1 &gt;&gt;= 16
+ 131: (73) *(u8 *)(r8 +42) = r1
+ 132: (73) *(u8 *)(r8 +40) = r2
+ 133: (77) r2 &gt;&gt;= 8
+ 134: (73) *(u8 *)(r8 +41) = r2
+ 135: (79) r2 = *(u64 *)(r10 -208)
+; pFileData-&gt;newdfd = newdfd;
+ 136: (bf) r1 = r2
+ 137: (77) r1 &gt;&gt;= 24
+ 138: (73) *(u8 *)(r8 +39) = r1
+ 139: (bf) r1 = r2
+ 140: (77) r1 &gt;&gt;= 16
+ 141: (73) *(u8 *)(r8 +38) = r1
+ 142: (73) *(u8 *)(r8 +36) = r2
+ 143: (77) r2 &gt;&gt;= 8
+ 144: (73) *(u8 *)(r8 +37) = r2
+ 145: (79) r2 = *(u64 *)(r10 -200)
+; pFileData-&gt;olddfd = olddfd;	
+ 146: (bf) r1 = r2
+ 147: (77) r1 &gt;&gt;= 24
+ 148: (73) *(u8 *)(r8 +35) = r1
+ 149: (bf) r1 = r2
+ 150: (77) r1 &gt;&gt;= 16
+ 151: (73) *(u8 *)(r8 +34) = r1
+ 152: (73) *(u8 *)(r8 +32) = r2
+ 153: (77) r2 &gt;&gt;= 8
+ 154: (73) *(u8 *)(r8 +33) = r2
+; pFileData-&gt;pathlen = ret;
+ 155: (bf) r1 = r3
+ 156: (77) r1 &gt;&gt;= 24
+ 157: (73) *(u8 *)(r8 +47) = r1
+ 158: (bf) r1 = r3
+ 159: (77) r1 &gt;&gt;= 16
+ 160: (73) *(u8 *)(r8 +46) = r1
+ 161: (73) *(u8 *)(r8 +44) = r3
+ 162: (77) r3 &gt;&gt;= 8
+ 163: (73) *(u8 *)(r8 +45) = r3
+ 164: (b7) r9 = 0
+; pFileData-&gt;header.protover = PROTOCOL_VERSION;
+ 165: (73) *(u8 *)(r8 +5) = r9
+; pFileData-&gt;type = type;
+ 166: (73) *(u8 *)(r8 +31) = r9
+ 167: (73) *(u8 *)(r8 +30) = r9
+ 168: (73) *(u8 *)(r8 +29) = r9
+; u32 tgid = bpf_get_current_pid_tgid() &gt;&gt; 32;
+ 169: (85) call bpf_get_current_pid_tgid#124560
+ 170: (bf) r7 = r0
+; u32 tid = bpf_get_current_pid_tgid();
+ 171: (7b) *(u64 *)(r10 -200) = r7
+; pFileData-&gt;pid = tgid;
+ 172: (77) r7 &gt;&gt;= 56
+; u32 tid = bpf_get_current_pid_tgid();
+ 173: (85) call bpf_get_current_pid_tgid#124560
+ 174: (7b) *(u64 *)(r10 -208) = r0
+; pFileData-&gt;pid = tgid;
+ 175: (73) *(u8 *)(r8 +27) = r7
+ 176: (79) r7 = *(u64 *)(r10 -200)
+ 177: (bf) r1 = r7
+ 178: (77) r1 &gt;&gt;= 48
+ 179: (73) *(u8 *)(r8 +26) = r1
+ 180: (bf) r1 = r7
+ 181: (77) r1 &gt;&gt;= 40
+ 182: (73) *(u8 *)(r8 +25) = r1
+; u32 tgid = bpf_get_current_pid_tgid() &gt;&gt; 32;
+ 183: (77) r7 &gt;&gt;= 32
+; pFileData-&gt;pid = tgid;
+ 184: (73) *(u8 *)(r8 +24) = r7
+; pFileData-&gt;ktime_event = bpf_ktime_get_ns();
+ 185: (85) call bpf_ktime_get_ns#124928
+; pFileData-&gt;ktime_proc = 0;
+ 186: (73) *(u8 *)(r8 +23) = r9
+ 187: (73) *(u8 *)(r8 +22) = r9
+ 188: (73) *(u8 *)(r8 +21) = r9
+ 189: (73) *(u8 *)(r8 +20) = r9
+ 190: (73) *(u8 *)(r8 +19) = r9
+ 191: (73) *(u8 *)(r8 +18) = r9
+ 192: (73) *(u8 *)(r8 +17) = r9
+ 193: (73) *(u8 *)(r8 +16) = r9
+; pFileData-&gt;ktime_event = bpf_ktime_get_ns();
+ 194: (bf) r1 = r0
+ 195: (77) r1 &gt;&gt;= 56
+ 196: (73) *(u8 *)(r8 +15) = r1
+ 197: (bf) r1 = r0
+ 198: (77) r1 &gt;&gt;= 48
+ 199: (73) *(u8 *)(r8 +14) = r1
+ 200: (bf) r1 = r0
+ 201: (77) r1 &gt;&gt;= 40
+ 202: (73) *(u8 *)(r8 +13) = r1
+ 203: (bf) r1 = r0
+ 204: (77) r1 &gt;&gt;= 32
+ 205: (73) *(u8 *)(r8 +12) = r1
+ 206: (bf) r1 = r0
+ 207: (77) r1 &gt;&gt;= 24
+ 208: (73) *(u8 *)(r8 +11) = r1
+ 209: (bf) r1 = r0
+ 210: (77) r1 &gt;&gt;= 16
+ 211: (73) *(u8 *)(r8 +10) = r1
+ 212: (73) *(u8 *)(r8 +8) = r0
+ 213: (77) r0 &gt;&gt;= 8
+ 214: (73) *(u8 *)(r8 +9) = r0
+; struct task_struct *task = bpf_get_current_task();
+ 215: (85) call bpf_get_current_task#-55200
+; if(task)
+ 216: (15) if r0 == 0x0 goto pc+48
+ 217: (79) r1 = *(u64 *)(r10 -208)
+; u32 tid = bpf_get_current_pid_tgid();
+ 218: (67) r1 &lt;&lt;= 32
+ 219: (77) r1 &gt;&gt;= 32
+; if(tgid != tid)
+ 220: (1d) if r7 == r1 goto pc+10
+ 221: (b7) r1 = 0
+; struct task_struct *group_leader = READ_KERN(task-&gt;group_leader);
+ 222: (7b) *(u64 *)(r10 -8) = r1
+ 223: (b7) r1 = 2368
+ 224: (0f) r0 += r1
+ 225: (bf) r1 = r10
+; 
+ 226: (07) r1 += -8
+; struct task_struct *group_leader = READ_KERN(task-&gt;group_leader);
+ 227: (b7) r2 = 8
+ 228: (bf) r3 = r0
+ 229: (85) call bpf_probe_read_kernel#-51920
+ 230: (79) r0 = *(u64 *)(r10 -8)
+ 231: (b7) r1 = 0
+; if(task == NULL)
+ 232: (15) if r0 == 0x0 goto pc+11
+ 233: (b7) r1 = 0
+; stime = READ_KERN(new_task-&gt;start_boottime);
+ 234: (b7) r1 = 0
+; stime = READ_KERN(task-&gt;real_start_time);
+ 235: (7b) *(u64 *)(r10 -8) = r1
+ 236: (b7) r1 = 2664
+ 237: (0f) r0 += r1
+ 238: (bf) r1 = r10
+; 
+ 239: (07) r1 += -8
+ 240: (b7) r2 = 8
+ 241: (bf) r3 = r0
+ 242: (85) call bpf_probe_read_kernel#-51920
+ 243: (79) r1 = *(u64 *)(r10 -8)
+; pFileData-&gt;ktime_proc = get_task_start_time(task);
+ 244: (bf) r2 = r1
+ 245: (77) r2 &gt;&gt;= 56
+ 246: (73) *(u8 *)(r8 +23) = r2
+ 247: (bf) r2 = r1
+ 248: (77) r2 &gt;&gt;= 48
+ 249: (73) *(u8 *)(r8 +22) = r2
+ 250: (bf) r2 = r1
+ 251: (77) r2 &gt;&gt;= 40
+ 252: (73) *(u8 *)(r8 +21) = r2
+ 253: (bf) r2 = r1
+ 254: (77) r2 &gt;&gt;= 32
+ 255: (73) *(u8 *)(r8 +20) = r2
+ 256: (bf) r2 = r1
+ 257: (77) r2 &gt;&gt;= 24
+ 258: (73) *(u8 *)(r8 +19) = r2
+ 259: (bf) r2 = r1
+ 260: (77) r2 &gt;&gt;= 16
+ 261: (73) *(u8 *)(r8 +18) = r2
+ 262: (73) *(u8 *)(r8 +16) = r1
+ 263: (77) r1 &gt;&gt;= 8
+ 264: (73) *(u8 *)(r8 +17) = r1
+; bufflength = bufflength - MAX_VALID_BUFSIZE + pFileData-&gt;pathlen;
+ 265: (71) r5 = *(u8 *)(r8 +45)
+ 266: (67) r5 &lt;&lt;= 8
+ 267: (71) r1 = *(u8 *)(r8 +44)
+ 268: (4f) r5 |= r1
+; bufflength = bufflength - MAX_VALID_BUFSIZE + pFileData-&gt;pathlen;
+ 269: (07) r5 += 8240
+; bufflength = bufflength & (MAX_VALID_BUFSIZE - 1);
+ 270: (57) r5 &= 16383
+; bpf_perf_event_output(ctx, &perf_event_array_map, BPF_F_CURRENT_CPU, map_value, bufflength);
+ 271: (79) r1 = *(u64 *)(r10 -192)
+ 272: (18) r2 = map[id:2]
+ 274: (18) r3 = 0xffffffff
+ 276: (bf) r4 = r8
+ 277: (85) call bpf_perf_event_output#-50016
+; return get_rename_event(ctx, 2, olddfd, oldname, newdfd, newname, flags);
+ 278: (bf) r0 = r6
+ 279: (95) exit

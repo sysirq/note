@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./js/Subscriber.js"></script>
+    <script src="./js/Publisher.js"></script>
+    <script src="./js/Compile.js"></script>
+    <script src="./js/MyVue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <input type="text" v-model="msg"> </input>
+        <p>{{ msg }} -- {{name}}</p>
+    </div>
+
+    <script>
+        const mv = new MyVue({
+            el:"#app",
+            data:{
+                msg:123123,
+                name:"hanhan"
+            }
+        });
+    </script>
+</body>
+</html>
