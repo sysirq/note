@@ -5,7 +5,7 @@ The dynamic linker also consults the file ==/etc/ld.so.preload== which can also 
 In the case that paths are defined both in the envar and in this file, the envar takes precedence
 
  Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system.
- 
+
  ```
  gcc -Wall -fPIC -shared -o libprocesshider.so processhider.c -ldl
  gcc -Wall -fPIC -shared -o myfopen.so myfopen.c
@@ -31,6 +31,7 @@ In our own fopen,opening /lib/terminfo/x/xterm-256color
 - 查看LD_PRELOAD环境变量
 - 查看/etc/ld.so.preload
 这种情况需要小心，可能对方已经修改了ld-linux-x86-64.so.2（动态连接器）
+- strace echo 查看 默认配置文件路径是否被修改
 
 
 # 资料
