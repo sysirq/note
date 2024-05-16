@@ -14,15 +14,12 @@ qemu 命令:
 -chardev socket,id=chrtpm,path=/tmp/swtpm-sock -tpmdev emulator,id=tmp0,chardev=chrtpm -device tpm-tis,tpmdev=tmp0
 ```
 
-# secure boot
+# boot
 
-How to enable secure boot for Windows
-
-https://projectacrn.github.io/1.6/tutorials/waag-secure-boot.html
-
-How to install a windows guest in qemu/kvm with secure boot enabled
-
-https://superuser.com/questions/1660806/how-to-install-a-windows-guest-in-qemu-kvm-with-secure-boot-enabled
+```
+apt install ovmf
+sudo qemu-system-x86_64 -accel kvm -m 16G -smp 4 -pflash /usr/share/OVMF/OVMF_CODE.fd -pflash /usr/share/OVMF/OVMF_VARS.fd -chardev socket,id=chrtpm,path=/tmp/swtpm-sock -tpmdev emulator,id=tmp0,chardev=chrtpm -device tpm-tis,tpmdev=tmp0 -hda hd.qcow2 -cdrom ../iso/Win11_23H2_EnglishInternational_x64v2.iso -boot order=d -vnc 10.4.21.2:1
+```
 
 # 资料
 
