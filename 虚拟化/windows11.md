@@ -3,7 +3,7 @@
 宿主机准备：
 
 ```sh
-apt install swtpm
+apt install swtpm ovmf
 mkdir /tmp/tpm
 sudo swtpm socket --tpmstate dir=/tmp/tpm --tpm2 --ctrl type=unixio,path=/tmp/swtpm-sock,mode=0777
 ```
@@ -25,13 +25,32 @@ qemu 命令:
 安装命令
 
 ```sh
-sudo qemu-system-x86_64 -accel kvm -m 16G -smp 4 -pflash /usr/share/OVMF/OVMF_CODE.fd -chardev socket,id=chrtpm,path=/tmp/swtpm-sock -tpmdev emulator,id=tmp0,chardev=chrtpm -device tpm-tis,tpmdev=tmp0 -hda hd.qcow2 -cdrom ../iso/Win11_23H2_EnglishInternational_x64v2.iso -boot order=d -usbdevice tablet -vnc 10.4.21.2:1
+sudo qemu-system-x86_64 -accel kvm \
+												-m 16G \
+												-smp 4 \
+												-pflash /usr/share/OVMF/OVMF_CODE.fd \
+												-chardev socket,id=chrtpm,path=/tmp/swtpm-sock \
+												-tpmdev emulator,id=tmp0,chardev=chrtpm \
+												-device tpm-tis,tpmdev=tmp0 -hda hd.qcow2 \
+												-cdrom ../iso/Win11_23H2_EnglishInternational_x64v2.iso \
+												-boot order=d \
+												-usbdevice tablet \
+												-vnc 10.4.21.2:1
 ```
 
 启动命令
 
 ```sh
-sudo qemu-system-x86_64 --accel kvm -m 16G -smp 4 -pflash /usr/share/OVMF/OVMF_CODE_4M.fd -chardev socket,id=chrtpm,path=/tmp/swtpm-sock -tpmdev emulator,id=tpm0,chardev=chrtpm -device tpm-tis,tpmdev=tpm0 -hda hd.qcow2 -usbdevice tablet -vnc 10.4.21.2:1
+sudo qemu-system-x86_64 --accel kvm \
+												-m 16G \
+												-smp 4 \
+												-pflash /usr/share/OVMF/OVMF_CODE_4M.fd \
+												-chardev socket,id=chrtpm,path=/tmp/swtpm-sock \
+												-tpmdev emulator,id=tpm0,chardev=chrtpm \
+												-device tpm-tis,tpmdev=tpm0 \
+												-hda hd.qcow2 \
+												-usbdevice tablet \
+												-vnc 10.4.21.2:1
 ```
 
 
@@ -92,7 +111,7 @@ sudo qemu-system-x86_64 --accel kvm \
                         -blockdev driver=file,node-name=hdfile,filename=hd.qcow2 \
                         -blockdev driver=qcow2,file=hdfile,node-name=hd \
                         -device virtio-blk,drive=hd \
-                        -netdev user,id=nc0 \
+                        -netdev tap,ifname=tap0,script=no,downscript=no,id=nc0 \
                         -device virtio-net,netdev=nc0 \
                         -device virtio-mouse \
                         -device virtio-vga \
@@ -100,6 +119,17 @@ sudo qemu-system-x86_64 --accel kvm \
                         -usbdevice tablet \
                         -vnc 10.4.21.2:1
 ```
+
+
+
+3389 nat 转换
+
+```shell
+iptables -t nat -A PREROUTING -p tcp --dport 3389 -i wg0 -j DNAT --to-destination <WINDOWS SERVER IP>
+iptables -t nat -A POSTROUTING -o wlp0s20f3 -j MASQUERADE
+```
+
+
 
 
 
