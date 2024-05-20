@@ -21,3 +21,7 @@ https://github.com/spiderpig1297/kunkillable
 kprochide (kprochide is an LKM for hiding processes from the userland. The module is able to hide multiple processes and is able to dynamically receive new processes to hide.)
 
 https://github.com/spiderpig1297/kprochide
+
+Diamorphine
+
+https://github.com/m0nad/Diamorphine
