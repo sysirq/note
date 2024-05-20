@@ -66,3 +66,15 @@ https://github.com/gojue/ebpf-slide
 bpf.h
 
 https://github.com/torvalds/linux/blob/0c0ddd6ae47c9238c18f475bcca675ca74c9dc31/include/uapi/linux/bpf.h
+
+ebpfkit
+
+https://github.com/Gui774ume/ebpfkit
+
+TripleCross
+
+https://github.com/h3xduck/TripleCross
+
+bad-bpf
+
+https://github.com/pathtofile/bad-bpf
