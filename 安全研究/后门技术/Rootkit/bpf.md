@@ -41,7 +41,7 @@ int kprobe_do_sys_open(struct pt_regs *ctx)
         bpf_printk("bpf_ringbuf_reserve failed");
         return 1;
     }
-    char *filename = (char *)PT_REGS_PARM2(ctx);
+    char *filename = (char *)PT_REGS_PARM2(ctx);//参数获取
 
     evt->pid = pid;
     bpf_get_current_comm(evt->comm,sizeof(evt->comm));
@@ -161,7 +161,7 @@ ebpf没法修改系统调用的参数与返回值，也无法修改内核数据�
 
 # 劫持执行
 
-当程序调用execve时更改可执行文件的文件名
+当程序调用execve时更改可执行文件的文件路径，使其为恶意程序的路径，然后把原始execve的参数传递给恶意程序，然后恶意程序在启动原始程序，避免用户察觉。
 
 # 假装系统调用
 
