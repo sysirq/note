@@ -59,6 +59,10 @@ DEF CON 29: Bad BPF - Warping reality using eBPF
 
 https://blog.tofile.dev/2021/08/01/bad-bpf.html
 
+Abusing eBPF to build a rootkit
+
+https://i.blackhat.com/USA21/Wednesday-Handouts/us-21-With-Friends-Like-EBPF-Who-Needs-Enemies.pdf
+
 ebpf-slide
 
 https://github.com/gojue/ebpf-slide
@@ -78,3 +82,6 @@ https://github.com/h3xduck/TripleCross
 bad-bpf
 
 https://github.com/pathtofile/bad-bpf
+
+
+
