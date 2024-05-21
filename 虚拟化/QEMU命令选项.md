@@ -63,13 +63,13 @@ sysirq@sysirq-machine:~$ qemu-system-x86_64 -device virtio-net,help | grep netde
 ### user
 
 ```
-qemu-system-x86_64 -netdev user,id=nc1 -device virtio-net,netdev=nc1
+qemu-system-x86_64 -netdev user,id=nc1 -device virtio-net,netdev=nc1,mac=52:54:00:21:34:56
 ```
 
 ### tap
 
 ```
-qemu-system-x86_64 -netdev tap,id=nc0,ifname=tap0,script=no,downscript=no -device virtio-net,netdev=nc0
+qemu-system-x86_64 -netdev tap,id=nc0,ifname=tap0,script=no,downscript=no -device virtio-net,netdev=nc0,mac=52:54:00:21:34:56
 ```
 
 - nat
@@ -137,7 +137,7 @@ qemu-system-x86_64 -accel kvm \
 										-device virtio-mouse \
 										-device virtio-keyboard \
 										-netdev user,id=nc0 \
-										-device virtio-net,netdev=nc0 \
+										-device virtio-net,netdev=nc0,mac=52:54:00:21:34:56 \
 										-vnc 10.4.21.2:1
 ```
 
