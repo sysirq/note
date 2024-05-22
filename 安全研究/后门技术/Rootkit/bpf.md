@@ -1,5 +1,64 @@
 ![image.png](images/WEBRESOURCE19769019c37efea4aef2e7ea6c7783e6image.png)
 
+
+# ebpf MAP
+
+BPF Map本质上是以「键/值」方式存储在内核中的数据结构
+
+### Hash Maps
+
+- `BPF_MAP_TYPE_HASH`：初始化时需要指定**支持的最大条目数**（max_entries）。 满了之后继续插入数据时，会报 `E2BIG` 错误。
+- `BPF_MAP_TYPE_PERCPU_HASH`
+- `BPF_MAP_TYPE_LRU_HASH`：普通 hash map 的问题是有大小限制，超过最大数量后无法再插入了。LRU map 可以避 免这个问题，如果 map 满了，再插入时它会自动将**最久未被使用（least recently used）**的 entry 从 map 中移除。`
+- `BPF_MAP_TYPE_LRU_PERCPU_HASH`
+- `BPF_MAP_TYPE_HASH_OF_MAPS`:**第一个 map 内的元素是指向另一个 map 的指针**
+
+内核中用链表实现
+
+### Array Maps
+
+- `BPF_MAP_TYPE_ARRAY`:**key 就是数组中的索引（index）**（因此 key 一定 是整形），因此无需对 key 进行哈希。
+- `BPF_MAP_TYPE_PERCPU_ARRAY`
+- `BPF_MAP_TYPE_PROG_ARRAY`
+- `BPF_MAP_TYPE_PERF_EVENT_ARRAY`
+- `BPF_MAP_TYPE_ARRAY_OF_MAPS`
+- `BPF_MAP_TYPE_CGROUP_ARRAY`
+
+### 创建
+
+```c
+struct {
+    __uint(type, BPF_MAP_TYPE_HASH);  // BPF map 类型
+    __type(key, __be32);              // 
+    __type(value, struct pair);       // 
+    __uint(max_entries, 1024);        // 最大 entry 数量
+} hash_map SEC(".maps");
+```
+
+### 操作（BPF object 与 Userspace program使用的函数）
+
+- bpf_map_lookup_elem：通过key查询BPF Map，得到对应value（内核空间与用户空间都能使用）
+- bpf_map_update_elem：通过key-value更新BPF Map，如果这个key不存在，也可以作为新的元素插入到BPF Map中去（内核空间与用户空间都能使用）
+```c
+//最后一个参数可选如下三个参数：
+#define BPF_ANY 0//如果key已经存在，则更新对应的value，如果key不存在就创建新的key-value
+#define BPF_NOEXIST 1//只要key对应的在map里还不存在，则创建新的key-value，否则返回出错
+#define BPF_EXIST 2//查找key指定的key-value，并更新，否则返回出错
+```
+- bpf_map_get_next_key：这个函数可以用来遍历BPF Map（只能在用户空间程序调用）
+- bpf_map_delete_elem:：元素删除（内核空间与用户空间都能使用）
+
+# ebpf调试
+
+```c
+bpf_printk()
+```
+
+输出：
+```
+cat /sys/kernel/debug/tracing/trace
+```
+
 # 简单epbf程序
 
 环境安装：
@@ -8,7 +67,9 @@
 apt install clang gcc-multilib libbpf-dev m4 linux-headers-$(uname -r)
 ```
 
+传入参数：struct pt_regs *ctx
 
+这个变量内的很多字段是平台相关的，但也有一些通用函数，例如 regs_return_value(regs)，返回的是存储程序返回值的寄存器内的值（x86 上对应的是 ax 寄存器）。
 
 prog1.c:
 
@@ -131,6 +192,11 @@ Output:
 
 ![image-20240521204641633](images/image-20240521204641633.png)
 
+### 参考资料
+
+Tracing System Calls Using eBPF - Part 1
+
+https://falco.org/blog/tracing-syscalls-using-ebpf-part-1/
 
 
 # XDP
@@ -138,8 +204,10 @@ Output:
 开发环境准备：
 
 ```
-apt install xdp-tools
+apt install xdp-tools libxdp-dev
 ```
+
+XDP 程序执行时 skb 都还没创建，开销非常低，因此效率非常高。适用于 DDoS 防御、四层负载均衡等场景。
 
 禁止 ping 该机器
 
@@ -199,6 +267,179 @@ xdp-loader load -m skb -s xdp_drop ens3 prog1.o
 xdp-loader unload -a ens3
 ```
 
+
+
+### 自定义Loader
+
+丢弃进入的ICMP包,并统计
+
+prog1.c
+
+```c
+#include <linux/bpf.h>
+#include <bpf/bpf_helpers.h>
+#include <linux/if_ether.h>
+#include <arpa/inet.h>
+#include <linux/ip.h>
+
+struct {
+    __uint(type,BPF_MAP_TYPE_PERCPU_ARRAY);
+    __type(key,__u32);
+    __type(value,long);
+    __uint(max_entries,1);
+}rxcnt SEC(".maps");
+
+SEC("xdp_drop_icmp")
+int xdp_drop_icmp_prog(struct xdp_md *ctx)
+{
+    void *data_end = (void *)(long)ctx->data_end;
+    void *data = (void *)(long)ctx->data;
+    struct ethhdr *eth = data;
+    __u16 h_proto;
+    __u32 key = 0;
+    long *value;
+    if (data + sizeof(struct ethhdr) > data_end)
+        return XDP_DROP;
+
+    h_proto = eth->h_proto;
+
+    if (h_proto == htons(ETH_P_IP)){
+        struct iphdr *ip = (struct iphdr*)((char*)data +sizeof(struct ethhdr));
+        if( (void*)((char *)ip + sizeof(struct iphdr)) > data_end){
+            return XDP_DROP;
+        }
+
+        if(ip->protocol ==  IPPROTO_ICMP){
+            value = bpf_map_lookup_elem(&rxcnt,&key);
+            if(value){
+                *value += 1;
+            }
+            return XDP_DROP;
+        }
+    }
+
+    return XDP_PASS;
+}
+
+char _license[] SEC("license") = "GPL";
+```
+
+loader.c
+
+```c
+#include <bpf/bpf.h>
+#include <bpf/libbpf.h>
+#include <xdp/libxdp.h>
+#include <stdio.h>
+#include <net/if.h>
+#include <signal.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <assert.h>
+
+static int ifindex;
+struct xdp_program *prog = NULL;
+
+/* This function will remove XDP from the link when the program exits. */
+static void int_exit(int sig)
+{
+    xdp_program__detach(prog,ifindex,XDP_MODE_SKB,0);
+    xdp_program__close(prog);
+    exit(0);
+}
+
+/* This function will count the per-CPU number of packets and print out
+ * the total number of dropped packets number and PPS (packets per second).
+ */
+static void poll_stats(struct bpf_map *map, int interval)
+{
+    int ncpus = libbpf_num_possible_cpus();
+    if(ncpus < 0){
+        printf("Error get possible cpus\n");
+        return;
+    }
+    long values[ncpus],prev[ncpus],total_pkts = 0;
+    int i;
+    __u32 key = 0;
+
+    memset(prev,0,sizeof(prev));
+
+    while(1){
+        long sum = 0;
+
+        sleep(interval);
+        assert(bpf_map__lookup_elem(map,&key,sizeof(key),values,sizeof(values),0) == 0);
+        for(i = 0;i<ncpus;i++){
+            sum += (values[i] - prev[i]);
+        }
+        if(sum){
+            total_pkts += sum;
+            printf("total dropped %10lu, %10lu pkt/s\n",
+                   total_pkts, sum / interval);
+        }
+        memcpy(prev, values, sizeof(values));
+    }
+}
+
+int main(int argc,char *argv[])
+{
+    int ret;
+    struct bpf_map *map;
+    struct bpf_object *bpf_obj;
+    if(argc != 2){
+        printf("Usage: %s IFNAME\n",argv[0]);
+        return 1;
+    }
+
+    ifindex = if_nametoindex(argv[1]);
+    if(ifindex == 0){
+        perror("get ifinde from interface name failed\n");
+        return 1;
+    }
+    printf("ifindex: %d\n",ifindex);
+
+    /*load XDP object by libxdp*/
+    prog = xdp_program__open_file("prog1.o","xdp_drop_icmp",NULL);
+    if(!prog){
+        printf("Error,load xdp prog failed\n");
+        return 1;
+    }
+    /* attach XDP program to interface with skb mode
+     * Please set ulimit if you got an -EPERM error.
+    */
+    ret = xdp_program__attach(prog,ifindex,XDP_MODE_SKB,0);
+    if(ret){
+        printf("Error,set xdp fd on %d failed\n",ifindex);
+        return ret;
+    }
+
+    bpf_obj = xdp_program__bpf_obj(prog);
+    map = bpf_object__find_map_by_name(bpf_obj,"rxcnt");
+    if(map == NULL){
+        printf("Error, get map from bpf obj failed\n");
+        return -1;
+    }
+
+    /* Remove attached program when it is interrupted or killed */
+    signal(SIGINT, int_exit);
+    signal(SIGTERM, int_exit);
+
+    poll_stats(map,2);
+
+    return 0;
+}
+```
+
+Makefile:
+
+```makefile
+all:
+	clang -O2 -g -target bpf -c prog1.c -o prog1.o
+	clang -O2 -g -Wall -I/usr/include -I/usr/include/bpf -lbpf -lxdp -o loader loader.c
+clean:
+	rm -rf loader prog1.o
+```
+
 ### 参考资料
 
 Get started with XDP
@@ -231,9 +472,15 @@ ebpf没法修改系统调用的参数与返回值，也无法修改内核数据�
 
 ![Picture highlighting how eBPF can intercept paramaters and return codes from syscalls](images/syscall_flow_03.png)
 
-# 隐藏进程
+# 隐藏进程与文件
 
 通过隐瞒/proc/伪文件夹的内容来隐藏进程
+
+
+
+
+
+
 
 # 劫持执行
 
@@ -255,10 +502,6 @@ int BPF_PROG(fake_write, struct pt_regs *regs)
 ```
 
 # 资料
-
-Tracing System Calls Using eBPF - Part 1
-
-https://falco.org/blog/tracing-syscalls-using-ebpf-part-1/
 
 Linux中基于eBPF的恶意利用与检测机制
 
@@ -292,7 +535,7 @@ bad-bpf
 
 https://github.com/pathtofile/bad-bpf
 
+BPF 进阶笔记（二）：BPF Map 类型详解：使用场景、程序示例
 
-
-
+http://arthurchiao.art/blog/bpf-advanced-notes-2-zh/
 
