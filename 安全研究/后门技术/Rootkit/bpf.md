@@ -133,6 +133,82 @@ Output:
 
 
 
+# XDP
+
+开发环境准备：
+
+```
+apt install xdp-tools
+```
+
+禁止 ping 该机器
+
+```c
+#include <linux/bpf.h>
+#include <bpf/bpf_helpers.h>
+#include <linux/if_ether.h>
+#include <arpa/inet.h>
+#include <linux/ip.h>
+
+
+SEC("xdp_drop")
+int icmp_drop_prog(struct xdp_md *ctx)
+{
+    void *data_end = (void *)(long)ctx->data_end;
+    void *data = (void *)(long)ctx->data;
+    struct ethhdr *eth = data;
+    __u16 h_proto;
+
+    if (data + sizeof(struct ethhdr) > data_end)
+        return XDP_DROP;
+
+    h_proto = eth->h_proto;
+
+    if (h_proto == htons(ETH_P_IP)){
+        struct iphdr *ip = (struct iphdr*)((char*)data +sizeof(struct ethhdr));
+        if( (void*)((char *)ip + sizeof(struct iphdr)) > data_end){
+            return XDP_DROP;
+        }
+
+        if(ip->protocol ==  IPPROTO_ICMP){
+            return XDP_DROP;
+        }
+    }
+
+    return XDP_PASS;
+}
+
+char _license[] SEC("license") = "GPL";
+```
+
+编译：
+
+```sh
+clang -O2 -g -target bpf -c prog1.c -o prog1.o
+```
+
+加载：
+
+```
+xdp-loader load -m skb -s xdp_drop ens3 prog1.o
+```
+
+卸载：
+
+```
+xdp-loader unload -a ens3
+```
+
+### 参考资料
+
+Get started with XDP
+
+https://developers.redhat.com/blog/2021/04/01/get-started-with-xdp
+
+xdp-tutorial
+
+https://github.com/xdp-project/xdp-tutorial
+
 # ebpf有用的helper函数
 
 ```
@@ -215,6 +291,8 @@ https://github.com/h3xduck/TripleCross
 bad-bpf
 
 https://github.com/pathtofile/bad-bpf
+
+
 
 
 
