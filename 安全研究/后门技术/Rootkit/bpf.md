@@ -478,7 +478,11 @@ ebpf没法修改系统调用的参数与返回值，也无法修改内核数据�
 
 
 
+原理：
 
+getdents, getdents64 - get directory entries 
+
+修改getdents返回的 struct linux_dirent 结构，跳过要隐藏的文件
 
 
 
