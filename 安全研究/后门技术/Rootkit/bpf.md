@@ -454,6 +454,200 @@ https://github.com/xdp-project/xdp-tutorial
 
 它的位置已经完成了sk_buff的分配，比xdp晚。
 
+
+
+统计到该主机的TCP连接（源地址、源端口）
+
+
+
+prog1.c
+
+```c
+#include <linux/bpf.h>
+#include <bpf/bpf_helpers.h>
+#include <linux/ptrace.h>
+#include <linux/if_ether.h>
+#include <bpf/bpf_endian.h>
+#include <linux/ip.h>
+#include <linux/tcp.h>
+#include <netinet/in.h>
+#include <linux/pkt_cls.h>
+
+struct {
+    __uint(type,BPF_MAP_TYPE_LRU_HASH);
+    __type(key,__u32);
+    __type(value,__u16);
+    __uint(max_entries,1024);
+}hash_map SEC(".maps");
+
+SEC("tc")
+int tc_ingress_prog(struct __sk_buff *ctx)
+{
+    void *data_end = (void*)(__u64)ctx->data_end;
+    void *data = (void*)(__u64)ctx->data;
+
+    struct ethhdr *l2;
+    struct iphdr *l3;
+    struct tcphdr *l4;
+
+    if(ctx->protocol != bpf_htons(ETH_P_IP))
+        return TC_ACT_OK;
+
+    l2 = data;
+    if((void*)(l2+1) > data_end )
+        return TC_ACT_OK;
+    
+    l3 = (struct iphdr*)(l2+1);
+    if((void*)(l3+1) > data_end || l3->protocol != IPPROTO_TCP)
+        return TC_ACT_OK;
+
+    l4 = (struct tcphdr*)(l3+1);
+    if((void*)(l4+1) > data_end)
+        return TC_ACT_OK;
+    
+    __u32 key = l3->saddr;
+    __u16 *value = (__u16*)bpf_map_lookup_elem(&hash_map,&key);
+    if(value == NULL){
+        __u16 v = (__u16)l4->source;
+        bpf_map_update_elem(&hash_map,&key,&v,BPF_NOEXIST);
+    }else{
+        *value = l4->source;
+    }
+
+    return TC_ACT_OK;
+}
+
+char _license[] SEC("license") = "GPL";
+```
+
+
+
+loader.c:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <bpf/libbpf.h>
+#include <bpf/bpf.h>
+#include <net/if.h>
+#include <unistd.h>
+#include <signal.h>
+#include <arpa/inet.h>
+
+int exiting = 0;
+
+static void int_exit(int sig)
+{
+    exiting = 1;
+}
+
+static int load_egress_program(const char *ifname) {
+    struct bpf_object *obj;
+    int prog_fd, err;
+    int ifindex;
+    struct bpf_map *map;
+
+    ifindex = if_nametoindex(ifname);
+    if (ifindex == 0) {
+        perror("if_nametoindex");
+        return 1;
+    }
+
+    obj = bpf_object__open_file("prog1.o", NULL);
+    if (libbpf_get_error(obj)) {
+        fprintf(stderr, "ERROR: opening BPF object file failed\n");
+        return 1;
+    }
+
+    err = bpf_object__load(obj);
+    if (err) {
+        fprintf(stderr, "ERROR: loading BPF object file failed\n");
+        return 1;
+    }
+
+    prog_fd = bpf_program__fd(bpf_object__find_program_by_name(obj, "tc_ingress_prog"));
+    if (prog_fd < 0) {
+        fprintf(stderr, "ERROR: finding egress program in BPF object failed\n");
+        return 1;
+    }
+
+    map = bpf_object__find_map_by_name(obj,"hash_map");
+    if(map == NULL){
+        printf("Error, get map from bpf obj failed\n");
+        return -1;
+    }
+
+    DECLARE_LIBBPF_OPTS(bpf_tc_hook, hook,.attach_point = BPF_TC_INGRESS);
+    hook.ifindex = ifindex;
+    err = bpf_tc_hook_create(&hook);
+    if (err && err != -EEXIST) {
+        fprintf(stderr, "ERROR: creating TC hook failed: %d\n", err);
+        return 1;
+    }
+
+    DECLARE_LIBBPF_OPTS(bpf_tc_opts, opts, .handle = 1, .priority = 1, .prog_fd = prog_fd);
+    err = bpf_tc_attach(&hook, &opts);
+    if (err) {
+        fprintf(stderr, "ERROR: attaching BPF program failed: %d\n", err);
+        return 1;
+    }
+
+    printf("Successfully attached BPF program to %s\n", ifname);
+    
+    signal(SIGINT, int_exit);
+    signal(SIGTERM, int_exit);
+
+    while( exiting == 0 ){
+        
+        sleep(1);
+        printf("========================================================================\n");
+        __u32 key = 0;
+        __u32 prev_key = 0;
+        __u16 value;
+        if(bpf_map__get_next_key(map,NULL,&key,sizeof(__u32)) != 0)
+            continue;
+
+        do{
+
+            if( bpf_map__lookup_elem(map,&key,sizeof(key),&value,sizeof(value),0) == 0 ){
+                printf("ip:%d.%d.%d.%d port: %d \n",((uint8_t*)&key)[0],((uint8_t*)&key)[1],((uint8_t*)&key)[2],((uint8_t*)&key)[3],ntohs(value));
+            }
+
+            prev_key = key;
+        }while(bpf_map__get_next_key(map,&prev_key,&key,sizeof(__u32)) == 0);
+
+    }
+
+    bpf_tc_detach(&hook,&opts);
+    bpf_tc_hook_destroy(&hook);
+    return 0;
+}
+
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <interface>\n", argv[0]);
+        return 1;
+    }
+
+    return load_egress_program(argv[1]);
+}
+```
+
+makefile
+
+```makefile
+all:
+	clang -O2 -g -target bpf -c prog1.c -o prog1.o
+	clang -O2 -g -Wall -I/usr/include -I/usr/include/bpf -lbpf -o loader loader.c
+clean:
+	rm -rf loader prog1.o
+```
+
+
+
+
+
 ### 资料
 
 eBPF Tutorial by Example 20: tc Traffic Control
