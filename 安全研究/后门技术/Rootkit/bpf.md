@@ -450,6 +450,24 @@ xdp-tutorial
 
 https://github.com/xdp-project/xdp-tutorial
 
+# TC
+
+它的位置已经完成了sk_buff的分配，比xdp晚。
+
+### 资料
+
+eBPF Tutorial by Example 20: tc Traffic Control
+
+https://eunomia.dev/tutorials/20-tc/
+
+你的第一个TC BPF 程序
+
+https://davidlovezoe.club/wordpress/archives/952
+
+libbpf-bootstrap开发指南：网络包监测-tc
+
+https://blog.csdn.net/qq_32378713/article/details/131751988
+
 # ebpf有用的helper函数
 
 ```
