@@ -644,10 +644,6 @@ clean:
 	rm -rf loader prog1.o
 ```
 
-
-
-
-
 ### 资料
 
 eBPF Tutorial by Example 20: tc Traffic Control
@@ -661,6 +657,126 @@ https://davidlovezoe.club/wordpress/archives/952
 libbpf-bootstrap开发指南：网络包监测-tc
 
 https://blog.csdn.net/qq_32378713/article/details/131751988
+
+# BTF CO-RE
+
+```sh
+bpftool btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h
+```
+
+### Reading kernel data
+
+- bpf_core_read()
+
+```c
+struct task_struct *task = (void *)bpf_get_current_task();
+struct task_struct *parent_task;
+int err;
+
+err = bpf_core_read(&parent_task, sizeof(void *), &task->parent);
+if (err) {
+    /* handle error */
+}
+
+/* parent_task contains the value of task->parent pointer */
+```
+
+- bpf_core_read_str()
+
+```c
+struct my_kernel_type {
+    const char *name;
+    char type[32];
+};
+
+
+struct my_kernel_type *t = ...;
+const char *p;
+char str[32];
+
+/* get string pointer, CO-RE-relocatable */
+bpf_core_read(&p, sizeof(p), &t->name);
+/* read the string, non-CO-RE-relocatable, pointer is valid regardless */
+bpf_probe_read_kernel_str(str, sizeof(str), p);
+
+
+
+char str[32];
+
+/* read string as CO-RE-relocatable */
+bpf_core_read_str(str, sizeof(str), &t->type);
+```
+
+- BPF_CORE_READ()
+
+```c
+/* direct pointer dereference */
+name = t->mm->exe_file->fpath.dentry->d_name.name;
+
+/* using BPF_CORE_READ() helper */
+name = BPF_CORE_READ(t, mm, exe_file, fpath.dentry, d_name.name);
+```
+
+- BPF_CORE_READ_INTO()
+
+```c
+struct task_struct *t = ...;
+const char *name;
+int err;
+
+err = BPF_CORE_READ_INTO(&name, t, mm, binfmt, executable, fpath.dentry, d_name.name);
+if (err) { /* handle errors */ }
+/* now `name` contains the pointer to the string */
+```
+
+- BPF_CORE_READ_STR_INTO()
+
+### BTF-enabled BPF program types with direct memory reads
+
+- BTF-enabled raw tracepoint (SEC("tp_btf/...") in libbpf lingo);
+- fentry/fexit/fmod_ret BPF programs;
+
+### Reading bitfields and integers of varying sizes
+
+- BPF_CORE_READ_BITFIELD()
+- BPF_CORE_READ_BITFIELD_PROBED()
+
+### LINUX_KERNEL_VERSION
+
+```c
+#include <bpf/bpf_helpers.h>
+
+extern int LINUX_KERNEL_VERSION __kconfig;
+
+...
+
+if (LINUX_KERNEL_VERSION > KERNEL_VERSION(5, 15, 0)) {
+    /* we are on v5.15+ */
+}
+```
+
+### 有用的函数
+
+- bpf_core_enum_value_exists()
+- bpf_core_field_exists()
+- bpf_core_type_exists()
+- bpf_core_type_size()
+- bpf_core_field_size()
+- bpf_core_enum_value
+
+### 资料
+
+BPF CO-RE (Compile Once – Run Everywhere)
+
+https://nakryiko.com/posts/bpf-portability-and-co-re/
+
+BPF CO-RE reference guide
+
+https://nakryiko.com/posts/bpf-core-reference-guide/
+
+BPF CO-RE的探索与落地
+
+https://www.strickland.cloud/post/1
 
 # ebpf有用的helper函数
 
@@ -755,3 +871,6 @@ BPF 进阶笔记（二）：BPF Map 类型详解：使用场景、程序示例
 
 http://arthurchiao.art/blog/bpf-advanced-notes-2-zh/
 
+eBPF 开发实践教程：基于 CO-RE，通过小工具快速上手 eBPF 开发
+
+https://eunomia.dev/zh/tutorials/
