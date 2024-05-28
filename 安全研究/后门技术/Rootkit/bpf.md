@@ -764,6 +764,131 @@ if (LINUX_KERNEL_VERSION > KERNEL_VERSION(5, 15, 0)) {
 - bpf_core_field_size()
 - bpf_core_enum_value
 
+### 开发流程
+
+- 目录结构
+
+```
+bpf/
+libbpf/
+src/
+tools/
+```
+
+- 切换到工作目录
+
+下载libbpf做为子模块,并编译
+
+```sh
+git submodule add https://github.com/libbpf/libbpf.git
+
+make -C libbpf/src BUILD_STATIC_ONLY=1 DESTDIR=$(pwd)/bpf install
+```
+
+此时会生成libbpf 与 bpf 目录
+
+- 切换到src目录
+
+生成vmlinux.h
+
+```sh
+bpftool btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h
+```
+
+hello_world.bpf.c:
+
+```c
+#include "vmlinux.h"
+#include <bpf/bpf_helpers.h>
+#include <bpf/bpf_tracing.h>
+#include <bpf/bpf_core_read.h>
+
+char LICENSE[] SEC("license") = "GPL";
+
+SEC("raw_tp/pelt_se_tp")
+int BPF_PROG(handle_pelt_se, struct sched_entity *se)
+{
+	int cpu = BPF_CORE_READ(se, cfs_rq, rq, cpu);
+
+	bpf_printk("[%d] Hello world!", cpu);
+	return 0;
+}
+```
+
+hello_world.c
+
+```c
+#include <bpf/libbpf.h>
+#include <signal.h>
+#include <stdio.h>
+
+#include "hello_world.skel.h"
+
+static volatile bool exiting = false;
+
+static void sig_handler(int sig)
+{
+	exiting = true;
+}
+
+int main(int argc, char **argv)
+{
+	struct hello_world_bpf *skel;
+	int err;
+
+	signal(SIGINT, sig_handler);
+	signal(SIGTERM, sig_handler);
+
+	skel = hello_world_bpf__open();
+	if (!skel) {
+		fprintf(stderr, "Failed to open and load BPF skeleton\n");
+		return 1;
+	}
+
+	err = hello_world_bpf__load(skel);
+	if (err) {
+		fprintf(stderr, "Failed to load and verify BPF skeleton\n");
+		goto cleanup;
+	}
+
+	err = hello_world_bpf__attach(skel);
+	if (err) {
+		fprintf(stderr, "Failed to attach BPF skeleton\n");
+		goto cleanup;
+	}
+
+	while (!exiting);
+
+cleanup:
+	hello_world_bpf__destroy(skel);
+	return err < 0 ? -err : 0;
+}
+```
+
+Makefile:
+
+```makefile
+all:
+	clang -g -O2 -Wall -target bpf -I ../bpf/usr/include \
+		-c hello_world.bpf.c -o hello_world.bpf.o
+
+	llvm-strip-14 -g hello_world.bpf.o
+
+	sudo bpftool gen skeleton hello_world.bpf.o > hello_world.skel.h
+	
+	clang -g -O2 -Wall -I ../bpf/usr/include -c hello_world.c -o hello_world.o
+
+	clang -static -g -O2 -Wall -I ../bpf/usr/include hello_world.o \
+		../bpf/usr/lib64/libbpf.a -lelf -lz -o hello_world
+	
+	strip -s hello_world
+
+clean:
+	rm -rf hello_world hello_world.bpf.o hello_world.o
+```
+
+
+
 ### 资料
 
 BPF CO-RE (Compile Once – Run Everywhere)
@@ -777,6 +902,10 @@ https://nakryiko.com/posts/bpf-core-reference-guide/
 BPF CO-RE的探索与落地
 
 https://www.strickland.cloud/post/1
+
+Intro to BPF CO-RE
+
+https://layalina.io/2022/04/23/intro-to-bpf-co-re.html
 
 # ebpf有用的helper函数
 
