@@ -48,6 +48,57 @@ struct {
 - bpf_map_get_next_key：这个函数可以用来遍历BPF Map（只能在用户空间程序调用）
 - bpf_map_delete_elem:：元素删除（内核空间与用户空间都能使用）
 
+# 函数签名
+
+### BPF_PROG_TYPE_TRACEPOINT
+
+对于系统调用 可以通过 
+
+```c
+root@debian:/home/sysirq# cat /sys/kernel/debug/tracing/events/syscalls/sys_enter_getdents64/format
+name: sys_enter_getdents64
+ID: 773
+format:
+	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+	field:int common_pid;	offset:4;	size:4;	signed:1;
+
+	field:int __syscall_nr;	offset:8;	size:4;	signed:1;
+	field:unsigned int fd;	offset:16;	size:8;	signed:0;
+	field:struct linux_dirent64 * dirent;	offset:24;	size:8;	signed:0;
+	field:unsigned int count;	offset:32;	size:8;	signed:0;
+
+print fmt: "fd: 0x%08lx, dirent: 0x%08lx, count: 0x%08lx", ((unsigned long)(REC->fd)), ((unsigned long)(REC->dirent)), ((unsigned long)(REC->count))
+root@debian:/home/sysirq# 
+```
+
+查看到函数签名:
+
+```c
+/**
+ * >> cat /sys/kernel/debug/tracing/events/syscalls/sys_enter_getdents64/format
+ */
+struct sys_getdents64_enter_ctx {
+    unsigned long long unused;
+    int __syscall_nr;
+    unsigned int padding;
+    unsigned int fd;
+    struct linux_dirent64 *dirent;
+    unsigned int count;
+};
+
+SEC("tp/syscalls/sys_enter_getdents64")
+int tp_sys_enter_getdents64(struct sys_getdents64_enter_ctx *ctx){
+    __u64 pid_tgid = bpf_get_current_pid_tgid();
+    if(pid_tgid<0){
+        //bpf_printk("Out\n");
+        return -1;
+    }
+    return handle_tp_sys_enter_getdents64(ctx, pid_tgid);
+}
+```
+
 # ebpf调试
 
 ```c
@@ -666,6 +717,8 @@ bpftool btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h
 
 ### Reading kernel data
 
+this will records CO-RE relocation information
+
 - bpf_core_read()
 
 ```c
@@ -773,6 +826,7 @@ bpf/
 libbpf/
 src/
 tools/
+Makefile
 ```
 
 - 切换到工作目录
@@ -868,23 +922,39 @@ cleanup:
 Makefile:
 
 ```makefile
-all:
-	clang -g -O2 -Wall -target bpf -I ../bpf/usr/include \
-		-c hello_world.bpf.c -o hello_world.bpf.o
+CC = clang
+CFLAGS_EBPF = -g -O2 -Wall -target bpf
+CFLAGS_EXEC = -g -O2 -Wall
+INCLUDES = -I bpf/usr/include 
 
-	llvm-strip-14 -g hello_world.bpf.o
+STATIC_LIB = bpf/usr/lib64/libbpf.a
 
-	sudo bpftool gen skeleton hello_world.bpf.o > hello_world.skel.h
+EXECSOURCES = src/hello_world.c
+EXECOBJS = $(EXECSOURCES:.c=.o)
+
+EBPFSOURCES = src/hello_world.bpf.c
+EBPFOBJS = $(EBPFSOURCES:.c=.o)
+EBPFSKEL = $(EBPFSOURCES:.bpf.c=.bpf.skel.h)
+
+TARGET = hello_world
+
+all:$(TARGET)
+
+$(TARGET) : $(EBPFSKEL) $(EXECOBJS) 
+	$(CC) -static $(CFLAGS_EXEC) $(INCLUDES) $(EXECOBJS) $(STATIC_LIB) -lelf -lz  -o $@
+
+src/%.o:src/%.c
+	$(CC) $(CFLAGS_EXEC) $(INCLUDES) -c $< -o $@
+
+src/%.bpf.skel.h:src/%.bpf.o
+	sudo bpftool gen skeleton $< > $@
+
+src/%.bpf.o:src/%.bpf.c
+	$(CC) $(CFLAGS_EBPF) $(INCLUDES) -c $< -o $@
+
 	
-	clang -g -O2 -Wall -I ../bpf/usr/include -c hello_world.c -o hello_world.o
-
-	clang -static -g -O2 -Wall -I ../bpf/usr/include hello_world.o \
-		../bpf/usr/lib64/libbpf.a -lelf -lz -o hello_world
-	
-	strip -s hello_world
-
 clean:
-	rm -rf hello_world hello_world.bpf.o hello_world.o
+	rm -rf $(TARGET) $(EBPFOBJS) $(EBPFSKEL) $(EXECOBJS)
 ```
 
 
@@ -940,6 +1010,18 @@ ebpf没法修改系统调用的参数与返回值，也无法修改内核数据�
 getdents, getdents64 - get directory entries 
 
 修改getdents返回的 struct linux_dirent 结构，跳过要隐藏的文件
+
+
+
+```c
+SEC("tp/syscalls/sys_enter_getdents64")
+int handle_getdents_enter(struct trace_event_raw_sys_enter *ctx)
+
+SEC("tp/syscalls/sys_exit_getdents64")
+int handle_getdents_exit(struct trace_event_raw_sys_exit *ctx)
+```
+
+
 
 
 
