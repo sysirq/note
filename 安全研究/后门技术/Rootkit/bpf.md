@@ -808,6 +808,77 @@ if (LINUX_KERNEL_VERSION > KERNEL_VERSION(5, 15, 0)) {
 }
 ```
 
+```c
+extern u32 LINUX_KERNEL_VERSION __kconfig;
+extern u32 CONFIG_HZ __kconfig;
+
+u64 utime_ns;
+
+if (LINUX_KERNEL_VERSION >= KERNEL_VERSION(4, 11, 0))
+    utime_ns = BPF_CORE_READ(task, utime);
+else
+    /* convert jiffies to nanoseconds */
+    utime_ns = BPF_CORE_READ(task, utime) * (1000000000UL / CONFIG_HZ);
+```
+
+### struct flavors
+
+```c
+/* up-to-date thread_struct definition matching newer kernels */
+struct thread_struct {
+    ...
+    u64 fsbase;
+    ...
+};
+
+/* legacy thread_struct definition for <= 4.6 kernels */
+struct thread_struct___v46 { /* ___v46 is a "flavor" part */
+    ...
+    u64 fs;
+    ...
+};
+
+extern int LINUX_KERNEL_VERSION __kconfig;
+...
+
+struct thread_struct *thr = ...;
+u64 fsbase;
+if (LINUX_KERNEL_VERSION > KERNEL_VERSION(4, 6, 0))
+    fsbase = BPF_CORE_READ((struct thread_struct___v46 *)thr, fs);
+else
+    fsbase = BPF_CORE_READ(thr, fsbase);
+```
+
+### 根据用户提供的配置改变行为
+
+main.bpf.c:
+
+```c
+const bool use_fancy_helper;
+const u32 fallback_value;
+
+...
+
+u32 value;
+if (use_fancy_helper)
+    value = bpf_fancy_helper(ctx);
+else
+    value = bpf_default_helper(ctx) * fallback_value;
+```
+
+main.c：
+
+```c
+	skel = main_bpf__open();
+	if (!skel) {
+		fprintf(stderr, "Failed to open and load BPF skeleton\n");
+		return 1;
+	}
+	skel->rodata->use_fancy_helper = true;
+	skel->rodata->fallback_value = 10;
+	err = main_bpf__load(skel);
+```
+
 ### 有用的函数
 
 - bpf_core_enum_value_exists()
