@@ -6,6 +6,12 @@
 
 
 
+For full browser isolation, the Browser Isolation Platform needs to be implemented as shown below, with two systems: System A that is assumed to be compromised and System B that is always trusted. Moreover, the transfer format between the two should create a “pixel gap” analogous to air gap security techniques to ensure that only raw pixels— and therefore no code—can be transferred from system A to system B.
+
+**Remember: Full Browser isolation must have a verifiable pixel gap.**
+
+Hardsec uses FPGAs to provide a video display on system B and the video camera on system A that captures the displayed pixels. Even if System A is completely compromised, this pixel gap ensures that no malicious code can reach system B or the user endpoint.
+
 # The Promise and Reality of Remote Browser Isolation
 
 资料地址：https://www.skyhighsecurity.com/wp-content/uploads/2023/01/wp-promise-reality-remote-browser-isolation-1.pdf
