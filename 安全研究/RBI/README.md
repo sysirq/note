@@ -1,3 +1,19 @@
+# key word
+
+- Hardware-based pixel-pushing
+
+
+
+# Hardsec: practical non-Turing-machine security for threat elimination
+
+资料地址：	https://www.hardsec.com
+
+
+
+It is well known that maliciously constructed data inputs can be used by an attacker to exploit system vulnerabilities. 
+
+
+
 #  Browser Isolation Buyer‘s Guide
 
 
@@ -6,11 +22,39 @@
 
 
 
+**browser isolation does not rely upon detection, instead it assumes that all web content which flows through it is risky.**
+
 For full browser isolation, the Browser Isolation Platform needs to be implemented as shown below, with two systems: System A that is assumed to be compromised and System B that is always trusted. Moreover, the transfer format between the two should create a “pixel gap” analogous to air gap security techniques to ensure that only raw pixels— and therefore no code—can be transferred from system A to system B.
 
 **Remember: Full Browser isolation must have a verifiable pixel gap.**
 
 Hardsec uses FPGAs to provide a video display on system B and the video camera on system A that captures the displayed pixels. Even if System A is completely compromised, this pixel gap ensures that no malicious code can reach system B or the user endpoint.
+
+
+
+### What is a Verifiable Pixel Gap?
+
+New advances in hardware-based pixel-pushing can now enable full isolation with an easily verifiable pixel gap -- **a physically enforced separation between the user and the web** - that delivers a powerful combination of security and usability alongside lower costs and management overheads.
+
+
+
+### Partial Browser Isolation
+
+
+
+Moreover, even a pixel-pushing method may still only provide partial browser isolation if the browser isolation platform is not robustly architected and implemented.
+
+If the browser isolation platform consists of only a single system that translates the web traffic to pixels, then should that system become compromised, **it can be used by an attacker to send something other than pixels to the end users’ browser** - such as malicious code - and thereby compromise that endpoint.
+
+
+
+In addition, even if two systems are used in the browser isolation platform, if any web content other than raw pixels (and raw Pulse-Code Modulation audio) can be sent between them, there is still the potential for the system that connects to the web site to send malicious code to the trusted system that connects to the end user’s endpoint. The correct way to implement a browser isolation platform for Full Browser Isolation is described below.
+
+
+
+### Full Browser Isolation
+
+
 
 # The Promise and Reality of Remote Browser Isolation
 
