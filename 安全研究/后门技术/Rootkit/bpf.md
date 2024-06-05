@@ -1028,7 +1028,34 @@ clean:
 	rm -rf $(TARGET) $(EBPFOBJS) $(EBPFSKEL) $(EXECOBJS)
 ```
 
+### 框架中使用XDP
 
+```c
+SEC("xdp")
+int xdp_prog(struct xdp_md *ctx)
+```
+
+```c
+	//attach xdp 
+	bpf_program__attach_xdp(skel->progs.xdp_prog,i_ifindex);
+```
+
+### 框架中使用ringbuf
+
+```c
+......
+{
+    struct ring_buffer *ringBuffer = ring_buffer__new(bpf_map__fd(skel->maps.payload_ringbuf),payload_handler,NULL,NULL);
+    if(!ringBuffer){
+        printf("Failed to create ring buffer\n");
+        return 1;
+    }
+
+	//attach xdp 
+	bpf_program__attach_xdp(skel->progs.xdp_prog,i_ifindex);
+	err = server_bpf__attach(skel);
+}
+```
 
 ### 资料
 
