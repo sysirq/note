@@ -1183,3 +1183,7 @@ http://arthurchiao.art/blog/bpf-advanced-notes-2-zh/
 eBPF 开发实践教程：基于 CO-RE，通过小工具快速上手 eBPF 开发
 
 https://eunomia.dev/zh/tutorials/
+
+eBPF, XDP and Network Security
+
+https://blog.path.net/ebpf-xdp-and-network-security/
