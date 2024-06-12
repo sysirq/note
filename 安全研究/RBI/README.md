@@ -114,3 +114,11 @@ A 1080p raw 24-bit RGB bitmap (for example) is a buffer in memory containing 3x1
 This is quite unlike other visual formats — jpeg, pdf, html — which require **sophisticated parsing that may potentially contain vulnerabilities that could be exploited by a carefully crafted data stream.** 
 
 **The challenge with pixel pushing is the sheer volume of data generated**. At 30 frames per second (for example) a 1080p red, green, blue (RGB) screen image will generate 3x1920x1080x30 bytes — or a data rate of 1.5Gbit/s. It is clearly not feasible to deliver that 1.5Gbit/s to the user’s endpoint without either very substantial data compression or excessive network utilisation. The good news is that suitable compression algorithms are well-known: this is a video compression problem, and technologies like **H264** are well-established.
+
+
+
+# 资料
+
+基于代理映射的网络安全隔离与信息交换系统及方法
+
+https://patents.google.com/patent/CN1571398A/zh
