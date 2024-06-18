@@ -443,7 +443,21 @@ void showme(void)
 }
 ```
 
+# 文件隐藏
 
+修改sys_getdents64返回到用户空间的linux_dirent64结构体：
+
+```
+struct linux_dirent64 {
+    u64         d_ino;
+    s64         d_off;
+    unsigned short      d_reclen;
+    unsigned char       d_type;
+    char        d_name[];
+};
+```
+
+如果linux_dirent64的d_name等于期望隐藏的文件，则我们可以将上一个linux_dirent64的d_reclen 加上期望隐藏的文件的d_reclen
 
 # 参考资料
 
