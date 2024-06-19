@@ -984,7 +984,7 @@ void inet_diag_dump_icsk(struct inet_hashinfo *hashinfo, struct sk_buff *skb,
 }
 ```
 
-关键函数为inet_sk_diag_fill、inet_sk_diag_fill、sk_diag_fill
+
 
 ### 通过/proc/net/ipv4获取连接信息
 
