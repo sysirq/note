@@ -621,7 +621,171 @@ int main() {
 
 ### netlink分析
 
+/net/netlink/af_netlink.c:
+```c
+static const struct net_proto_family netlink_family_ops = {
+	.family = PF_NETLINK,
+	.create = netlink_create,
+	.owner	= THIS_MODULE,	/* for consistency 8) */
+};
 
+static int __init netlink_proto_init(void)
+{
+...
+	sock_register(&netlink_family_ops);//add a socket protocol handler
+...
+	netlink_add_usersock_entry();//nt_table add entity
+...
+}
+
+static void __init netlink_add_usersock_entry(void)
+{
+	struct listeners *listeners;
+	int groups = 32;
+
+	listeners = kzalloc(sizeof(*listeners) + NLGRPSZ(groups), GFP_KERNEL);
+	if (!listeners)
+		panic("netlink_add_usersock_entry: Cannot allocate listeners\n");
+
+	netlink_table_grab();
+
+	nl_table[NETLINK_USERSOCK].groups = groups;
+	rcu_assign_pointer(nl_table[NETLINK_USERSOCK].listeners, listeners);
+	nl_table[NETLINK_USERSOCK].module = THIS_MODULE;
+	nl_table[NETLINK_USERSOCK].registered = 1;
+	nl_table[NETLINK_USERSOCK].flags = NL_CFG_F_NONROOT_SEND;
+
+	netlink_table_ungrab();
+}
+```
+
+然后用户通过socket创建AF_NETLINK套接字时：
+
+```c
+// 创建 netlink 套接字
+    sock_fd = socket(AF_NETLINK, SOCK_DGRAM, NETLINK_INET_DIAG);
+```
+
+会调用到netlink_create。
+
+net/netlink/af_netlink.c:
+```c
+
+struct netlink_table {
+	struct rhashtable	hash;
+	struct hlist_head	mc_list;
+	struct listeners __rcu	*listeners;
+	unsigned int		flags;
+	unsigned int		groups;
+	struct mutex		*cb_mutex;
+	struct module		*module;
+	int			(*bind)(struct net *net, int group);
+	void			(*unbind)(struct net *net, int group);
+	void                    (*release)(struct sock *sk,
+					   unsigned long *groups);
+	int			registered;
+};
+
+static int netlink_create(struct net *net, struct socket *sock, int protocol,int kern)
+{
+...
+	cb_mutex = nl_table[protocol].cb_mutex;
+	bind = nl_table[protocol].bind;
+	unbind = nl_table[protocol].unbind;
+	release = nl_table[protocol].release;
+...
+	err = __netlink_create(net, sock, cb_mutex, protocol, kern);
+...
+	nlk = nlk_sk(sock->sk);
+	nlk->module = module;
+	nlk->netlink_bind = bind;
+	nlk->netlink_unbind = unbind;
+	nlk->netlink_release = release;
+...
+}
+
+
+static const struct proto_ops netlink_ops = {
+	.family =	PF_NETLINK,
+	.owner =	THIS_MODULE,
+	.release =	netlink_release,
+	.bind =		netlink_bind,
+	.connect =	netlink_connect,
+	.socketpair =	sock_no_socketpair,
+	.accept =	sock_no_accept,
+	.getname =	netlink_getname,
+	.poll =		datagram_poll,
+	.ioctl =	netlink_ioctl,
+	.listen =	sock_no_listen,
+	.shutdown =	sock_no_shutdown,
+	.setsockopt =	netlink_setsockopt,
+	.getsockopt =	netlink_getsockopt,
+	.sendmsg =	netlink_sendmsg,
+	.recvmsg =	netlink_recvmsg,
+	.mmap =		sock_no_mmap,
+};
+static int __netlink_create(struct net *net, struct socket *sock,
+			    struct mutex *dump_cb_mutex, int protocol,
+			    int kern)
+{
+...
+	sock->ops = &netlink_ops;
+...
+}
+
+```
+
+可以通过netlink_kernel_create函数，找到内核所有的注册的netlink接口
+
+通过 strace 命令：
+
+```sh
+root@debian:/home/sysirq/Work/rootkit/lkm# strace -e trace=%net ss -tlpn
+socket(AF_NETLINK, SOCK_RAW|SOCK_CLOEXEC, NETLINK_SOCK_DIAG) = 3
+setsockopt(3, SOL_SOCKET, SO_SNDBUF, [32768], 4) = 0
+setsockopt(3, SOL_SOCKET, SO_RCVBUF, [1048576], 4) = 0
+setsockopt(3, SOL_NETLINK, NETLINK_EXT_ACK, [1], 4) = 0
+bind(3, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0
+```
+
+我们可以知道，netlink获取IP端口等信息的对应的protocol接口为NETLINK_SOCK_DIAG
+
+net/core/sock_diag.c:
+
+```c
+static int __net_init diag_net_init(struct net *net)
+{
+	struct netlink_kernel_cfg cfg = {
+		.groups	= SKNLGRP_MAX,
+		.input	= sock_diag_rcv,
+		.bind	= sock_diag_bind,
+		.flags	= NL_CFG_F_NONROOT_RECV,
+	};
+
+	net->diag_nlsk = netlink_kernel_create(net, NETLINK_SOCK_DIAG, &cfg);
+	return net->diag_nlsk == NULL ? -ENOMEM : 0;
+}
+```
+
+调用sendmsg会到netlink_sendmsg
+
+net/netlink/af_netlink.c:
+
+```c
+static int netlink_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
+{
+...
+	if (dst_group) {
+		refcount_inc(&skb->users);
+		netlink_broadcast(sk, skb, dst_portid, dst_group, GFP_KERNEL);
+	}
+	err = netlink_unicast(sk, skb, dst_portid, msg->msg_flags & MSG_DONTWAIT);
+
+...
+}
+```
+
+最终获取ip端口等信息的netlink会调用到sock_diag_rcv。
 
 # 参考资料
 
@@ -650,3 +814,7 @@ https://xcellerator.github.io/tags/rootkit/
 netlink实时获取网络信息原理分析
 
 https://www.anquanke.com/post/id/288932
+
+Netlink Communication between Kernel and User space
+
+https://dev.to/zqiu/netlink-communication-between-kernel-and-user-space-2mg1
