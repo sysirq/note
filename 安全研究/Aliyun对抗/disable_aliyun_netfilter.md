@@ -14,6 +14,16 @@
 },
 ```
 
+
+
+内核注册函数为：nf_register_net_hook （低版本下为：nf_register_hook）
+
+```
+nf_register_net_hook(&init_net,....)
+```
+
+
+
 # hack
 
 ```c
