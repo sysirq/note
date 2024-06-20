@@ -5,6 +5,9 @@
 
 
 ```
+# rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+# yum install -y https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm
+
 wget http://mirrors.coreix.net/elrepo-archive-archive/kernel/el7/x86_64/RPMS/kernel-ml-6.5.5-1.el7.elrepo.x86_64.rpm
 
 wget http://mirrors.coreix.net/elrepo-archive-archive/kernel/el7/x86_64/RPMS/kernel-ml-devel-6.5.5-1.el7.elrepo.x86_64.rpm
