@@ -1037,6 +1037,34 @@ static void hook_tcp_diag_dump(struct sk_buff *skb, struct netlink_callback *cb,
 
 ### 通过/proc/net/ipv4获取连接信息
 
+
+
+以 netstat 为工具的代表，通过读取/proc/获取网络连接信息
+
+```c
+openat(AT_FDCWD, "/proc/net/tcp", O_RDONLY) = 3
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      -                   
+tcp        0      0 127.0.0.1:36199         0.0.0.0:*               LISTEN      5885/code-611f9bfce 
+tcp        0      0 127.0.0.1:44418         127.0.0.1:36199         ESTABLISHED 5862/sshd: sysirq@n 
+tcp        0      0 192.168.182.131:22      192.168.182.1:43512     ESTABLISHED 402/sshd: sysirq [p 
+tcp        0      0 192.168.182.131:22      192.168.182.1:46856     ESTABLISHED 1269/sshd: sysirq [ 
+tcp        0      0 127.0.0.1:36199         127.0.0.1:44418         ESTABLISHED 5885/code-611f9bfce 
+tcp        0      0 192.168.182.131:22      192.168.182.1:52878     ESTABLISHED 5856/sshd: sysirq [ 
+openat(AT_FDCWD, "/proc/net/tcp6", O_RDONLY) = 3
+```
+
+```log
+root@debian:/home/sysirq/Work/rootkit/lkm# cat /proc/net/tcp
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+   0: 00000000:0016 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 16570 1 0000000081d87d85 100 0 0 10 0                     
+   1: 0100007F:8D67 00000000:0000 0A 00000000:00000000 00:00000000 00000000  1000        0 22780 1 00000000322456ee 100 0 0 10 0                     
+   2: 0100007F:AD82 0100007F:8D67 01 00000000:00000000 00:00000000 00000000  1000        0 22014 1 000000005e2f48ff 20 4 0 10 -1                     
+   3: 83B6A8C0:0016 01B6A8C0:A9F8 01 00000000:00000000 02:000ABB53 00000000     0        0 16584 4 00000000654b1696 20 4 31 10 -1                    
+   4: 83B6A8C0:0016 01B6A8C0:B708 01 00000000:00000000 02:00091F7A 00000000     0        0 17453 2 000000005d3660f7 20 4 27 10 -1                    
+   5: 0100007F:8D67 0100007F:AD82 01 00000000:00000000 00:00000000 00000000  1000        0 22784 1 000000003b7170c9 20 4 0 10 -1                     
+   6: 83B6A8C0:0016 01B6A8C0:CE8E 01 00000000:00000000 02:0008969E 00000000     0        0 21253 2 00000000a1612404 20 4 30 10 -1  
+```
+
 需要hook tcp4_seq_show函数
 
 ```c
