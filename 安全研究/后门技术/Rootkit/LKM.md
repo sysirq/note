@@ -1031,10 +1031,6 @@ static void hook_tcp_diag_dump(struct sk_buff *skb, struct netlink_callback *cb,
 }
 ```
 
-
-
-
-
 ### 通过/proc/net/ipv4获取连接信息
 
 
