@@ -1134,8 +1134,48 @@ static asmlinkage long hook_tcp4_seq_show(struct seq_file *seq, void *v)
 }
 ```
 
+# 如何监听其他模块的插入事件
 
+/kernel/module/main.c:
 
+```c
+SYSCALL_DEFINE3(init_module, void __user *, umod,
+		unsigned long, len, const char __user *, uargs)
+{
+....
+	return load_module(&info, uargs, 0);
+}
+
+static int load_module(struct load_info *info, const char __user *uargs,
+		       int flags)
+{
+...
+	err = prepare_coming_module(mod);
+...
+}
+
+static int prepare_coming_module(struct module *mod)
+{
+...
+	err = blocking_notifier_call_chain_robust(&module_notify_list,
+			MODULE_STATE_COMING, MODULE_STATE_GOING, mod);
+...
+}
+```
+
+我们可以在我们的模块中调用：
+
+/kernel/module/main.c:
+
+```c
+int register_module_notifier(struct notifier_block *nb)
+{
+	return blocking_notifier_chain_register(&module_notify_list, nb);
+}
+EXPORT_SYMBOL(register_module_notifier);
+```
+
+来实现，并通过传入过来的module对模块代码进行修改
 
 # 参考资料
 
@@ -1172,3 +1212,11 @@ https://dev.to/zqiu/netlink-communication-between-kernel-and-user-space-2mg1
 美国NSA超级后门`Bvp47`的隐身技能：网络隐身1
 
 https://www.freebuf.com/articles/system/365376.html
+
+Linux Rootkit 研究
+
+https://docs-conquer-the-universe.readthedocs.io/zh-cn/latest/linux_rootkit.html
+
+Infecting loadable kernel modules
+
+http://phrack.org/issues/68/11.html#article
