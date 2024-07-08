@@ -52,3 +52,4 @@ extern char __start_once[], __end_once[];
 ```
 
 - 遍历ftrace 与 kprobe链表 检查可疑的hook:如 不是在 内核text section中的hook，就要认真检查一下
+- volatility：https://github.com/volatilityfoundation/volatility

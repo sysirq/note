@@ -122,3 +122,7 @@ This is quite unlike other visual formats — jpeg, pdf, html — which require 
 基于代理映射的网络安全隔离与信息交换系统及方法
 
 https://patents.google.com/patent/CN1571398A/zh
+
+QEMU基于VNC的桌面虚拟化原理
+
+https://blog.csdn.net/wanthelping/article/details/47686055
