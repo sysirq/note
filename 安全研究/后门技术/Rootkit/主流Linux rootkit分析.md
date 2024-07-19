@@ -79,8 +79,14 @@ give_root(void)
 }
 ```
 
+# adore-ng
+
 # 资料
 
 Diamorphine
 
 https://github.com/m0nad/Diamorphine
+
+adore-ng
+
+https://github.com/yaoyumeng/adore-ng
