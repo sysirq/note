@@ -83,7 +83,21 @@ give_root(void)
 
 ### 模块隐藏
 
-通过对adore-ng 代码分析，我们还需要对 /sys/module 下的 模块文件进行隐藏，
+通过对adore-ng 代码分析，我们还需要对 /sys/module 下的 模块文件进行隐藏。
+
+sysfs 是 Linux 内核中的一个虚拟文件系统，它提供了一个统一的接口来访问内核对象，kobject 代表一个内核对象，而 kset 是一组 kobject 的集合。
+
+内核模块加载时，调用 mod_sysfs_setup(/kernel/module/sysfs.c) 函数，初始化其对应的 /sys/module下面的目录。
+
+
+
+```
+
+```
+
+
+
+
 
 # 资料
 

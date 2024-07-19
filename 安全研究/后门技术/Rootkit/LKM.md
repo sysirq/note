@@ -1181,6 +1181,8 @@ EXPORT_SYMBOL(register_module_notifier);
 
 内核版本：Linux debian 6.1.0-23-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.99-1 (2024-07-15) x86_64 GNU/Linux
 
+代码(example.c)：
+
 ```c
 #include <linux/module.h>
 #include <linux/init.h>
@@ -1725,7 +1727,16 @@ MODULE_LICENSE("GPL");
 
 ```
 
+Makefile：
 
+```makefile
+obj-m += example.o
+
+all:
+	make -C /usr/src/linux-headers-`uname -r`/ M=`pwd` modules
+clean:
+	make -C /usr/src/linux-headers-`uname -r`/ M=`pwd` clean
+```
 
 
 
