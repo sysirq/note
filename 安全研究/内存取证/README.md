@@ -2,6 +2,9 @@
 
 ```shell
 git clone https://github.com/volatilityfoundation/volatility.git
+apt install python2.7
+apt install pcregrep libpcre++-dev python2.7-dev -y
+pip2 install pycrypto
 ```
 
 # 关键文件
