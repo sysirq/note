@@ -108,3 +108,7 @@ https://github.com/m0nad/Diamorphine
 adore-ng
 
 https://github.com/yaoyumeng/adore-ng
+
+设备模型
+
+https://www.cnblogs.com/jliuxin/p/14129383.html
