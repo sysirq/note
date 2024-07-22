@@ -89,7 +89,7 @@ sysfs 是 Linux 内核中的一个虚拟文件系统，它提供了一个统一�
 
 内核模块加载时，调用 mod_sysfs_setup(/kernel/module/sysfs.c) 函数，初始化其对应的 /sys/module下面的目录。
 
-### kobject、kset
+##### kobject、kset
 
 Kobject代表一个目录, 而Attribute代表该目录下的文件
 
@@ -303,7 +303,25 @@ MODULE_AUTHOR("John LiuXin");
 MODULE_DESCRIPTION("Example of manual create kobject and attribute");
 ```
 
+/sys/module的创建函数为：/kernel/params.c:param_sysfs_init
 
+
+
+/sys/module目录下的模块目录创建流程：
+
+
+
+```c
+  kobject_add -> kobject_add_internal ->  create_dir -> sysfs_create_dir_ns
+```
+
+
+
+/sys/module目录下的模块目录删除流程：
+
+```c
+kobject_del -> __kobject_del -> sysfs_remove_dir
+```
 
 
 
