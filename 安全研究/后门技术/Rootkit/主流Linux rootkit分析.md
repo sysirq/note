@@ -312,7 +312,7 @@ MODULE_DESCRIPTION("Example of manual create kobject and attribute");
 
 
 ```c
-  kobject_add -> kobject_add_internal ->  create_dir -> sysfs_create_dir_ns
+kobject_add -> kobject_add_internal ->  create_dir -> sysfs_create_dir_ns
 ```
 
 
