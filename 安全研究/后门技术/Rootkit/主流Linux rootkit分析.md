@@ -325,6 +325,121 @@ kobject_del -> __kobject_del -> sysfs_remove_dir
 
 
 
+##### 思路1
+
+利用hook , hook掉 gendents，隐藏 /sys/module下面对应的模块文件
+
+##### 思路2
+
+利用 kobject_del(&THIS_MODULE->mkobj.kobj);去除，但是这玩意有点问题，使用后无法卸载模块
+
+##### 思路3
+
+sysfs 文件与目录最终会通过kernfs 进行组织以及显示，可以通过 kernfs_unlink_sibling ( （红黑树）)，将 kobject 对应的 kernfs_inode 去掉， 但是貌似无法实现，因为 kernfs_unlink_sibling 没有导出，且通过 kallsyms_lookup_name 也无法获取。需要自己手动实现:
+
+```c
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/init.h>
+#include <linux/spinlock.h>
+#include <linux/sysfs.h>
+#include <linux/kprobes.h>
+#include <linux/rbtree.h>
+#include <linux/delay.h>
+
+static struct kprobe kp = {
+    .symbol_name = "kallsyms_lookup_name"
+};
+typedef unsigned long (*kallsyms_lookup_name_t)(const char *name);
+static kallsyms_lookup_name_t my_kallsyms_lookup_name;
+static void init_ksymbol(void){
+    
+    register_kprobe(&kp);
+    my_kallsyms_lookup_name = (kallsyms_lookup_name_t) kp.addr;
+    unregister_kprobe(&kp);
+}
+
+#define rb_to_kn(X) rb_entry((X), struct kernfs_node, rb)
+static int kernfs_name_compare(unsigned int hash, const char *name,
+			       const void *ns, const struct kernfs_node *kn)
+{
+	if (hash < kn->hash)
+		return -1;
+	if (hash > kn->hash)
+		return 1;
+	if (ns < kn->ns)
+		return -1;
+	if (ns > kn->ns)
+		return 1;
+	return strcmp(name, kn->name);
+}
+
+static int kernfs_sd_compare(const struct kernfs_node *left,
+			     const struct kernfs_node *right)
+{
+	return kernfs_name_compare(left->hash, left->name, left->ns, right);
+}
+
+static bool kernfs_link_sibling(struct kernfs_node *kn)
+{
+	struct rb_node **node = &kn->parent->dir.children.rb_node;
+	struct rb_node *parent = NULL;
+
+	while (*node) {
+		struct kernfs_node *pos;
+		int result;
+
+		pos = rb_to_kn(*node);
+		parent = *node;
+		result = kernfs_sd_compare(kn, pos);
+		if (result < 0)
+			node = &pos->rb.rb_left;
+		else if (result > 0)
+			node = &pos->rb.rb_right;
+		else
+			return -EEXIST;
+	}
+
+	/* add new node and rebalance the tree */
+	rb_link_node(&kn->rb, parent, node);
+	rb_insert_color(&kn->rb, &kn->parent->dir.children);
+	return true;
+}
+
+static bool kernfs_unlink_sibling(struct kernfs_node *kn)
+{
+	rb_erase(&kn->rb, &kn->parent->dir.children);
+	return true;
+}
+
+static int example_init(void)
+{
+	printk("example init\n");
+	init_ksymbol();
+
+	//&THIS_MODULE->mkobj.kobj
+	
+	kernfs_unlink_sibling(THIS_MODULE->mkobj.kobj.sd);
+	
+	msleep(30*1000);//sleep 30 seconds
+
+	kernfs_link_sibling(THIS_MODULE->mkobj.kobj.sd);
+
+	return 0;
+}
+
+static void example_exit(void)
+{
+	printk("example exit\n");
+}
+
+module_init(example_init);
+module_exit(example_exit);
+MODULE_LICENSE("GPL");
+```
+
+30 秒前，会将 /sys/module下面对应模块的目录隐藏掉
+
 # 资料
 
 Diamorphine
@@ -338,3 +453,11 @@ https://github.com/yaoyumeng/adore-ng
 设备模型
 
 https://www.cnblogs.com/jliuxin/p/14129383.html
+
+kernfs_node、kobject和kset
+
+https://blog.csdn.net/zhoudawei/article/details/86669868
+
+sysfs分析
+
+https://palliatory66.rssing.com/chan-60693167/all_p3.html
