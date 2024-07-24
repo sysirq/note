@@ -10,8 +10,6 @@ apt install linux-image-$(uname -r)-dbg # SystemTap 需要访问内核调试信�
 apt install build-essential linux-headers-$(uname -r)  # SystemTap 本质上是将脚本编译为LKM，所以需要LKM开发环境
 ```
 
-
-
 # 结构
 
 SystemTap的工作过程：
@@ -189,6 +187,34 @@ probe timer.ms(12345)
     kernel_string(address)
     
     kernel_string_n(address,n)
+    
+    user_char(address)
+    
+    user_short(address)
+    
+    user_int(address)
+    
+    user_long(address)
+    
+    user_string(address)
+    
+    user_string_n(address, n)
+
+
+
+eg:从内核态，获取用户态的数据
+
+
+
+```
+probe kernel.function("vfs_fstatat"){
+	printf("%s\n",user_string($filename));
+}
+```
+
+
+
+
 
 ### 更简单的打印目标变量
 
@@ -198,12 +224,23 @@ SystemTap脚本通常用于观察代码中正在发生的事情。 在许多情�
 
 $$locals:Expands to a subset of $$vars contaning only the local variables
 
-$$params:Expands to a subset of $$vars containing only the function parameters
+$$parms:Expands to a subset of $$vars containing only the function parameters
 
 $$return:Is available in return probes only. It expands to a string that is equivalent to sprintf("return=%x",  $return) if the probed function has a return value, or else an empty string.
 
-$$vars、$$locals、$$params、$$return可以加（多个）$，表示展开指针（结构）
+$$vars、$$locals、$$parms、$$return可以加（多个）$，表示展开指针（结构）
 ```
+
+Eg:
+
+```
+probe kernel.function("__do_sys_openat"){
+	printf("%s\n",$$parms);
+	exit();
+}
+```
+
+
 
 ### 类型转换
 
@@ -394,4 +431,7 @@ tapset 类似于C语言中的库文件。
 
 # 资料
 
-https://sourceware.org/systemtap/
+SystemTap Beginners Guide
+
+https://sourceware.org/systemtap/SystemTap_Beginners_Guide/
+
