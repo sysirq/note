@@ -4,6 +4,12 @@ SystemTap的基本思想是命名事件（events），并为他们提供处理�
 
 # 安装
 
+```shell
+apt install systemtap
+apt install linux-image-$(uname -r)-dbg # SystemTap 需要访问内核调试信息来解析内核符号
+apt install build-essential linux-headers-$(uname -r)  # SystemTap 本质上是将脚本编译为LKM，所以需要LKM开发环境
+```
+
 
 
 # 结构
