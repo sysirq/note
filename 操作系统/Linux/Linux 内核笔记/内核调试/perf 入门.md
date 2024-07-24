@@ -2,6 +2,8 @@
 
 Ubuntu系列：apt install linux-tools-common
 
+Debian: apt install linux-perf
+
 # 概念
 
 PMU：Performance Monitor Unit
@@ -57,17 +59,17 @@ pid, comm, dso, symbol, parent, srcline, weight, local\_weight, abort, in\_tx, t
 # 常用命令行参数
 
     # perf top // 默认配置
-
+    
     # perf top -G // 得到调用关系图
-
+    
     # perf top -e cycles // 指定性能事件
-
+    
     # perf top -p 23015,32476 // 查看这两个进程的cpu cycles使用情况
-
+    
     # perf top -s comm,pid,symbol // 显示调用symbol的进程名和进程号
-
+    
     # perf top --comms nginx,top // 仅显示属于指定进程的符号
-
+    
     # perf top --symbols kfree // 仅显示指定的符号
 
 \-p：stat events on existing process id (comma separated list). 仅分析目标进程及其创建的线程。
