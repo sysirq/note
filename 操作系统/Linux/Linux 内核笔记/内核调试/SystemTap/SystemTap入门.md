@@ -2,6 +2,10 @@ SystemTap的基本思想是命名事件（events），并为他们提供处理�
 
 这里有几种事件：进入/退出函数，定时器，对话终止。
 
+# 安装
+
+
+
 # 结构
 
 SystemTap的工作过程：
@@ -46,7 +50,7 @@ SystemTap的events被分成两种类别：同步的和异步的
 eg:
 
     syscall.close
-
+    
     syscall.close.return
 
 ##### vfs.file\_operation
@@ -58,7 +62,7 @@ eg:
 
     kernel.function("sys_open")
     kernel.function("sys_open").return
-
+    
     kernel.function("*@kernel/fork.c:1598")
 
 ##### kernel.trace("tracepoint")
@@ -157,27 +161,27 @@ probe timer.ms(12345)
 可以使用-L选项来获得可用的目标变量:
 
     stap -L 'kernel.function("vfs_read")'
-
+    
     会得到以下信息：
-
+    
     kernel.function("vfs_read@/build/linux-IWbocJ/linux-4.15.0/fs/read_write.c:432") $file:struct file* $buf:char* $count:size_t $pos:loff_t* $ret:ssize_t
-
+    
     可以使用@var("varname@src/file.c")引用全局变量
-
+    
     可以使用 var->fied 来引用字段，var可以是结构体也可以是指针
 
 可以通过内存地址来获得该地址的值：
 
     kernel_char(address)
-
+    
     kernel_short(address)
-
+    
     kernel_int(address)
-
+    
     kernel_long(address)
-
+    
     kernel_string(address)
-
+    
     kernel_string_n(address,n)
 
 ### 更简单的打印目标变量
