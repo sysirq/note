@@ -631,7 +631,7 @@ khook_sm_init_hooks -->  khook_arch_sm_init_one
 void khook_arch_sm_init_one(khook_t *hook) {
 	void _activate(khook_t *hook) {
 		khook_arch_create_stub(hook); //初始化hook汇编代码
-		khook_arch_create_orig(hook); //用于复制被hook函数的汇编代码
+		khook_arch_create_orig(hook); //用于复制被hook函数的开始汇编代码到一块内存中，然后加上跳过
 		x86_put_jmp(hook->target.addr, hook->target.addr, hook->stub);
 	}
 
@@ -647,6 +647,10 @@ void khook_arch_sm_init_one(khook_t *hook) {
 ```
 
 首先将被hook函数的开始的汇编指令复制到一块内存中，然后再在这内存块加上跳转指令，跳过被hook函数开始的汇编指令之后的指令（因为被hook函数的开始的汇编指令会被 替换为跳转到 hook函数的指令，有点乱，直接看他的原理图）。
+
+# KoviD
+
+
 
 # 资料
 
@@ -673,3 +677,7 @@ https://palliatory66.rssing.com/chan-60693167/all_p3.html
 khook （kernel hook框架）
 
 https://github.com/milabs/khook?tab=readme-ov-file 
+
+KoviD
+
+https://github.com/carloslack/KoviD

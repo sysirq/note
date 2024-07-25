@@ -1,3 +1,14 @@
+- 对于通过ftrace进行hook的rootkit，我们可以直接查看/sys/kernel/debug/tracing/enabled_functions 来定位该rootkit
+
+```cmd
+root@debian:/home/sysirq/Work/rootkit/lkm# cat /sys/kernel/debug/tracing/enabled_functions 
+__x64_sys_kill (1) R I  	tramp: 0xffffffffc03ab000 (fh_ftrace_thunk+0x0/0x40 [example]) ->ftrace_ops_assist_func+0x0/0x100
+__x64_sys_mkdir (1) R I  	tramp: 0xffffffffc0389000 (fh_ftrace_thunk+0x0/0x40 [example]) ->ftrace_ops_assist_func+0x0/0x100
+__x64_sys_getdents64 (1) R I  	tramp: 0xffffffffc03ad000 (fh_ftrace_thunk+0x0/0x40 [example]) ->ftrace_ops_assist_func+0x0/0x100
+random_read_iter (1) R I  	tramp: 0xffffffffc03b5000 (fh_ftrace_thunk+0x0/0x40 [example]) ->ftrace_ops_assist_func+0x0/0x100
+tcp_diag_dump [tcp_diag] (1) R I  	tramp: 0xffffffffc03bd000 (fh_ftrace_thunk+0x0/0x40 [example]) ->ftrace_ops_assist_func+0x0/0x100
+```
+
 - 获取内核text section的起始地址与结束地址
 
 ```c
