@@ -697,7 +697,21 @@ hook kill 函数，
 
 提权： kill -n 19 666
 
-打开/proc 命令交互接口：kill -n 19 31337
+打开/proc/PROCNAME 命令交互接口：kill -n 19 31337 ， 然后用户通过直接写入/proc/PROCNAME，来与该rootkit交互。
+
+支持的命令(查看write_cb函数，可以知道该rootkit支持的命令)：
+
+```c
+        /* Hide PID as backdoor */
+        if(!strncmp(buf, "-bd", MIN(3, size))) {
+                  /* hide kovid module */
+        } else if(!strcmp(buf, "-h") && !op_lock) {
+          ................
+```
+
+
+
+
 
 # 资料
 
