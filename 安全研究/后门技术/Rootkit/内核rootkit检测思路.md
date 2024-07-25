@@ -9,6 +9,29 @@ random_read_iter (1) R I  	tramp: 0xffffffffc03b5000 (fh_ftrace_thunk+0x0/0x40 [
 tcp_diag_dump [tcp_diag] (1) R I  	tramp: 0xffffffffc03bd000 (fh_ftrace_thunk+0x0/0x40 [example]) ->ftrace_ops_assist_func+0x0/0x100
 ```
 
+- 对于ebpf木马，我们可以通过查看 /proc/kallsyms
+
+```cmd
+root@debian:/home/sysirq/Work/rootkit/ebpf# cat /proc/kallsyms | grep '\[bpf\]'
+ffffffffc0166794 t bpf_prog_3650d9673c54ce30_sd_devices	[bpf]
+ffffffffc016690c t bpf_prog_6deef7357e7b4530_sd_fw_egress	[bpf]
+ffffffffc01669a0 t bpf_prog_6deef7357e7b4530_sd_fw_ingress	[bpf]
+ffffffffc0168bb4 t bpf_prog_6deef7357e7b4530_sd_fw_egress	[bpf]
+ffffffffc0168c18 t bpf_prog_6deef7357e7b4530_sd_fw_ingress	[bpf]
+ffffffffc016cb7c t bpf_prog_ee0e253c78993a24_sd_devices	[bpf]
+ffffffffc016f34c t bpf_prog_8470ed2b25b99116_sd_devices	[bpf]
+ffffffffc016f564 t bpf_prog_6deef7357e7b4530_sd_fw_egress	[bpf]
+ffffffffc016f5fc t bpf_prog_6deef7357e7b4530_sd_fw_ingress	[bpf]
+ffffffffc01723a8 t bpf_prog_3b15d563d774482f_tp_sys_enter_getdents64	[bpf]
+ffffffffc01726d4 t bpf_prog_a46aa1590dfd4014_my_strcmp	[bpf]
+ffffffffc0172410 t bpf_prog_c440e718f526652f_tp_sys_exit_getdents64	[bpf]
+ffffffffc017288c t bpf_prog_5bcc54dcd3ad9b99_xdp_prog	[bpf]
+ffffffffc0172b40 t bpf_dispatcher_xdp	[bpf]
+root@debian:/home/sysirq/Work/rootkit/ebpf# 
+```
+
+可以看到 getdents64 、xdp 被hook
+
 - 获取内核text section的起始地址与结束地址
 
 ```c
