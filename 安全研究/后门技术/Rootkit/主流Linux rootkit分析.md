@@ -650,7 +650,35 @@ void khook_arch_sm_init_one(khook_t *hook) {
 
 # KoviD
 
+### hook 
 
+利用 ftrace进行hook
+
+```c
+static struct ftrace_hook ft_hooks[] = {
+    {"sys_exit_group", m_exit_group, &real_m_exit_group, true},
+    {"sys_clone", m_clone, &real_m_clone, true},
+    {"sys_kill", m_kill, &real_m_kill, true},
+    {"sys_bpf", m_bpf, &real_m_bpf, true},
+    {"tcp4_seq_show", m_tcp4_seq_show, &real_m_tcp4_seq_show},
+    {"udp4_seq_show", m_udp4_seq_show, &real_m_udp4_seq_show},
+    {"tcp6_seq_show", m_tcp6_seq_show, &real_m_tcp6_seq_show},
+    {"udp6_seq_show", m_udp6_seq_show, &real_m_udp6_seq_show},
+    {"packet_rcv", m_packet_rcv, &real_packet_rcv},
+    {"tpacket_rcv", m_tpacket_rcv, &real_tpacket_rcv},
+    {"account_process_tick", m_account_process_tick, &real_account_process_tick},
+    {"account_system_time", m_account_system_time, &real_account_system_time},
+    {"audit_log_start", m_audit_log_start, &real_audit_log_start},
+    {"filldir", m_filldir, &real_filldir},
+    {"filldir64", m_filldir64, &real_filldir64},
+    {"tty_read", m_tty_read, &real_tty_read},
+    {NULL, NULL, NULL},
+};
+```
+
+### netfilter
+
+存在敲门包，然后提取命令 ， 调用call_usermodehelper执行用户态命令。
 
 # 资料
 
