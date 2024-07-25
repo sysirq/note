@@ -590,7 +590,63 @@ CALLER
 
 ### 代码分析
 
+```c
+/**
+ * stop_machine: freeze the machine on all CPUs and run this function
+ * @fn: the function to run
+ * @data: the data ptr for the @fn()
+ * @cpus: the cpus to run the @fn() on (NULL = any online cpu)
+ *
+ * Description: This causes a thread to be scheduled on every cpu,
+ * each of which disables interrupts.  The result is that no one is
+ * holding a spinlock or inside any other preempt-disabled region when
+ * @fn() runs.
+ *
+ * This can be thought of as a very heavy write lock, equivalent to
+ * grabbing every spinlock in the kernel.
+ *
+ * Protects against CPU hotplug.
+ */
+int stop_machine(cpu_stop_fn_t fn, void *data, const struct cpumask *cpus);
 
+int khook_init(khook_lookup_t lookup)
+{
+........................................
+	stop_machine(khook_sm_init_hooks, NULL, 0);
+
+	return 0;
+}
+
+void khook_cleanup(void)
+{
+	stop_machine(khook_sm_cleanup_hooks, NULL, 0);
+	khook_release();
+}
+
+```
+
+khook_sm_init_hooks -->  khook_arch_sm_init_one 
+
+```c
+void khook_arch_sm_init_one(khook_t *hook) {
+	void _activate(khook_t *hook) {
+		khook_arch_create_stub(hook); //初始化hook汇编代码
+		khook_arch_create_orig(hook); //用于复制被hook函数的汇编代码
+		x86_put_jmp(hook->target.addr, hook->target.addr, hook->stub);
+	}
+
+	if (hook->target.addr[0] == (char)0xE9 ||
+	    hook->target.addr[0] == (char)0xCC) return;
+
+	while (hook->nbytes < 5) {
+		hook->nbytes += khook_arch_lde_get_length(hook->target.addr + hook->nbytes);
+	}
+
+	khook_arch_write_kernel((void *)_activate, hook);
+}
+```
+
+首先将被hook函数的开始的汇编指令复制到一块内存中，然后再在这内存块加上跳转指令，跳过被hook函数开始的汇编指令之后的指令（因为被hook函数的开始的汇编指令会被 替换为跳转到 hook函数的指令，有点乱，直接看他的原理图）。
 
 # 资料
 
