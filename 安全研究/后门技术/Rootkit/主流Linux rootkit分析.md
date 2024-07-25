@@ -551,6 +551,47 @@ MODULE_LICENSE("GPL");
 
 30 秒前，会将 /sys/module下面对应模块的目录隐藏掉
 
+
+
+# khook
+
+一个内核函数hook框架
+
+### 工作原理
+
+The diagram below illustrates the call to function X without hooking:
+
+```
+CALLER
+| ...
+| CALL X -(1)---> X
+| ...  <----.     | ...
+` RET       |     ` RET -.
+            `--------(2)-'
+```
+
+The diagram below illustrates the call to function X when KHOOK is used:
+
+```
+CALLER
+| ...
+| CALL X -(1)---> X
+| ...  <----.     | JUMP -(2)----> khook_X_stub
+` RET       |     | ???            | INCR use_count
+            |     | ...  <----.    | CALL handler   -(3)----> khook_X
+            |     | ...       |    | DECR use_count <----.    | ...
+            |     ` RET -.    |    ` RET -.              |    | CALL origin -(4)----> khook_X_orig
+            |            |    |           |              |    | ...  <----.           | N bytes of X
+            |            |    |           |              |    ` RET -.    |           ` JMP X + N -.
+            `------------|----|-------(8)-'              '-------(7)-'    |                        |
+                         |    `-------------------------------------------|--------------------(5)-'
+                         `-(6)--------------------------------------------'
+```
+
+### 代码分析
+
+
+
 # 资料
 
 Diamorphine
@@ -572,3 +613,7 @@ https://blog.csdn.net/zhoudawei/article/details/86669868
 sysfs分析
 
 https://palliatory66.rssing.com/chan-60693167/all_p3.html
+
+khook （kernel hook框架）
+
+https://github.com/milabs/khook?tab=readme-ov-file 
