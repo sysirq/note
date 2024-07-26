@@ -135,6 +135,8 @@ kill -n 64 1
 
 ### hook 思路
 
+**VFS hook**
+
 ```c
 filep = filp_open("/proc/", O_RDONLY|O_DIRECTORY, 0);
 if (IS_ERR(filep)) 
