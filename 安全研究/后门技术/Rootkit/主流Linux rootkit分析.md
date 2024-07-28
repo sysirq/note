@@ -909,7 +909,13 @@ hook 点位：
 - tcp4_seq_show
 - udp4_seq_show
 
+# 其他rootkit的新姿势
 
+### 键盘监听
+
+```c
+register_keyboard_notifier(&nb);
+```
 
 # 资料
 
