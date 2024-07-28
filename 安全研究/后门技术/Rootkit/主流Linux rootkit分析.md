@@ -855,6 +855,24 @@ enable_page_protection();
 
 使用的是khook框架。
 
+
+
+### 与用户之间的交互
+
+hook inet_ioctl 函数，
+
+用户态与内核态的交互实现代码：
+
+```c
+......
+sockfd = socket(AF_INET, SOCK_STREAM, 6);
+rk_args.cmd = 0;
+io = ioctl(sockfd, AUTH_TOKEN, &rk_args);
+......
+```
+
+
+
 ### 进程隐藏方式
 
 通过给task的flag设置 FLAG（0x80000000），来判断是否需要隐藏
