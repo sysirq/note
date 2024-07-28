@@ -849,9 +849,47 @@ disable_page_protection();
 enable_page_protection();
 ```
 
+# Reptile
 
+### hook 方式
 
-# 
+使用的是khook框架。
+
+### 进程隐藏方式
+
+通过给task的flag设置 FLAG（0x80000000），来判断是否需要隐藏
+
+相关的hook 点位：
+
+- audit_alloc : 对于隐藏的进程，去掉TIF_SYSCALL_AUDIT，（clear_tsk_thread_flag(t, TIF_SYSCALL_AUDIT) ）
+- find_task_by_vpid：对于隐藏的pid，返回null
+- vfs_statx：对抗遍历/proc/PIDS的隐藏进程查找，
+- sys_kill：对抗通过发送信号来查找隐藏进程
+
+```c
+if (is_proc_invisible(pid)) {
+			return -ESRCH;
+}
+```
+
+### 目录隐藏
+
+hook 点位：
+
+- fillonedir
+- filldir
+- filldir64
+- compat_fillonedir
+- compat_filldir
+- compat_filldir64
+- __d_lookup
+
+### 网络隐藏
+
+通过hook /proc/tcp 对应的read函数:
+
+- tcp4_seq_show
+- udp4_seq_show
 
 
 
@@ -888,3 +926,7 @@ https://github.com/carloslack/KoviD
 lkm-rootkit
 
 https://github.com/croemheld/lkm-rootkit
+
+Reptile
+
+https://github.com/f0rb1dd3n/Reptile
