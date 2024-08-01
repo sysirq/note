@@ -35,3 +35,9 @@ funcs = idautils.Functions()
 for f in funcs:
     print("%s %X"%(idc.get_func_name(f),f))
 ```
+
+# IDA Python 安装其他的库
+
+```
+PS D:\IDA_Pro_v8.3\python311> .\python.exe -m pip install pycryptodome
+```
