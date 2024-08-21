@@ -88,7 +88,7 @@ __int64 __fastcall main(signed int a1, const char **a2, char **a3)
 
 这里判断argv[0]的前9个字节是不是/bin/init，如果是则不执行sub_44C140，继续执行main函数的后面初始化部分，不是则执行。
 
-对于argv[0]为/bin/sslvpnd，则执行sub_44C140：
+对于argv[0]为/bin/sslvpnd类似情况，则执行sub_44C140：
 
 ```c
 __int64 __fastcall sub_44C140(unsigned int a1, const char **a2)
