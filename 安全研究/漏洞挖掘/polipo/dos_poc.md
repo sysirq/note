@@ -1,4 +1,6 @@
-Polipo through 1.1.1,allows remote attackers to cause a denial of service 
+Polipo through 1.1.1,allows remote attackers to cause a denial of service，
+
+When users continuously send maliciously constructed HTTP requests to Polipo, Polipo memory leaks, resulting in a denial of service attack
 
 # reason
 
