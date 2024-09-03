@@ -16,7 +16,7 @@ CMD node demos/01.js
 - COPY . /app：将当前目录下的所有文件（除了.dockerignore排除的路径），都拷贝进入 image 文件的/app目录。
 - WORKDIR /app：指定接下来的工作路径为/app。
 - RUN npm install：在/app目录下，运行npm install命令安装依赖。注意，安装后所有的依赖，都将打包进入 image 文件。
-- EXPOSE 3000：将容器 3000 端口暴露出来， 允许外部连接这个端口。
+- EXPOSE 3000：EXPOSE 指令在 Dockerfile 中声明容器将使用的端口，但并不会自动将这些端口映射到主机上，实际的端口映射是在使用 docker run 启动容器时，通过 -p 或 --publish 选项来指定。
 - CMD node demos/01.js : 容器启动以后执行node demos/01.js命令。
 
 ###  创建 image 文件
