@@ -35,7 +35,13 @@ clean:
 ➜  libnvram git:(master) make CC=mipsel-linux-gnu-gcc-10
 ```
 
+# 通过LD_PRELOAD机制，patch函数
 
+eg:
+
+```
+qemu-mipsel-static -E LD_PRELOAD="./libnvram.so" ./bin/goahead
+```
 
 
 
