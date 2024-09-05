@@ -40,7 +40,7 @@ clean:
 eg:
 
 ```
-qemu-mipsel-static -E LD_PRELOAD="./libnvram.so" ./bin/goahead
+qemu-mipsel-static -E LD_PRELOAD="/libnvram.so" ./bin/goahead
 ```
 
 
