@@ -62,3 +62,7 @@ eg:
 https://zhuanlan.zhihu.com/p/544793994
 
 https://github.com/pr0v3rbs/FirmAE/tree/master/sources
+
+基于QEMU的NVRAM仿真
+
+https://blog.csdn.net/qq_21063873/article/details/103037515
