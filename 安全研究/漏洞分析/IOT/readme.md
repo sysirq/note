@@ -40,10 +40,20 @@ clean:
 eg:
 
 ```
-qemu-mipsel-static -E LD_PRELOAD="/libnvram.so" ./bin/goahead
+ sudo chroot . ./qemu-mipsel-static -L . -E LD_PRELOAD="/libnvram.so" ./bin/goahead
 ```
 
+# 有用的帮助
 
+### 尝试禁用强化检查
+
+在编译时，可以通过禁用 glibc 的强化检查来避免使用 __fprintf_chk 函数。你可以尝试在编译时加入以下编译选项：
+
+```
+-D_FORTIFY_SOURCE=0
+```
+
+这将禁用类似 __fprintf_chk 的强化检查函数，回退到标准的 fprintf 函数。
 
 # 资料
 
