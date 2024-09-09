@@ -66,3 +66,8 @@ https://github.com/pr0v3rbs/FirmAE/tree/master/sources
 基于QEMU的NVRAM仿真
 
 https://blog.csdn.net/qq_21063873/article/details/103037515
+
+模拟固件下的patch与hook
+
+https://www.iotsec-zone.com/article/202
+
