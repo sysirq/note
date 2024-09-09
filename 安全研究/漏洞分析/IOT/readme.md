@@ -71,3 +71,7 @@ https://blog.csdn.net/qq_21063873/article/details/103037515
 
 https://www.iotsec-zone.com/article/202
 
+libnvram.so编译教程
+
+https://ioo0s.art/2023/02/20/libnvram-so编译教程/
+
