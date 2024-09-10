@@ -55,6 +55,16 @@ clean:
 .PHONY: clean
 ```
 
+# 问题定位区
+
+### nvram_init: Unable to mount tmpfs on mount point XXXXXXXXX!
+
+注意权限问题：
+
+- 手动挂载：sudo mount -t tmpfs -o size=10M tmpfs ./mnt/libnvram
+
+- docker权限设置：docker container run --privileged --cap-add=SYS_ADMIN  -it cve-2023-26801  /qemu-mipsel-static /bin/sh
+
 # 注意事项
 
 **不能混用** mipsel-uclibc-gcc 和 mipsel-linux-gcc **编译的动态库**，除非在非常受控的条件下确保二者的库和运行时环境兼容，否则会产生无法预料的错误。
@@ -69,3 +79,7 @@ clean:
 libnvram.so编译教程
 
 https://ioo0s.art/2023/02/20/libnvram-so编译教程/
+
+模拟固件下的patch与hook
+
+https://www.iotsec-zone.com/article/202
