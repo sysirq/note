@@ -6,19 +6,19 @@
 
 *   以普通用户创建编译rpm所需的基础目录结构
 
-<!---->
 
-    $ mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
-    $ echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
-
+```
+$ mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+$ echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
+```
 *   安装源码
 
-<!---->
-
-    $ rpm -i kernel-3.10.0-514.26.2.el7.src.rpm 2>&1 | grep -v exist
-    $ cd ~/rpmbuild/SPECS
-    $ rpmbuild -bp --target=$(uname -m) kernel.spec
-    现在可以在“~/rpmbuild/BUILD/kernel*/linux*”看到完整的内核源代码了。
+```
+$ rpm -i kernel-3.10.0-514.26.2.el7.src.rpm 2>&1 | grep -v exist
+$ cd ~/rpmbuild/SPECS
+$ rpmbuild -bp --target=$(uname -m) kernel.spec
+现在可以在“~/rpmbuild/BUILD/kernel*/linux*”看到完整的内核源代码了。
+```
 
 # TIME\_WAIT
 
@@ -31,12 +31,13 @@
 临时关闭selinux：
 
 获取当前selinux状态
-
+```
 getenforce
+```
 
 Enforcing为开启，Permissive为关闭
 
-临时关闭：setenforce 0
+临时关闭：`setenforce 0`
 
 永久关闭selinux：
 
@@ -47,10 +48,11 @@ SELINUX=enforcing 替换为SELINUX=disabled
 重启后，运行命令sestatus
 
 SELinux status ：  disabled
-
-    /sbin/restorecon -v /usr/sbin/sshd
-    ausearch -c 'sshd' --raw | audit2allow -M my-sshd
-    semodule -i my-sshd.pp
+```
+/sbin/restorecon -v /usr/sbin/sshd
+ausearch -c 'sshd' --raw | audit2allow -M my-sshd
+semodule -i my-sshd.pp
+```
 
 # 编译
 
