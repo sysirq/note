@@ -8,6 +8,15 @@
 CALLER
 | ...
 | CALL X -(1)---> X
+| ...  <----.     | ...
+` RET       |     ` RET -.
+            `--------(2)-'
+```
+
+```
+CALLER
+| ...
+| CALL X -(1)---> X
 | ...  <----.     | JUMP -(2)----> khook_X_stub
 ` RET       |     | ???            | INCR use_count
             |     | ...  <----.    | CALL handler   -(3)----> khook_X
