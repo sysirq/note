@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <string.h>
 #include <lzma.h>
+#include <dlfcn.h>
 #include "debug.h"
 #include "my_elf.h"
 #include "just4fun.h"
@@ -64,6 +65,10 @@ static int decompress_xz(char *input, size_t input_size, char **output, size_t *
     lzma_stream strm = LZMA_STREAM_INIT;
     lzma_ret ret;
     size_t buf_size = 8*1024*1024;//最大
+    lzma_ret (*my_lzma_stream_decoder)(lzma_stream *, uint64_t, uint32_t);
+    lzma_ret (*my_lzma_code)(lzma_stream *, lzma_action);
+    lzma_ret (*my_lzma_end)(lzma_stream *);
+    void *handle = NULL;
     *output = malloc(buf_size);
 
     if (*output == NULL) {
@@ -71,11 +76,44 @@ static int decompress_xz(char *input, size_t input_size, char **output, size_t *
         return -1;
     }
 
+    handle = dlopen("liblzma.so", RTLD_LAZY);
+    if (!handle) {
+        DLX(0,printf("Error opening liblzma.so\n"));
+        free(*output);
+        return -1;
+    }
+
+    my_lzma_stream_decoder = dlsym(handle, "lzma_stream_decoder");
+    my_lzma_code = dlsym(handle, "lzma_code");
+    my_lzma_end = dlsym(handle, "lzma_end");
+
+    if(my_lzma_stream_decoder == NULL){
+        DLX(0,printf("\tget lzma_stream_decoder func error\n"));
+        free(*output);
+        dlclose(handle);
+        return -1;
+    }
+
+    if(my_lzma_code == NULL){
+        DLX(0,printf("\tget lzma_code func error\n"));
+        free(*output);
+        dlclose(handle);
+        return -1;
+    }
+
+    if(my_lzma_end == NULL){
+        DLX(0,printf("\tget lzma_end func error\n"));
+        free(*output);
+        dlclose(handle);
+        return -1;
+    }
+
     // Initialize decompression
-    ret = lzma_stream_decoder(&strm, UINT64_MAX, LZMA_CONCATENATED);
+    ret = my_lzma_stream_decoder(&strm, UINT64_MAX, LZMA_CONCATENATED);
     if (ret != LZMA_OK) {
         DLX(0,fprintf(stderr, "lzma_stream_decoder failed\n"));
         free(*output);
+        dlclose(handle);
         return -1;
     }
 
@@ -85,15 +123,17 @@ static int decompress_xz(char *input, size_t input_size, char **output, size_t *
     strm.avail_out = buf_size;
 
     // Decompress data
-    ret = lzma_code(&strm, LZMA_FINISH);
+    ret = my_lzma_code(&strm, LZMA_FINISH);
     if (ret == LZMA_OK || ret == LZMA_STREAM_END) {
         *output_size = buf_size - strm.avail_out;
-        lzma_end(&strm);
+        my_lzma_end(&strm);
+        dlclose(handle);
         return 0;
     } else {
         DLX(0,fprintf(stderr, "lzma_code failed\n"));
         free(*output);
-        lzma_end(&strm);
+        my_lzma_end(&strm);
+        dlclose(handle);
         return -1;
     }
 }
