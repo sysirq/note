@@ -6,7 +6,7 @@
 
 只适合拥有gnu_debugdata section的二进制文件，且二进制文件必须为单进程
 
-# HOOK
+# HOOK 思路
 
 ```
 CALLER
