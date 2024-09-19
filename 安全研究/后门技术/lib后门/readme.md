@@ -2,6 +2,10 @@
 
 通过lib库，劫持特定程序的函数
 
+# Demo说明
+
+只适合拥有gnu_debugdata section的二进制文件，且二进制文件必须为单进程
+
 # HOOK
 
 ```
