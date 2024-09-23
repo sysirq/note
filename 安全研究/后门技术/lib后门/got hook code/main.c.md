@@ -143,13 +143,6 @@ static void update_got_entry(unsigned long addr,unsigned long entry)
     }
 
     *(unsigned long*)(addr) = entry;
-
-    if(first_page == second_page){
-        mprotect((void*)(first_page), page_size, PROT_READ);
-    }else{
-        mprotect((void*)(first_page), page_size, PROT_READ);
-        mprotect((void*)(second_page), page_size, PROT_READ);
-    }
 }
 
 int got_hook(char *func_name,unsigned long func_addr)
