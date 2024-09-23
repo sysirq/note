@@ -129,6 +129,29 @@ unsigned long get_prog_load_offset()
     return self_prog_entry - self_exe_entry;
 }
 
+static void update_got_entry(unsigned long addr,unsigned long entry)
+{
+    size_t page_size = sysconf(_SC_PAGESIZE);
+    unsigned long first_page  = addr & (~((unsigned long) (page_size-1)));
+    unsigned long second_page = (addr+sizeof(entry)) & (~((unsigned long)(page_size-1)));
+
+    if(first_page == second_page){
+        mprotect((void*)(first_page), page_size, PROT_READ|PROT_WRITE);
+    }else{
+        mprotect((void*)(first_page), page_size, PROT_READ|PROT_WRITE);
+        mprotect((void*)(second_page), page_size, PROT_READ|PROT_WRITE);
+    }
+
+    *(unsigned long*)(addr) = entry;
+
+    if(first_page == second_page){
+        mprotect((void*)(first_page), page_size, PROT_READ);
+    }else{
+        mprotect((void*)(first_page), page_size, PROT_READ);
+        mprotect((void*)(second_page), page_size, PROT_READ);
+    }
+}
+
 int got_hook(char *func_name,unsigned long func_addr)
 {
     Elf_Phdr *phdr = NULL;
@@ -244,7 +267,7 @@ int got_hook(char *func_name,unsigned long func_addr)
         char *name = (char*)(str_tab_addr + sym->st_name);
         
         if(strcmp(name,func_name) == 0){
-            *(unsigned long*)(load_offset + rel_table[i].r_offset) = func_addr;
+            update_got_entry(load_offset + rel_table[i].r_offset,func_addr);
             return 0;
         }
     }
