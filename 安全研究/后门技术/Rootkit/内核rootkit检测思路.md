@@ -123,7 +123,7 @@ root@vmcloud:~# bpftool prog
 	btf_id 123
 ```
 
-
+然后通过`lsof | grep bpf`定位到大概的pid
 
 # 其他检查思路
 
