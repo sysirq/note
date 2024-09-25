@@ -8,6 +8,6 @@ IoT Botnet
 
 https://www.trendmicro.com/vinfo/sg/security/definition/iot-botnet
 
-Caught in the Crossfire: Defending Devices From Battling Botnets
+VPNFilter Two Years Later: Routers Still Compromised
 
-https://www.trendmicro.com/vinfo/sg/security/news/internet-of-things/caught-in-the-crossfire-defending-devices-from-battling-botnets
+https://www.trendmicro.com/en_us/research/21/a/vpnfilter-two-years-later-routers-still-compromised-.html
