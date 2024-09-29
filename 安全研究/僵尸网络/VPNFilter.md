@@ -1,4 +1,10 @@
+# C2
 
+1. Get the second-stage malware from an image file uploaded to Photobucket[.]com.
+2. If the above fails, it tries to download the image from the domain toknowall[.]com.
+3. If both fail, it starts listening to all TCP packets on the affected device to receive the IP address from a specific TCP packet sent by the attacker.
+
+If the malware does not get a valid image from previous stages, it will then enter into listening mode. This allows the attackers to regain control over infected victims if the sinkholed alternative domain does not serve a valid image.
 
 
 
