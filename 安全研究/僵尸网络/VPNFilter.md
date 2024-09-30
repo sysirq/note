@@ -40,3 +40,7 @@ https://blog.talosintelligence.com/vpnfilter-update/
 New VPNFilter malware targets at least 500K networking devices worldwide
 
 https://blog.talosintelligence.com/vpnfilter/
+
+VPNFilter 物联网僵尸网络深度分析报告
+
+https://www.6cloudtech.com/upload/default/20180821/3b9df83890935447995292156402215c.pdf
