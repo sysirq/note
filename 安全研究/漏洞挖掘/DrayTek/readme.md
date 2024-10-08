@@ -15,6 +15,10 @@
 ![image-20241008175401727](images/image-20241008175401727.png)
 
 
+# 固件下载
+
+https://fw.draytek.com.tw
+
 # 参考资料
 
 VPN设备的矛与盾
