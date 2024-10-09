@@ -24,3 +24,7 @@ https://fw.draytek.com.tw
 VPN设备的矛与盾
 
 https://drive.google.com/file/d/1z4QZctHU3XYB-X9jXiWrTGhMLJqP27ub/view?pli=1
+
+物联网终端安全入门与实践之玩转物联网固件之解密篇
+
+https://www.51cto.com/article/722261.html
