@@ -1002,3 +1002,9 @@ static void usage(process_rec *process)
 .rodata:000000000398A2BC	0000001A	C	/code/migbase/ulib/proc.c
 .rodata:000000000398E088	0000002A	C	/code/migbase/sysapi/webfilter/url_list.c
 ```
+
+# 参考资料
+
+Apache HTTPD架构分析
+
+https://blog.betamao.me/posts/2021/apache-httpd-analyze/
