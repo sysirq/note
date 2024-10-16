@@ -1,3 +1,42 @@
+# 如何确定FGT使用的Apache版本
+
+分析Apache httpd源码main.c:
+
+```c
+static void usage(process_rec *process)
+{
+......
+    ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL,
+                 "  -v                 : show version number");
+......
+}
+```
+
+```c
+#ifdef HFND_FUZZING_ENTRY_FUNCTION
+ HFND_FUZZING_ENTRY_FUNCTION(int argc, const char *const *argv)
+#else
+ int main(int argc, const char *const *argv)
+#endif
+{
+    while ((rv = apr_getopt(opt, AP_SERVER_BASEARGS, &c, &opt_arg))
+            == APR_SUCCESS) {
+        const char **new;
+                switch (c) {
+......
+       					case 'v':
+                	printf("Server version: %s\n", ap_get_server_description());
+                	printf("Server built:   %s\n", ap_get_server_built());
+                	destroy_and_exit_process(process, 0);
+......
+    if (rv != APR_EOF || opt->ind < opt->argc) {
+        usage(process);
+    }
+}
+```
+
+结合逆向
+
 # FGT源码目录
 
 ### FGT 6.4.6
