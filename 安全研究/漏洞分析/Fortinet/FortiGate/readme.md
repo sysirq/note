@@ -35,7 +35,17 @@ static void usage(process_rec *process)
 }
 ```
 
-结合逆向
+结合逆向(通过字符串"  -v                 : show version number"确定到usage函数，然后交叉引用到main函数)，就可以确定FGT使用的apache版本。
+
+### FGT 6.4.6
+
+![image-20241016105150795](images/image-20241016105150795.png)
+
+![image-20241016105221179](images/image-20241016105221179.png)
+
+### FGT 7.6.0
+
+![image-20241016105319782](images/image-20241016105319782.png)
 
 # FGT源码目录
 
