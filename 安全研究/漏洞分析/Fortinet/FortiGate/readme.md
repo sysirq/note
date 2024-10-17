@@ -49,7 +49,7 @@ static void usage(process_rec *process)
 
 # 获取Apache静态编译进来的模块
 
-可通过ap_setup_prelinked_modules去获取链接的列表，该函数会在main的前面被调用
+- 可通过ap_setup_prelinked_modules去获取链接的列表，该函数会在main的前面被调用
 
 ```c
 /* For http_main.c... */
@@ -59,6 +59,9 @@ static void usage(process_rec *process)
  */
 AP_DECLARE(const char *) ap_setup_prelinked_modules(process_rec *process);
 ```
+
+- 可通过版本号/模块文件名/魔数等关键常量定位到module结构
+
 
 # FGT源码目录
 
