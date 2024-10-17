@@ -47,6 +47,19 @@ static void usage(process_rec *process)
 
 ![image-20241016105319782](images/image-20241016105319782.png)
 
+# 获取Apache静态编译进来的模块
+
+可通过ap_setup_prelinked_modules去获取链接的列表，该函数会在main的前面被调用
+
+```c
+/* For http_main.c... */
+/**
+ * Add all of the prelinked modules into the loaded module list
+ * @param process The process that is currently running the server
+ */
+AP_DECLARE(const char *) ap_setup_prelinked_modules(process_rec *process);
+```
+
 # FGT源码目录
 
 ### FGT 6.4.6
