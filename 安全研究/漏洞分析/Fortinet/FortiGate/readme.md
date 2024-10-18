@@ -1036,3 +1036,7 @@ http://www.apachetutor.org/dev/brigades
 Request Processing in Apache
 
 http://www.apachetutor.org/dev/request
+
+Developer: Apache Tutor
+
+http://www.apachetutor.org/dev/#devintro
