@@ -286,7 +286,7 @@ AP_DECLARE(const char *) ap_setup_prelinked_modules(process_rec *process);
 .rodata:015270F3	00000038	C	/code/FortiOS/fortinet/router/ZebOS-7.2/ripngd/ripngd.c
 .rodata:0155D793	0000002B	C	/code/FortiOS/fortinet/daemon/ssh/sshkey.c
 .rodata:0157C0EE	00000038	C	/code/FortiOS/fortinet/daemon/sslvpnd/http/apache_ssl.c
-.rodata:0157D788	0000002B	C	/code/FortiOS/fortinet/daemon/sslvpnd/http/
+.rodata:0157D788	0000002B	C	/code/FortiOS/fortinet/daemon/sslvpnd/http/http_core.c
 .rodata:0157FE40	00000036	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/error.c
 .rodata:01581930	0000003D	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/logindisable.c
 .rodata:01581B70	00000038	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/message.c
@@ -1024,3 +1024,15 @@ AP_DECLARE(const char *) ap_setup_prelinked_modules(process_rec *process);
 Apache HTTPD架构分析
 
 https://blog.betamao.me/posts/2021/apache-httpd-analyze/
+
+Apache处理请求步骤及过程
+
+https://www.cnblogs.com/linguoguo/p/5556043.html
+
+Introduction to Buckets and Brigades
+
+http://www.apachetutor.org/dev/brigades
+
+Request Processing in Apache
+
+http://www.apachetutor.org/dev/request
