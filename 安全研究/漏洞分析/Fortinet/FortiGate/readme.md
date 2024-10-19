@@ -1040,3 +1040,11 @@ http://www.apachetutor.org/dev/request
 Developer: Apache Tutor
 
 http://www.apachetutor.org/dev/#devintro
+
+Hook Functions in the Apache HTTP Server 2.x
+
+https://httpd.apache.org/docs/2.4/developer/hooks.html
+
+Developing modules for the Apache HTTP Server 2.4
+
+https://httpd.apache.org/docs/2.4/developer/modguide.html
