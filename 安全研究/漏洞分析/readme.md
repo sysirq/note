@@ -1,3 +1,26 @@
+# Nuclei
+
+### 代理使用
+
+
+```
+-p, -proxy string[]        list of http/socks5 proxy to use (comma separated or file input)
+```
+
+eg:
+
+```
+nuclei -l xxx.txt -t xxx.yaml -p http://192.168.1.1:8080
+```
+
+
+### 与shodan的联动
+
+```
+export SHODAN_API_KEY=xxx
+nuclei -id 'CVE-2021-26855' -uq 'vuln:CVE-2021-26855' -ue shodan
+```
+
 # 资料
 
 Running Nuclei
