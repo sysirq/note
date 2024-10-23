@@ -21,6 +21,11 @@ export SHODAN_API_KEY=xxx
 nuclei -id 'CVE-2021-26855' -uq 'vuln:CVE-2021-26855' -ue shodan
 ```
 
+### 有用的命令
+
+```
+```
+
 # 资料
 
 Running Nuclei
@@ -42,3 +47,7 @@ https://docs.projectdiscovery.io/templates/introduction
 Basic HTTP Protocol
 
 https://docs.projectdiscovery.io/templates/protocols/http/basic-http
+
+nuclei中文readme
+
+https://github.com/projectdiscovery/nuclei/blob/dev/README_CN.md
