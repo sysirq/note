@@ -2,7 +2,7 @@
 
 Running Nuclei
 
-https://docs.projectdiscovery.io/tools/nuclei/running#for-github-project
+https://docs.projectdiscovery.io/tools/nuclei/running#scan-on-internet-database
 
 nuclei模板编写总结
 
