@@ -15,3 +15,7 @@ https://www.cnblogs.com/haidragon/p/16852363.html
 Introduction to Nuclei Templates
 
 https://docs.projectdiscovery.io/templates/introduction
+
+Basic HTTP Protocol
+
+https://docs.projectdiscovery.io/templates/protocols/http/basic-http
