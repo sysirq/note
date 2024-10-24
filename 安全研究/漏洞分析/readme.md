@@ -24,6 +24,7 @@ nuclei -id 'CVE-2021-26855' -uq 'vuln:CVE-2021-26855' -ue shodan
 ### 有用的命令
 
 ```
+nuclei -id CVE-2024-8877 -stats -uc -ul 3000 -ue shodan -p socks5://127.0.0.1:1080
 ```
 
 # 资料
