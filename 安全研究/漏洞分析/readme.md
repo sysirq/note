@@ -21,6 +21,13 @@ export SHODAN_API_KEY=xxx
 nuclei -id 'CVE-2021-26855' -uq 'vuln:CVE-2021-26855' -ue shodan
 ```
 
+### 与fofa的联动
+
+```
+export FOFA_EMAIL=xxx
+export FOFA_KEY=xxx
+```
+
 ### 有用的命令
 
 ```
