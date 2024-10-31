@@ -193,3 +193,23 @@ target_link_libraries(
   ${PROJECT_NAME} libcurl.a
 )
 ```
+# 小技巧
+
+
+```
+1.动态库去掉前缀
+
+SET(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+2.去掉RPATH
+
+SET(CMAKE_SKIP_BUILD_RPATH TRUE)
+```
+
+可以到CMakeFiles/xxx.dir/link.txt 查看最终的编译命令
+
+# 资料
+
+cmake 引入第三方库（头文件目录、库目录、库文件）
+
+https://blog.csdn.net/challenglistic/article/details/129093434
