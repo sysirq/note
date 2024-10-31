@@ -213,3 +213,7 @@ SET(CMAKE_SKIP_BUILD_RPATH TRUE)
 cmake 引入第三方库（头文件目录、库目录、库文件）
 
 https://blog.csdn.net/challenglistic/article/details/129093434
+
+libcurl with mbedtls
+
+https://git.vikingsoftware.com/blog/libcurl-with-mbedtls
