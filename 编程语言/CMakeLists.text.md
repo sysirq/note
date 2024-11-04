@@ -438,3 +438,7 @@ https://blog.csdn.net/challenglistic/article/details/129093434
 libcurl with mbedtls
 
 https://git.vikingsoftware.com/blog/libcurl-with-mbedtls
+
+cmakelists循环执行
+
+https://blog.csdn.net/m0_38040006/article/details/103594543
