@@ -32,7 +32,7 @@ exit:
     return retcode;
 }
 
-int encrypt_with_rsa_public_key(char *public_key, uint8_t *input, uint32_t input_len,uint8_t *output,uint32_t output_len)
+int encrypt_with_rsa_public_key(char *public_key, uint8_t *input, uint32_t input_len,uint8_t *output,uint32_t output_buf_len,uint32_t *out_len)
 {
     int ret = 0;
     mbedtls_rsa_context *rsa;
@@ -63,8 +63,8 @@ int encrypt_with_rsa_public_key(char *public_key, uint8_t *input, uint32_t input
 
     rsa = mbedtls_pk_rsa(ctx_pk);
 
-    if(output_len < (rsa)->MBEDTLS_PRIVATE(len)){
-        DLX(0, printf("\t. output_len < rsa->len(%d)\n", (rsa)->MBEDTLS_PRIVATE(len)));
+    if(output_buf_len < (rsa)->MBEDTLS_PRIVATE(len)){
+        DLX(0, printf("\t. output_buf_len < rsa->len(%d)\n", (rsa)->MBEDTLS_PRIVATE(len)));
         goto exit;
     }
 
@@ -80,6 +80,8 @@ int encrypt_with_rsa_public_key(char *public_key, uint8_t *input, uint32_t input
         goto exit;
     }
 
+    if(out_len)
+        *out_len =  (rsa)->MBEDTLS_PRIVATE(len);
 
 exit:
     mbedtls_ctr_drbg_free(&ctr_drbg);
