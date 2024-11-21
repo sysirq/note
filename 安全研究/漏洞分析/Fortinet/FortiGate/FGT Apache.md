@@ -304,3 +304,5 @@ __int64 __fastcall sub_C13350(__int64 a1)
 .data:0000000003F41E50                 align 20h
 ```
 
+# FGT如何对URL请求进行处理呢？
+
