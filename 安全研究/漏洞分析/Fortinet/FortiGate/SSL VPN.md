@@ -146,3 +146,112 @@ tcp        0      0 :::8443                 :::*                    LISTEN      
 
 # 如何进行调试
 
+首先建立ssl连接，然后在FGT上获取处理该ssl连接的pid附加上去，最后在发送数据：
+
+```python
+import http.client
+import ssl
+import socket
+import re
+import urllib.parse
+
+HOST = "192.168.182.188"
+PORT = 8443  
+
+REQ_POST = """\
+POST %s HTTP/1.1\r
+Host: %s:%d\r
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0\r
+Content-Type: text/plain;charset=UTF-8\r
+Connection: keep-alive\r
+Content-Length: %d\r
+\r
+%s
+"""
+
+REQ_GET = """\
+GET %s HTTP/1.1\r
+Host: %s:%d\r
+Connection: keep-alive\r
+\r
+"""
+
+CIPHERS = "ECDHE-RSA-AES256-SHA@SECLEVEL=0"
+context = ssl.create_default_context()
+context.minimum_version = ssl.TLSVersion.MINIMUM_SUPPORTED
+context.set_ciphers(CIPHERS)
+context.check_hostname = False
+context.verify_mode = ssl.CERT_NONE
+
+def create_ssl_socket():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((HOST, PORT))
+    ssl_sock = context.wrap_socket(sock)
+    return ssl_sock
+
+def send_get(sock, path: str) -> bytes:
+    """Sends a GET request, returns the response."""
+    request = REQ_GET % (
+            path,
+            HOST,
+            PORT,
+    )
+    sock.sendall(request.encode())
+    return try_read_response(sock)
+
+def try_read_response(sock) -> bytes:
+    """Try to read the response header and contents. If the read() call
+    returns an empty byte array, `RuntimeError` is raised. This generally
+    indicates that the socket died.
+    """
+
+    def read_or_raise(n):
+        read = sock.read(n)
+        if not read:
+            raise RuntimeError(f"Unable to read response headers: {headers}")
+        return read
+
+    count = 0
+    max_count = 10
+    while not (headers := sock.read(1)):
+        count += 1
+        time.sleep(0.1)
+        if count == max_count:
+            raise RuntimeError(f"Unable to read response headers: {headers}")
+
+    while b"\r\n\r\n" not in headers:
+        headers += read_or_raise(100)
+
+    # TOP tier HTTP parser
+    if b"Content-Length: " in headers:
+        length = int(re.search(rb"Content-Length: ([0-9]+)", headers).group(1))
+        data = headers[headers.index(b"\r\n\r\n") + 4 :]
+        while len(data) < length:
+            data += read_or_raise(length - len(data))
+    elif b"Transfer-Encoding: chunked" in headers:
+        data = headers[headers.index(b"\r\n\r\n") + 4 :]
+        while not data.endswith(b"\r\n0\r\n\r\n"):
+            data += read_or_raise(100)
+    else:
+        raise RuntimeError(
+            f"No Content-Length / Transfer-Encoding headers: {headers}"
+        )
+    return data
+
+def send_post(sock, path: str, data: dict) -> bytes:
+    """Sends a POST request, returns the response."""
+    data = urllib.parse.urlencode(data)
+    if len(data) > 0x10000:
+        failure(f"POST data too big: {hex(len(data))}")
+    request = REQ_POST % (path, HOST, PORT, len(data), data)
+    # msg_print(request[:-0x1000])
+    sock.sendall(request.encode())
+    return try_read_response(sock)
+
+ssl_socket = create_ssl_socket()
+input("Press Enter to send the HTTP request...")
+
+ret = send_get(ssl_socket,"/remote/info")
+print(ret)
+```
+
