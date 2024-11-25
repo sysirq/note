@@ -258,3 +258,26 @@ print(ret)
 # SSL VPN module
 
 通过字符串"DYNAMIC_MODULE_LIMIT and recompile"，定位到FGT 自己实现的ap_add_module函数
+
+通过字符串我们可以看到SSL VPN有哪些模块：
+
+```
+.rodata:00000000030B2378	00000038	C	/code/FortiOS/fortinet/daemon/sslvpnd/http/apache_ssl.c
+.rodata:00000000030B32B8	00000037	C	/code/FortiOS/fortinet/daemon/sslvpnd/http/http_core.c
+.rodata:00000000030B59C8	00000036	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/error.c
+.rodata:00000000030B7218	0000003D	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/logindisable.c
+.rodata:00000000030B7340	00000038	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/message.c
+.rodata:00000000030B7378	00000038	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/mod_dir.c
+.rodata:00000000030B7440	0000003A	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/mod_image.c
+.rodata:00000000030B7480	00000039	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/mod_mime.c
+.rodata:00000000030B7788	0000003A	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/mod_proxy.c
+.rodata:00000000030B77C8	00000040	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/mod_zip_archive.c
+.rodata:00000000030BC490	0000003A	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_login.c
+.rodata:00000000030C6890	0000003B	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_tunnel.c
+.rodata:00000000030C6970	0000003C	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_tunnel2.c
+.rodata:00000000030C69B0	0000003B	C	/code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_webcgi.c
+.rodata:00000000030C7FE8	00000039	C	/code/FortiOS/fortinet/daemon/sslvpnd/proxy/proxy_html.c
+.rodata:00000000030CA400	00000039	C	/code/FortiOS/fortinet/daemon/sslvpnd/state/http_state.c
+.rodata:00000000030CCBD0	0000003C	C	/code/FortiOS/fortinet/daemon/sslvpnd/libtelnet/libtelnet.c
+```
+
