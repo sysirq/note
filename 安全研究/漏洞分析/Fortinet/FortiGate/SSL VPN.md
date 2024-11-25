@@ -376,6 +376,8 @@ name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_webcgi.c
 
 # SSL VPN /remote/info bt
 
+请求 https://192.168.182.188:8443/remote/info ，到响应生成的流程
+
 ```
 (gdb) bt
 #0  0x00000000016476b0 in ?? ()
@@ -385,10 +387,10 @@ name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_webcgi.c
 #4  0x0000000001713ad5 in ?? ()   # ap_process_http?
 #5  0x00000000017152a0 in ?? ()
 #6  0x000000000171537e in ?? ()
-#7  0x0000000001715b91 in ?? ()
-#8  0x0000000001716f42 in ?? ()
-#9  0x0000000001717236 in ?? ()
-#10 0x0000000001717919 in ?? ()
+#7  0x0000000001715b91 in ?? ()   # 
+#8  0x0000000001716f42 in ?? ()   # sub_17169B0 ，  疑似通过unix 域套节字传递 连接信息 ，然后进行后续处理
+#9  0x0000000001717236 in ?? ()		# sub_1717000 ，  疑似通过unix 域套节字传递 连接信息 ，然后进行后续处理
+#10 0x0000000001717919 in ?? ()		# sub_17175E0 ， ssl vpn main 函数
 #11 0x000000000044c88f in ?? ()
 #12 0x00000000004554ca in ?? ()
 #13 0x000000000045212c in ?? ()
