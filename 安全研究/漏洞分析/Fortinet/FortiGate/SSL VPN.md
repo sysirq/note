@@ -281,3 +281,96 @@ print(ret)
 .rodata:00000000030CCBD0	0000003C	C	/code/FortiOS/fortinet/daemon/sslvpnd/libtelnet/libtelnet.c
 ```
 
+通过脚本找到所有的SSL VPN注册的模块（magic 为：19990320 、18 ）
+
+```
+import idc
+import idaapi
+import idautils
+
+def get_string_at(ea):
+    i = 0
+    byte_array = bytearray()
+    while True:
+        b = idaapi.get_byte(ea+i)
+        if b == 0:
+            break
+        byte_array.append(b)
+        i = i + 1
+    
+    if i == 0:
+        return ""
+    return byte_array.decode('utf-8')
+ 
+
+def find_all_sequences(data, sequence):
+    sequence_length = len(sequence)
+    data_length = len(data)
+    indices = []
+    
+    position = 0
+    
+    while position < data_length:
+        position = data.find(sequence, position)
+        if position == -1:
+            break
+        indices.append(position)
+        position += 1
+    return indices
+
+start_addr = 0x0000000000400000
+end_addr   = 0x000000000F4D2EC8
+
+number_major = 19990320
+number_minor = 18
+
+number_major_bytes = number_major.to_bytes(4, byteorder='little', signed=False)
+number_minor_bytes = number_minor.to_bytes(4, byteorder='little', signed=False)
+
+search_bytes = number_major_bytes + number_minor_bytes
+
+img_data = idaapi.get_bytes(start_addr, end_addr - start_addr)
+address = find_all_sequences(img_data,search_bytes)
+
+for addr in address:
+    addr += start_addr
+    
+    module_name_addr_addr = addr + 0x10
+    module_name_addr = int.from_bytes(ida_bytes.get_bytes(module_name_addr_addr, 8),'little')
+    module_name = get_string_at(module_name_addr)
+    
+    print("module addr: ",hex(addr))
+    print("name: ",module_name)
+```
+
+output：
+
+```
+module addr:  0x42bfe00
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/http/apache_ssl.c
+module addr:  0x42bff40
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/http/http_core.c
+module addr:  0x42c0ac0
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/error.c
+module addr:  0x42c0c20
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/logindisable.c
+module addr:  0x42c0d20
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/message.c
+module addr:  0x42c0e00
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/mod_dir.c
+module addr:  0x42c0f00
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/mod_image.c
+module addr:  0x42c1000
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/mod_mime.c
+module addr:  0x42c1120
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/mod_proxy.c
+module addr:  0x42c1200
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/mod_zip_archive.c
+module addr:  0x42c1820
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_tunnel.c
+module addr:  0x42c1920
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_tunnel2.c
+module addr:  0x42c1a20
+name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_webcgi.c
+```
+
