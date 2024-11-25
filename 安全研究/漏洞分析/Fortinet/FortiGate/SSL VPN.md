@@ -387,7 +387,7 @@ name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_webcgi.c
 #4  0x0000000001713ad5 in ?? ()   # ap_process_http?
 #5  0x00000000017152a0 in ?? ()
 #6  0x000000000171537e in ?? ()
-#7  0x0000000001715b91 in ?? ()   # 
+#7  0x0000000001715b91 in ?? ()   # sub_1715A60 ，  疑似SSL相关、fgt ssl vpn 决定相关
 #8  0x0000000001716f42 in ?? ()   # sub_17169B0 ，  疑似通过unix 域套节字传递 连接信息 ，然后进行后续处理
 #9  0x0000000001717236 in ?? ()		# sub_1717000 ，  疑似通过unix 域套节字传递 连接信息 ，然后进行后续处理
 #10 0x0000000001717919 in ?? ()		# sub_17175E0 ， ssl vpn main 函数
