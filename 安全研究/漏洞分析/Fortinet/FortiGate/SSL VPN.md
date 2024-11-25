@@ -255,3 +255,6 @@ ret = send_get(ssl_socket,"/remote/info")
 print(ret)
 ```
 
+# SSL VPN module
+
+通过字符串"DYNAMIC_MODULE_LIMIT and recompile"，定位到FGT 自己实现的ap_add_module函数
