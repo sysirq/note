@@ -579,3 +579,81 @@ name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_webcgi.c
 #15 0x0000000000455061 in ?? ()
 ```
 
+# ssl vpn module 的 command_struct 
+
+```
+.rodata:000000000306C040 off_306C040     dq offset aAddtype      ; DATA XREF: .data:00000000042C1058↓o
+.rodata:000000000306C040                                         ; "AddType"
+.rodata:000000000306C048                 dq offset sub_1623270
+.rodata:000000000306C050                 dq 0
+.rodata:000000000306C058                 dd 4
+.rodata:000000000306C05C                 dd 4
+.rodata:000000000306C060                 dq offset aAMimeTypeFollo ; "a mime type followed by one or more fil"...
+.rodata:000000000306C068                 dq offset aAddencoding  ; "AddEncoding"
+.rodata:000000000306C070                 dq offset sub_16232C0
+.rodata:000000000306C078                 dq 0
+.rodata:000000000306C080                 dd 4
+.rodata:000000000306C084                 dd 4
+.rodata:000000000306C088                 dq offset aAnEncodingEGGz ; "an encoding (e.g., gzip), followed by o"...
+.rodata:000000000306C090                 dq offset aAddcharset   ; "AddCharset"
+.rodata:000000000306C098                 dq offset sub_1623310
+.rodata:000000000306C0A0                 dq 0
+.rodata:000000000306C0A8                 dd 4
+.rodata:000000000306C0AC                 dd 4
+.rodata:000000000306C0B0                 dq offset aACharsetEGIso2 ; "a charset (e.g., iso-2022-jp), followed"...
+.rodata:000000000306C0B8                 dq offset aAddlanguage  ; "AddLanguage"
+.rodata:000000000306C0C0                 dq offset sub_1623360
+.rodata:000000000306C0C8                 dq 0
+.rodata:000000000306C0D0                 dd 4
+.rodata:000000000306C0D4                 dd 4
+.rodata:000000000306C0D8                 dq offset aALanguageEGFrF ; "a language (e.g., fr), followed by one "...
+.rodata:000000000306C0E0                 dq offset aAddhandler   ; "AddHandler"
+.rodata:000000000306C0E8                 dq offset sub_16233B0
+.rodata:000000000306C0F0                 dq 0
+.rodata:000000000306C0F8                 dd 4
+.rodata:000000000306C0FC                 dd 4
+.rodata:000000000306C100                 dq offset aAHandlerNameFo ; "a handler name followed by one or more "...
+.rodata:000000000306C108                 dq offset aForcetype    ; "ForceType"
+.rodata:000000000306C110                 dq offset sub_15FE090
+.rodata:000000000306C118                 dq 40h
+.rodata:000000000306C120                 dd 4
+.rodata:000000000306C124                 dd 1
+.rodata:000000000306C128                 dq offset aAMediaType   ; "a media type"
+.rodata:000000000306C130                 dq offset aRemovehandler ; "RemoveHandler"
+.rodata:000000000306C138                 dq offset sub_1623400
+.rodata:000000000306C140                 dq 0
+.rodata:000000000306C148                 dd 4
+.rodata:000000000306C14C                 dd 3
+.rodata:000000000306C150                 dq offset aOneOrMoreFileE ; "one or more file extensions"
+.rodata:000000000306C158                 dq offset aRemoveencoding ; "RemoveEncoding"
+.rodata:000000000306C160                 dq offset sub_1623450
+.rodata:000000000306C168                 dq 0
+.rodata:000000000306C170                 dd 4
+.rodata:000000000306C174                 dd 3
+.rodata:000000000306C178                 dq offset aOneOrMoreFileE ; "one or more file extensions"
+.rodata:000000000306C180                 dq offset aRemovetype   ; "RemoveType"
+.rodata:000000000306C188                 dq offset sub_16234A0
+.rodata:000000000306C190                 dq 0
+.rodata:000000000306C198                 dd 4
+.rodata:000000000306C19C                 dd 3
+.rodata:000000000306C1A0                 dq offset aOneOrMoreFileE ; "one or more file extensions"
+.rodata:000000000306C1A8                 dq offset aSethandler   ; "SetHandler"
+.rodata:000000000306C1B0                 dq offset sub_15FE090
+.rodata:000000000306C1B8                 dq 48h
+.rodata:000000000306C1C0                 dd 4
+.rodata:000000000306C1C4                 dd 1
+.rodata:000000000306C1C8                 dq offset aAHandlerName ; "a handler name"
+.rodata:000000000306C1D0                 dq offset aTypesconfig  ; "TypesConfig"
+.rodata:000000000306C1D8                 dq offset sub_16234F0
+.rodata:000000000306C1E0                 dq 0
+.rodata:000000000306C1E8                 dd 80h
+.rodata:000000000306C1EC                 dd 1
+.rodata:000000000306C1F0                 dq offset aTheMimeTypesCo ; "the MIME types config file"
+.rodata:000000000306C1F8                 dq offset aDefaultlanguag ; "DefaultLanguage"
+.rodata:000000000306C200                 dq offset sub_15FE080
+.rodata:000000000306C208                 dq 50h
+.rodata:000000000306C210                 dd 4
+.rodata:000000000306C214                 dd 1
+.rodata:000000000306C218                 dq offset aLanguageToUseF ; "language to use for documents with no o"...
+```
+
