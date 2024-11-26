@@ -400,3 +400,154 @@ name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_webcgi.c
 #17 0x0000000000447daa in ?? ()
 ```
 
+# SSL VPN CGI 处理流程
+
+通过sslvpnd/modules/rmt_webcgi.c，我们可以定位到所有的CGI接口：
+
+```
+.data:00000000042C1A20 dword_42C1A20   dd 1310730h             ; DATA XREF: .data:00000000042C1330↑o
+.data:00000000042C1A20                                         ; .data:00000000042C13B0↑o
+.data:00000000042C1A24                 dd 12h
+.data:00000000042C1A28                 dq 0FFFFFFFFh
+.data:00000000042C1A30                 dq offset aCodeFortiosFor_602 ; "/code/FortiOS/fortinet/daemon/sslvpnd/m"...
+.data:00000000042C1A38                 dq 0
+.data:00000000042C1A40                 dq 0
+.data:00000000042C1A48                 dq 41503133h
+.data:00000000042C1A50                 dq 0
+.data:00000000042C1A58                 dq 0
+.data:00000000042C1A60                 dq 0
+.data:00000000042C1A68                 dq 0
+.data:00000000042C1A70                 dq 0
+.data:00000000042C1A78                 dq 0
+.data:00000000042C1A80                 dq offset off_42C1A00   ; "rmt-webcgi-handler"
+```
+
+```
+.data:00000000042C1A00 off_42C1A00     dq offset aRmtWebcgiHandl
+.data:00000000042C1A00                                         ; DATA XREF: .data:00000000042C1A80↓o
+.data:00000000042C1A00                                         ; "rmt-webcgi-handler"
+.data:00000000042C1A08                 dq offset sub_1663390
+```
+
+根据sub_1663390函数，可以找到url对应的处理函数：
+
+```
+.rodata:000000000306DD60 off_306DD60     dq offset key           ; DATA XREF: sub_16432F0+4A↑r
+.rodata:000000000306DD60                                         ; sub_16432F0+51↑o
+.rodata:000000000306DD68                 align 10h
+.rodata:000000000306DD70                 dq offset key
+.rodata:000000000306DD78                 align 20h
+.rodata:000000000306DD80                 dq offset key
+.rodata:000000000306DD88                 align 10h
+.rodata:000000000306DD90                 dq offset key
+.rodata:000000000306DD98                 align 20h
+.rodata:000000000306DDA0                 dq offset aInfo         ; "info"
+.rodata:000000000306DDA8                 dq offset sub_16476B0
+.rodata:000000000306DDB0                 dq offset aLogin_2      ; "login"
+.rodata:000000000306DDB8                 dq offset sub_1649700
+.rodata:000000000306DDC0                 dq offset aTool         ; "tool"
+.rodata:000000000306DDC8                 dq offset sub_16621F0
+.rodata:000000000306DDD0                 dq offset aPortal       ; "portal"
+.rodata:000000000306DDD8                 dq offset sub_165E340
+.rodata:000000000306DDE0                 dq offset aLogout_0     ; "logout"
+.rodata:000000000306DDE8                 dq offset sub_164F870
+.rodata:000000000306DDF0                 dq offset aNetwork      ; "network"
+.rodata:000000000306DDF8                 dq offset sub_1658140
+.rodata:000000000306DE00                 dq offset aRemoteLogoutok+8 ; "logoutok"
+.rodata:000000000306DE08                 dq offset sub_164FD50
+.rodata:000000000306DE10                 dq offset aRemoteNetworkD+8 ; "network/del"
+.rodata:000000000306DE18                 dq offset sub_1650610
+.rodata:000000000306DE20                 dq offset aFabricLoginche+8 ; "logincheck"
+.rodata:000000000306DE28                 dq offset sub_164DFA0
+.rodata:000000000306DE30                 dq offset aNetworkLogin ; "network/login"
+.rodata:000000000306DE38                 dq offset sub_1651FD0
+.rodata:000000000306DE40                 dq offset aLicensecheck ; "licensecheck"
+.rodata:000000000306DE48                 dq offset sub_1647CC0
+.rodata:000000000306DE50                 dq offset aRemoteSamlLogi+8 ; "saml/login"
+.rodata:000000000306DE58                 dq offset sub_161D260
+.rodata:000000000306DE60                 dq offset aRemoteNetworkL+8 ; "network/logout"
+.rodata:000000000306DE68                 dq offset sub_1652850
+.rodata:000000000306DE70                 dq offset aSamlStart    ; "saml/start"
+.rodata:000000000306DE78                 dq offset sub_161EA00
+.rodata:000000000306DE80                 dq offset aSamlLogout+1 ; "saml/logout"
+.rodata:000000000306DE88                 dq offset sub_161E700
+.rodata:000000000306DE90                 dq offset aMaxForwards+9 ; "rds"
+.rodata:000000000306DE98                 dq offset sub_165FD40
+.rodata:000000000306DEA0                 dq offset aRmtEmpty     ; "rmt_empty"
+.rodata:000000000306DEA8                 dq offset sub_1638580
+.rodata:000000000306DEB0                 dq offset aLoginredir   ; "loginredir"
+.rodata:000000000306DEB8                 dq offset sub_164F550
+.rodata:000000000306DEC0                 dq offset aPortalBookmark_0 ; "portal/bookmarks"
+.rodata:000000000306DEC8                 dq offset sub_16377B0
+.rodata:000000000306DED0                 dq offset aSslvpnSsoJs  ; "sslvpn_sso.js"
+.rodata:000000000306DED8                 dq offset sub_16612F0
+.rodata:000000000306DEE0                 dq offset aRemoteNetworkM+8 ; "network/mkdir"
+.rodata:000000000306DEE8                 dq offset sub_1653170
+.rodata:000000000306DEF0                 dq offset aLoginexpire  ; "loginexpire"
+.rodata:000000000306DEF8                 dq offset sub_164EFE0
+.rodata:000000000306DF00                 dq offset aLogindisable+1 ; "logindisable"
+.rodata:000000000306DF08                 dq offset sub_164EA50
+.rodata:000000000306DF10                 dq offset aRemoteSslvpnSu+8 ; "sslvpn_support.js"
+.rodata:000000000306DF18                 dq offset sub_16619C0
+.rodata:000000000306DF20                 dq offset aRemoteNetworkR+8 ; "network/rename"
+.rodata:000000000306DF28                 dq offset sub_1653CB0
+.rodata:000000000306DF30                 dq offset aFortisslvpn  ; "fortisslvpn"
+.rodata:000000000306DF38                 dq offset sub_163CB60
+.rodata:000000000306DF40                 dq offset aError_1      ; "error"
+.rodata:000000000306DF48                 dq offset sub_1639100
+.rodata:000000000306DF50                 dq offset aRemoteHostchec_0+8 ; "hostcheck_install"
+.rodata:000000000306DF58                 dq offset sub_1644150
+.rodata:000000000306DF60                 dq offset aRemoteNetworkU+8 ; "network/upload"
+.rodata:000000000306DF68                 dq offset sub_1654C20
+.rodata:000000000306DF70                 dq offset aFortisslvpnXml ; "fortisslvpn_xml"
+.rodata:000000000306DF78                 dq offset sub_163E1E0
+.rodata:000000000306DF80                 dq offset aNetworkDownloa ; "network/download"
+.rodata:000000000306DF88                 dq offset sub_1651040
+.rodata:000000000306DF90                 dq offset aSamlAuthId   ; "saml/auth_id"
+.rodata:000000000306DF98                 dq offset sub_161CD50
+.rodata:000000000306DFA0                 dq offset aHttpsSSamlLogi+0Bh ; "saml/login/"
+.rodata:000000000306DFA8                 dq offset sub_161D260
+.rodata:000000000306DFB0                 dq offset aSamlLogout_1 ; "saml/logout/"
+.rodata:000000000306DFB8                 dq offset sub_161E700
+.rodata:000000000306DFC0                 dq offset aSamlAuthId_0 ; "saml/auth_id/"
+.rodata:000000000306DFC8                 dq offset sub_161CD50
+.rodata:000000000306DFD0                 dq offset aWebService   ; "web_service"
+.rodata:000000000306DFD8                 dq offset sub_16645E0
+.rodata:000000000306DFE0                 dq offset aHostcheckSw  ; "hostcheck_sw"
+.rodata:000000000306DFE8                 dq offset sub_1645590
+.rodata:000000000306DFF0                 dq offset aSIsNotFoundInC+13h ; "cookie"
+.rodata:000000000306DFF8                 dq offset sub_16382B0
+.rodata:000000000306E000                 dq offset aRemoteLogincon+8 ; "loginconfirm"
+.rodata:000000000306E008                 dq offset sub_1649CB0
+.rodata:000000000306E010                 dq offset aFgtLang      ; "fgt_lang"
+.rodata:000000000306E018                 dq offset sub_16399B0
+.rodata:000000000306E020                 dq offset key
+.rodata:000000000306E028                 align 10h
+.rodata:000000000306E030                 dq offset key
+.rodata:000000000306E038                 align 20h
+.rodata:000000000306E040                 dq offset aRemoteHostchec_1+8 ; "hostcheck_validate"
+.rodata:000000000306E048                 dq offset sub_1646A90
+.rodata:000000000306E050                 dq offset key
+.rodata:000000000306E058                 align 20h
+.rodata:000000000306E060                 dq offset key
+.rodata:000000000306E068                 align 10h
+.rodata:000000000306E070                 dq offset key
+.rodata:000000000306E078                 align 20h
+.rodata:000000000306E080                 dq offset key
+.rodata:000000000306E088                 align 10h
+.rodata:000000000306E090                 dq offset key
+.rodata:000000000306E098                 align 20h
+.rodata:000000000306E0A0                 dq offset key
+.rodata:000000000306E0A8                 align 10h
+.rodata:000000000306E0B0                 dq offset aHostcheckPerio ; "hostcheck_periodic"
+.rodata:000000000306E0B8                 dq offset sub_1646A90
+.rodata:000000000306E0C0                 dq offset key
+.rodata:000000000306E0C8                 align 10h
+.rodata:000000000306E0D0                 dq offset key
+.rodata:000000000306E0D8                 align 20h
+.rodata:000000000306E0E0                 dq offset key
+.rodata:000000000306E0E8                 align 10h
+.rodata:000000000306E0F0                 dq offset aFortisslvpnSsl ; "fortisslvpn/sslvpn_installer"
+.rodata:000000000306E0F8                 dq offset sub_1642F70
+```
+
