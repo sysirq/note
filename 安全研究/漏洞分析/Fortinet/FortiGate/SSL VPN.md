@@ -551,3 +551,10 @@ name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_webcgi.c
 .rodata:000000000306E0F8                 dq offset sub_1642F70
 ```
 
+通过分析ap_invoke_handler函数，发送request的handler也为rmt-webcgi-handler
+
+```
+(gdb) x /s *(long*)($rdi+328)    
+0x7f0710ba43b0:	"rmt-webcgi-handler"
+```
+
