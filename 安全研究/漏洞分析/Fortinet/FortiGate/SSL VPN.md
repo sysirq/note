@@ -757,7 +757,7 @@ __int64 __fastcall sub_1715180(__int64 a1, char a2)
       v5 = a1 + 32 * (v4 + 6LL);
       if ( (*(_BYTE *)(v5 + 16) & 2) != 0 )
       {
-        result = sub_1713A40(a1, v4, 1u);   
+        result = sub_1713A40(a1, v4, 1u);    // 喵喵喵喵 ，重点函数
         if ( (_DWORD)result )
           goto LABEL_23;
         *(_BYTE *)(v5 + 16) &= 0xFDu;
@@ -765,7 +765,7 @@ __int64 __fastcall sub_1715180(__int64 a1, char a2)
       v6 = a1 + 32 * (v4 + 6LL);
       if ( (*(_BYTE *)(v6 + 16) & 4) != 0 )
       {
-        result = sub_1713A40(a1, v4, 0);
+        result = sub_1713A40(a1, v4, 0);    // 喵喵喵喵 ，重点函数
         if ( (_DWORD)result )
         {
 LABEL_23:
@@ -901,7 +901,7 @@ LABEL_66:
   sub_2902A70(a3);
   if ( v9 )
   {
-    v11 = *(__int64 (__fastcall **)(__int64))(32LL * a2 + v27 + 32);
+    v11 = *(__int64 (__fastcall **)(__int64))(32LL * a2 + v27 + 32);  // 喵喵喵喵 ，重点函数
     if ( !v11 )
       return 0xFFFFFFFFLL;
     v9 = v11(a1);
@@ -918,7 +918,7 @@ LABEL_66:
   }
   else
   {
-    v14 = *(__int64 (__fastcall **)(__int64, __int64, __int64, __int64))(32LL * a2 + v27 + 40);
+    v14 = *(__int64 (__fastcall **)(__int64, __int64, __int64, __int64))(32LL * a2 + v27 + 40); // 喵喵喵喵 ，重点函数
     if ( !v14 )
       return 0xFFFFFFFFLL;
     v9 = v14(a1, v6, v10, v27);
