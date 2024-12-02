@@ -657,7 +657,7 @@ name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_webcgi.c
 .rodata:000000000306C218                 dq offset aLanguageToUseF ; "language to use for documents with no o"...
 ```
 
-# 疑似状态SSL 连接处理过程中的状态转换的东西
+# 疑似处理SSL 连接过程中的状态转换的代码
 
 通过字符串“read_client_block”的引用的引用可以找到sub_1724B60函数:
 
