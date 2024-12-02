@@ -1,3 +1,7 @@
+# 版本
+
+以下分析基于:FGT 7.2.0 VM 版本
+
 # Linux 进程之间通过UNIX 域套接字传递文件描述符
 
 通过Linux 内核中的辅助消息（Ancillary Message）机制，辅助消息（Ancillary Message）是 Linux 套接字子系统的一种扩展机制，允许通过套接字发送除普通数据之外的元信息。例如，文件描述符传递和进程身份信息（PID、UID、GID）传递就是通过辅助消息实现的。
