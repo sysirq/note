@@ -823,7 +823,7 @@ sub_1713A40 函数，通过
 2327: 2024-12-01 22:56:53 <00223> [0x01713ad5] => /bin/sslvpnd  
 ```
 
-对read_post_data 函数的调用
+实现对read_post_data 函数的调用
 
 
 
