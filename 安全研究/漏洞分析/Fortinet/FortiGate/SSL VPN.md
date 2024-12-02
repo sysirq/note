@@ -718,3 +718,317 @@ void sub_1724B60()
 }
 ```
 
+
+
+在sub_1715180函数中，疑似通过连接是否可读或者写，通过指定的参数调用sub_1713A40函数（可以看到代码通过测试，用不同的参数对sub_1713A40进行了调用），进行连接处理。
+
+```c
+__int64 __fastcall sub_1715180(__int64 a1, char a2)
+{
+  __int64 v2; // rax
+  __int64 result; // rax
+  int v4; // er14
+  __int64 v5; // r12
+  __int64 v6; // rbx
+  __int64 v7; // rsi
+  __int64 v8; // rdx
+  __int64 (__fastcall *v9)(__int64); // rax
+  __int64 v10; // rax
+
+  v2 = qword_BBA80C0;
+  if ( qword_BBA80C0 - 1000 - *(_QWORD *)(a1 + 984) >= 0 )
+  {
+    sub_166BB70();
+    v2 = qword_BBA80C0;
+  }
+  if ( v2 - (unsigned int)(*(_DWORD *)(a1 + 912) + 1000) >= 0 )
+  {
+    sub_166BE70(a1);
+    v2 = qword_BBA80C0;
+  }
+  if ( v2 - (unsigned int)(*(_DWORD *)(a1 + 936) + 12000) >= 0 )
+    sub_162B390(a1);
+  if ( !a2 || (result = sub_162AA90(a1), (int)result >= 0) )
+  {
+    v4 = 0;
+    result = sub_1722770(a1);
+    do
+    {
+      v5 = a1 + 32 * (v4 + 6LL);
+      if ( (*(_BYTE *)(v5 + 16) & 2) != 0 )
+      {
+        result = sub_1713A40(a1, v4, 1u);   
+        if ( (_DWORD)result )
+          goto LABEL_23;
+        *(_BYTE *)(v5 + 16) &= 0xFDu;
+      }
+      v6 = a1 + 32 * (v4 + 6LL);
+      if ( (*(_BYTE *)(v6 + 16) & 4) != 0 )
+      {
+        result = sub_1713A40(a1, v4, 0);
+        if ( (_DWORD)result )
+        {
+LABEL_23:
+          v10 = *(_QWORD *)(a1 + 664);
+          if ( v10 )
+          {
+            v9 = *(__int64 (__fastcall **)(__int64))(v10 + 136);
+            if ( v9 )
+              return v9(a1);
+          }
+          return sub_1713E80(a1);
+        }
+        *(_BYTE *)(v6 + 16) &= 0xFBu;
+      }
+      ++v4;
+    }
+    while ( v4 != 5 );
+    v7 = *(_QWORD *)(a1 + 664);
+    if ( v7 )
+    {
+      v8 = *(_QWORD *)(v7 + 112);
+      if ( v8 )
+      {
+        result = v7 + 96;
+        if ( v8 != v7 + 96 )
+        {
+          v9 = *(__int64 (__fastcall **)(__int64))(v8 + 200);
+          if ( v9 )
+            return v9(a1);
+          result = sub_1713400(a1, v7, v8);
+        }
+      }
+    }
+  }
+  return result;
+}
+```
+
+sub_1713A40 函数，通过
+
+```
+    v11 = *(__int64 (__fastcall **)(__int64))(32LL * a2 + v27 + 32);
+    if ( !v11 )
+```
+
+调用sub_1724B60注册的函数，如：
+
+```
+  sub_1724730((__int64 *)a2, "send_expect_100", 0, 4, (__int64)sub_171A4B0);
+  sub_1724730((__int64 *)a2, "read_post_data", 0, 1, (__int64)sub_171A510);
+```
+
+```
+2326: 2024-12-01 22:56:53 <00223> [0x0171a602] => /bin/sslvpnd  
+2327: 2024-12-01 22:56:53 <00223> [0x01713ad5] => /bin/sslvpnd  
+```
+
+
+
+对read_post_data 函数的调用
+
+
+
+```c
+__int64 __fastcall sub_1713A40(__int64 a1, int a2, unsigned int a3)
+{
+  char v4; // al
+  __int64 v5; // r13
+  __int64 v6; // rsi
+  __int64 v7; // rcx
+  __int64 v8; // r14
+  unsigned int v9; // ebx
+  __int64 v10; // rdx
+  __int64 (__fastcall *v11)(__int64); // rax
+  char v12; // al
+  __int64 result; // rax
+  __int64 (__fastcall *v14)(__int64, __int64, __int64, __int64); // rax
+  __int64 v15; // rcx
+  __int64 j; // rax
+  __int64 *v17; // rax
+  __int64 v18; // rcx
+  __int64 i; // rax
+  __int64 v20; // rcx
+  __int64 k; // rax
+  __int64 *v22; // rax
+  __int64 v23; // rcx
+  __int64 l; // rax
+  __int64 v25; // rcx
+  __int64 m; // rax
+  __int64 v27; // [rsp+8h] [rbp-38h]
+
+  v4 = *(_BYTE *)(a1 + 1143);
+  v5 = *(_QWORD *)(a1 + 664);
+  v6 = v4 & 0x20;
+  if ( !v5 || (v7 = *(_QWORD *)(v5 + 112)) == 0 || (v8 = v5 + 96, v5 + 96 == v7) )
+  {
+    if ( !(_BYTE)v6 )
+    {
+      if ( (v4 & 0x40) == 0 )
+      {
+LABEL_19:
+        if ( (int)sub_17136C0(a1, v5) < 0 )
+        {
+          if ( !sub_17050F0(a1) )
+          {
+            sub_17050D0(a1);
+            return 1LL;
+          }
+        }
+        else if ( !sub_17050F0(a1) )
+        {
+          return sub_1713720(a1);
+        }
+        return 1LL;
+      }
+      return sub_1713720(a1);
+    }
+    goto LABEL_66;
+  }
+  v9 = a3;
+  if ( a2 < 0 )
+  {
+    if ( !(_BYTE)v6 )
+    {
+      v12 = v4 & 0x40;
+      goto LABEL_15;
+    }
+LABEL_66:
+    *(_BYTE *)(a1 + 1140) |= 0x80u;
+    return 0xFFFFFFFFLL;
+  }
+  if ( (_BYTE)v6 )
+    goto LABEL_66;
+  v27 = *(_QWORD *)(v5 + 112);
+  sub_2902A70(a3);
+  if ( v9 )
+  {
+    v11 = *(__int64 (__fastcall **)(__int64))(32LL * a2 + v27 + 32);
+    if ( !v11 )
+      return 0xFFFFFFFFLL;
+    v9 = v11(a1);
+    v12 = *(_BYTE *)(a1 + 1143) & 0x40;
+    if ( !v9 )
+    {
+      if ( v12 )
+        goto LABEL_10;
+      *(_DWORD *)(v27 + 32LL * a2 + 16) = sub_1713990(a1, (unsigned int)a2, 1LL);
+      if ( (*(_BYTE *)(a1 + 1143) & 0x40) != 0 )
+        return sub_1713720(a1);
+      return 0LL;
+    }
+  }
+  else
+  {
+    v14 = *(__int64 (__fastcall **)(__int64, __int64, __int64, __int64))(32LL * a2 + v27 + 40);
+    if ( !v14 )
+      return 0xFFFFFFFFLL;
+    v9 = v14(a1, v6, v10, v27);
+    v12 = *(_BYTE *)(a1 + 1143) & 0x40;
+    if ( v12 )
+    {
+LABEL_10:
+      if ( v9 == 7 )
+        return 0xFFFFFFFFLL;
+      return sub_1713720(a1);
+    }
+    if ( !v9 )
+    {
+      *(_DWORD *)(v27 + 32LL * a2 + 20) = sub_1713990(a1, (unsigned int)a2, 0LL);
+      if ( (*(_BYTE *)(a1 + 1143) & 0x40) != 0 )
+        return sub_1713720(a1);
+      return 0LL;
+    }
+  }
+LABEL_15:
+  if ( v12 )
+    goto LABEL_10;
+  switch ( v9 )
+  {
+    case 0u:
+      return v9;
+    case 1u:
+      v18 = *(_QWORD *)(*(_QWORD *)(v5 + 112) + 8LL);
+      if ( v18 == v8 )
+        return 0xFFFFFFFFLL;
+      for ( i = 0LL; i != 40; i += 8LL )
+      {
+        if ( *(_QWORD *)(a1 + i + 616) )
+        {
+          *(_DWORD *)(v18 + 4 * i + 16) = *(_DWORD *)(v18 + 4 * i + 24);
+          *(_DWORD *)(v18 + 4 * i + 20) = *(_DWORD *)(v18 + 4 * i + 28);
+        }
+      }
+      *(_QWORD *)(v5 + 112) = *(_QWORD *)(*(_QWORD *)(v5 + 112) + 8LL);
+      return 0LL;
+    case 2u:
+      v22 = *(__int64 **)(v5 + 112);
+      goto LABEL_46;
+    case 3u:
+      v17 = *(__int64 **)(v5 + 112);
+      goto LABEL_40;
+    case 4u:
+      v15 = **(_QWORD **)(v5 + 112);
+      if ( v15 == v8 )
+        goto LABEL_19;
+      for ( j = 0LL; j != 40; j += 8LL )
+      {
+        if ( *(_QWORD *)(a1 + j + 616) )
+        {
+          *(_DWORD *)(v15 + 4 * j + 16) = *(_DWORD *)(v15 + 4 * j + 24);
+          *(_DWORD *)(v15 + 4 * j + 20) = *(_DWORD *)(v15 + 4 * j + 28);
+        }
+      }
+      v17 = **(__int64 ***)(v5 + 112);
+      *(_QWORD *)(v5 + 112) = v17;
+LABEL_40:
+      v20 = *v17;
+      if ( *v17 == v8 )
+        goto LABEL_19;
+      for ( k = 0LL; k != 40; k += 8LL )
+      {
+        if ( *(_QWORD *)(a1 + k + 616) )
+        {
+          *(_DWORD *)(v20 + 4 * k + 16) = *(_DWORD *)(v20 + 4 * k + 24);
+          *(_DWORD *)(v20 + 4 * k + 20) = *(_DWORD *)(v20 + 4 * k + 28);
+        }
+      }
+      v22 = **(__int64 ***)(v5 + 112);
+      *(_QWORD *)(v5 + 112) = v22;
+LABEL_46:
+      v23 = *v22;
+      if ( *v22 == v8 )
+        goto LABEL_19;
+      for ( l = 0LL; l != 40; l += 8LL )
+      {
+        if ( *(_QWORD *)(a1 + l + 616) )
+        {
+          *(_DWORD *)(v23 + 4 * l + 16) = *(_DWORD *)(v23 + 4 * l + 24);
+          *(_DWORD *)(v23 + 4 * l + 20) = *(_DWORD *)(v23 + 4 * l + 28);
+        }
+      }
+      *(_QWORD *)(v5 + 112) = **(_QWORD **)(v5 + 112);
+      result = 0LL;
+      break;
+    case 5u:
+      v25 = *(_QWORD *)(v5 + 112);
+      if ( v25 && v8 == v25 )
+        v25 = 0LL;
+      for ( m = 0LL; m != 40; m += 8LL )
+      {
+        if ( *(_QWORD *)(a1 + m + 616) )
+        {
+          *(_DWORD *)(v25 + 4 * m + 16) = *(_DWORD *)(v25 + 4 * m + 24);
+          *(_DWORD *)(v25 + 4 * m + 20) = *(_DWORD *)(v25 + 4 * m + 28);
+        }
+      }
+      return 0LL;
+    case 6u:
+      goto LABEL_19;
+    default:
+      return 0xFFFFFFFFLL;
+  }
+  return result;
+}
+```
+
