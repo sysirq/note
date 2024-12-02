@@ -657,3 +657,60 @@ name:  /code/FortiOS/fortinet/daemon/sslvpnd/modules/rmt_webcgi.c
 .rodata:000000000306C218                 dq offset aLanguageToUseF ; "language to use for documents with no o"...
 ```
 
+# 疑似状态SSL 连接处理过程中的状态转换的东西
+
+通过字符串“read_client_block”的引用的引用可以找到sub_1724B60函数:
+
+```c
+void sub_1724B60()
+{
+  dword_BBA8128 = 0;
+  qword_BBA8130 = (__int64)sub_1705070;
+  dword_BBA8170 = 8;
+  qword_BBA8178 = (__int64)sub_1705410;
+  dword_BBA81D0 = 4;
+  qword_BBA81D8 = (__int64)sub_1706410;
+  qword_BBA81E0 = (__int64)sub_1706480;
+  dword_BBA8230 = 15;
+  qword_BBA8238 = (__int64)sub_172C240;
+  qword_BBA8240 = (__int64)sub_172C310;
+  dword_BBA8248 = 16;
+  qword_BBA8250 = (__int64)sub_1728EE0;
+  qword_BBA8258 = (__int64)sub_1728FE0;
+  dword_BBA8188 = 6;
+  qword_BBA8190 = (__int64)sub_1712020;
+  dword_BBA81A0 = 7;
+  qword_BBA81A8 = (__int64)sub_1712F30;
+  dword_BBA8218 = 13;
+  qword_BBA8220 = (__int64)sub_1675820;
+  qword_BBA8228 = (__int64)sub_1675940;
+  dword_BBA8158 = 9;
+  qword_BBA8160 = (__int64)sub_171A6F0;
+  dword_BBA81B8 = 11;
+  qword_BBA81C0 = (__int64)sub_16A0130;
+  qword_BBA81C8 = (__int64)sub_16A01D0;
+  dword_BBA81E8 = 5;
+  qword_BBA81F0 = (__int64)sub_172E4D0;
+  dword_BBA8200 = 12;
+  qword_BBA8208 = (__int64)sub_1697F00;
+  qword_BBA8210 = (__int64)sub_16983A0;
+  dword_BBA8140 = 3;
+  qword_BBA8148 = (__int64)sub_170CC00;
+  qword_BBA8150 = (__int64)sub_170CCB0;
+  dword_BBA8260 = 17;
+  qword_BBA8268 = (__int64)sub_171A1A0;
+  qword_BBA8270 = (__int64)sub_171A200;
+  dword_BBA8278 = 18;
+  qword_BBA8280 = (__int64)sub_17354F0;
+  qword_BBA8288 = (__int64)sub_1735560;
+  dword_BBA8290 = 19;
+  qword_BBA8298 = (__int64)sub_170D1A0;
+  dword_BBA82A8 = 20;
+  qword_BBA82B0 = (__int64)sub_17387A0;
+  qword_BBA82B8 = (__int64)sub_1738890;
+  dword_BBA82C0 = 21;
+  qword_BBA82C8 = (__int64)sub_170EC00;
+  qword_BBA82D0 = (__int64)sub_170ECA0;
+}
+```
+
