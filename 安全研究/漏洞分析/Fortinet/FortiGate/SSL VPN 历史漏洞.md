@@ -2,7 +2,7 @@
 
 漏洞点：/remote/hostcheck_validate，位于对enc参数的处理过程中，会造成越界读写
 
-# CVE-20220-42475
+# CVE-2022-42475
 
 对http请求中的Content-Length中的内存分配时，会造成符号扩展，从而造成崩溃。
 
