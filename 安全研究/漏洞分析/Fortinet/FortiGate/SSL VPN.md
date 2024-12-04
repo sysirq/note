@@ -1311,7 +1311,7 @@ __int64 __fastcall sub_1714EF0(int fd, unsigned int a2)
         if ( v8 )
         {
           sub_1722230(v6);
-          sub_1714800(v8);
+          sub_1714800(v8);//设置结构体中的函数指针表，以及进行状态转换
           return 0LL;
         }
         goto LABEL_25;
