@@ -1249,5 +1249,240 @@ Breakpoint 3, 0x0000000001722890 in ?? ()
 #12 0x0000000000447daa in ?? ()
 ```
 
+sub_1714EF0 为通过Unix域套节字机制，获取父进程accpet的fd
 
+```c
+__int64 __fastcall sub_1714EF0(int fd, unsigned int a2)
+{
+  int v2; // eax
+  __int64 v4; // rbx
+  int v5; // er12
+  unsigned int v6; // er13
+  int v7; // edi
+  __int64 v8; // r12
+  unsigned int v9; // eax
+  int *v10; // rax
+  socklen_t v11; // [rsp-124h] [rbp-12Ch] BYREF
+  __int128 v12; // [rsp-120h] [rbp-128h] BYREF
+  struct msghdr v13; // [rsp-110h] [rbp-118h] BYREF
+  _QWORD v14[2]; // [rsp-D0h] [rbp-D8h] BYREF
+  struct sockaddr v15[8]; // [rsp-C0h] [rbp-C8h] BYREF
+  _QWORD v16[9]; // [rsp-40h] [rbp-48h] BYREF
+
+  v16[3] = __readfsqword(0x28u);
+  v12 = 0LL;
+  v13.msg_control = v16;
+  v14[0] = &v12;
+  *(_QWORD *)&v13.msg_flags = 0LL;
+  v13.msg_controllen = 24LL;
+  v14[1] = 16LL;
+  v13.msg_iov = (iovec *)v14;
+  v13.msg_iovlen = 1LL;
+  *(_OWORD *)&v13.msg_name = 0LL;
+  if ( (a2 & 0x18) != 0 )
+  {
+    sub_166F020(0LL, 8LL, (__int64)"parent fd error! close child %x.\n", a2);
+    exit(1);
+  }
+  while ( recvmsg(fd, &v13, 0) <= 0 )
+  {
+    v2 = *__errno_location();
+    if ( v2 != 4 && v2 != 11 )
+      return 4294967294LL;
+  }
+  v4 = (unsigned int)v12;
+  if ( (_DWORD)v12 == 1 )
+  {
+    if ( v13.msg_controllen <= 0xF
+      || !v13.msg_control
+      || *(_QWORD *)v13.msg_control != 20LL
+      || *((_QWORD *)v13.msg_control + 1) != 0x100000001LL )
+    {
+      return 0xFFFFFFFFLL;
+    }
+    v6 = *((_DWORD *)v13.msg_control + 4);
+    if ( dword_BBA80F8 < dword_BBA8124 )
+    {
+      v11 = 128;
+      if ( getpeername(v6, v15, &v11) >= 0 )
+      {
+        v7 = v6;
+        v8 = sub_1722890(v6, (const __m128i *)v15, 0LL, 0, 0);//调用sub_1722890创建连接管理结构体，v6为父进程accept 的fd，通过Unix域套节字传递过来的，v15为客户端的地址
+        if ( v8 )
+        {
+          sub_1722230(v6);
+          sub_1714800(v8);
+          return 0LL;
+        }
+        goto LABEL_25;
+      }
+      v10 = __errno_location();
+      sub_166F020(0LL, 8LL, (__int64)"failed to get peer name %d\n", (unsigned int)*v10);
+    }
+    v7 = v6;
+LABEL_25:
+    close(v7);
+    return 0xFFFFFFFFLL;
+  }
+  if ( (_DWORD)v12 == 2 )
+  {
+    if ( v13.msg_controllen > 0xF
+      && v13.msg_control
+      && *(_QWORD *)v13.msg_control == 20LL
+      && *((_QWORD *)v13.msg_control + 1) == 0x100000001LL )
+    {
+      v5 = *((_DWORD *)v13.msg_control + 4);
+      sub_1714A00(v5);
+      close(v5);
+      return 0LL;
+    }
+    return 0xFFFFFFFFLL;
+  }
+  v9 = getpid();
+  sub_166F020(0LL, 524296LL, (__int64)"[%d] %s:%d unknown cmd %d\n", v9, "sslvpn_listenPassingFdHandler", 887LL, v4);
+  return 0xFFFFFFFFLL;
+}
+```
+
+
+
+sub_1714EF0 会调用sub_1714800
+
+
+
+sub_1714800 会调用sub_1713720，对sconn结构体中的函数指针表进行初始化，这里刚好与（疑似处理SSL 连接过程中的状态转换的代码）这一节说到的sub_1724B60函数对上了
+
+```c
+__int64 __fastcall sub_1713720(__int64 a1)
+{
+  _QWORD *v1; // r14
+  __int64 *v2; // rax
+  __int64 v3; // rcx
+  _QWORD *v4; // rdx
+  __int64 *v5; // rbx
+  unsigned int v6; // er14
+  unsigned int (__fastcall *v7)(__int64, __int64 *); // rax
+  __int64 *v8; // rax
+  __int64 (__fastcall *v9)(__int64, __int64 *); // rdx
+  int v10; // eax
+  int *v12; // rax
+  __int64 i; // rdx
+
+  while ( 1 )
+  {
+    v1 = *(_QWORD **)(a1 + 664);
+    sub_1722770(a1);
+    *(_BYTE *)(a1 + 208) &= 0xF9u;
+    *(_BYTE *)(a1 + 240) &= 0xF9u;
+    *(_BYTE *)(a1 + 272) &= 0xF9u;
+    *(_BYTE *)(a1 + 304) &= 0xF9u;
+    *(_BYTE *)(a1 + 336) &= 0xF9u;
+    sub_17243F0((_QWORD *)a1);
+    if ( v1 )
+    {
+      sub_1724800(a1, v1);
+      change_sconn_function_table(a1, 0LL);
+    }
+    v2 = *(__int64 **)(a1 + 680);
+    *(_BYTE *)(a1 + 1143) &= 0xBFu;
+    if ( v2 == (__int64 *)(a1 + 680) )
+    {
+      v6 = 1;
+      v5 = sub_17245D0(a1, (__int64)&dword_BBA8188, 0);
+    }
+    else
+    {
+      v3 = *v2;
+      v4 = (_QWORD *)v2[1];
+      v5 = v2 - 1;
+      if ( *v2 )
+        *(_QWORD *)(v3 + 8) = v4;
+      if ( v4 )
+        *v4 = v3;
+      *v2 = (__int64)v2;
+      v6 = 0;
+      v2[1] = (__int64)v2;
+    }
+    change_sconn_function_table(a1, (__int64)v5);
+    v5[6] = qword_BBA80C0;
+    if ( (unsigned int)sub_1724860((__int64)v5) )
+      break;
+    sub_1724870((__int64)v5);
+    v7 = *(unsigned int (__fastcall **)(__int64, __int64 *))(v5[7] + 8);
+    if ( v7 && v7(a1, v5) )
+    {
+      sub_166F020(a1, 8LL, (__int64)"sslStateInit error\n");
+      return 0xFFFFFFFFLL;
+    }
+    v8 = (__int64 *)v5[12];
+    if ( v8 == v5 + 12 )
+    {
+      sub_166F020(a1, 8LL, (__int64)"task empty\n");
+      return 0xFFFFFFFFLL;
+    }
+    v9 = (__int64 (__fastcall *)(__int64, __int64 *))v5[11];
+    v5[14] = (__int64)v8;
+    if ( !v9 )
+      goto LABEL_27;
+    v10 = v9(a1, v5);
+    if ( v10 == 7 )
+    {
+      sub_166F020(a1, 8LL, (__int64)"enter() returned task error.\n");
+      return 0xFFFFFFFFLL;
+    }
+    if ( v10 == 6 )
+    {
+      if ( (int)sub_17136C0(a1, (__int64)v5) < 0 )
+      {
+        sub_166F020(a1, 8LL, (__int64)"sslStateDoFinish error\n");
+        return 0xFFFFFFFFLL;
+      }
+      v12 = (int *)v5[7];
+      if ( v6 || v12 == &dword_BBA8128 )
+      {
+        sub_166F020(
+          a1,
+          8LL,
+          (__int64)"%s:%d error (last state: %d, closeOp: %d)\n",
+          "sslConnGotoNextState",
+          311LL,
+          v6,
+          v12 == &dword_BBA8128);
+        return 0xFFFFFFFFLL;
+      }
+    }
+    else
+    {
+      if ( (*(_BYTE *)(a1 + 1143) & 0x40) == 0 )
+        break;
+      if ( v6 )
+      {
+        sub_166F020(a1, 8LL, (__int64)"http request enter error!.\n");
+        return 0xFFFFFFFFLL;
+      }
+    }
+  }
+  v8 = (__int64 *)v5[14];
+LABEL_27:
+  for ( i = 0LL; i != 20; i += 4LL )
+  {
+    if ( *(_QWORD *)(a1 + i * 2 + 616) )
+    {
+      LODWORD(v8[i + 2]) = v8[i + 3];
+      HIDWORD(v8[i + 2]) = HIDWORD(v8[i + 3]);
+    }
+  }
+  return 0LL;
+}
+```
+
+
+
+
+
+FGT用于管理连接的结构体的结构：
+
+```
+*(_DWORD *)(v8 + 184) = a1; //client的fd
+```
 
