@@ -1029,3 +1029,225 @@ LABEL_46:
   return result;
 }
 ```
+
+# 连接处理相关流程分析
+
+sslvpnd中，存在自己的事件循环处理机制，也存在自己的用来管理连接的结构体：
+
+根据“allocSSLConn”字符串 ， 可以找到sub_1722890 函数
+
+```c
+__int64 __fastcall sub_1722890(unsigned int a1, const __m128i *a2, __int64 a3, char a4, int a5)
+{
+  __int64 v7; // rax
+  __int64 v8; // r12
+  __int64 v9; // rcx
+  __int64 *v10; // rax
+  __int64 v11; // rdi
+  __m128i v12; // xmm0
+  __m128i v13; // xmm1
+  __m128i v14; // xmm2
+  __m128i v15; // xmm3
+  __m128i v16; // xmm4
+  __m128i v17; // xmm5
+  __m128i v18; // xmm6
+  __m128i v19; // xmm7
+  __int64 v20; // rdi
+  __int64 v21; // rax
+  unsigned int v22; // edx
+  int v23; // eax
+  unsigned __int64 v24; // rax
+  bool v25; // al
+  char v26; // al
+  __int64 v28; // rdi
+  __int64 v29; // rax
+  int *v30; // rax
+  char *v31; // rax
+  __int64 v32; // rdi
+
+  v7 = je_calloc(1LL, a5 + 1152LL);
+  v8 = v7;
+  if ( !v7 )
+    return v8;
+  if ( a3 )
+  {
+    *(_DWORD *)(v7 + 144) = *(_DWORD *)(a3 + 200);
+    *(_BYTE *)(v7 + 148) = *(_BYTE *)(a3 + 204);
+  }
+  else if ( (int)sub_2846F50(a1, v7 + 144, v7 + 148) < 0 )
+  {
+    v30 = __errno_location();
+    v31 = strerror(*v30);
+    sub_166F020(0LL, 8LL, (__int64)"%s:%d get_ervf_vrf_id() failed: %s\n", "allocSSLConn", 214LL, v31);
+    v32 = v8;
+    v8 = 0LL;
+    je_free(v32);
+    return v8;
+  }
+  v9 = v8 + 40;
+  *(_DWORD *)(v8 + 184) = a1;
+  *(_QWORD *)(v8 + 8) = v8 + 8;
+  *(_QWORD *)(v8 + 16) = v8 + 8;
+  *(_QWORD *)(v8 + 24) = v8 + 24;
+  *(_QWORD *)(v8 + 32) = v8 + 24;
+  *(_QWORD *)(v8 + 680) = v8 + 680;
+  *(_QWORD *)(v8 + 688) = v8 + 680;
+  *(_QWORD *)(v8 + 72) = v8 + 72;
+  *(_QWORD *)(v8 + 80) = v8 + 72;
+  *(_DWORD *)(v8 + 216) = -1;
+  *(_DWORD *)(v8 + 248) = -1;
+  *(_DWORD *)(v8 + 280) = -1;
+  *(_DWORD *)(v8 + 312) = -1;
+  *(_QWORD *)(v8 + 192) = sub_17143B0;
+  *(_QWORD *)(v8 + 224) = sub_17143B0;
+  *(_QWORD *)(v8 + 256) = sub_17143B0;
+  *(_QWORD *)(v8 + 288) = sub_17143B0;
+  *(_QWORD *)(v8 + 320) = sub_17143B0;
+  *(_QWORD *)(v8 + 40) = v8 + 40;
+  *(_QWORD *)(v8 + 48) = v8 + 40;
+  *(_QWORD *)(v8 + 88) = v8 + 88;
+  *(_QWORD *)(v8 + 96) = v8 + 88;
+  *(_QWORD *)(v8 + 752) = 0LL;
+  *(_QWORD *)(v8 + 760) = 1LL;
+  *(_QWORD *)(v8 + 112) = 0LL;
+  *(_QWORD *)(v8 + 120) = 1LL;
+  *(_QWORD *)(v8 + 128) = 0LL;
+  *(_QWORD *)(v8 + 136) = 1LL;
+  *(_QWORD *)(v8 + 792) = 0LL;
+  *(_QWORD *)(v8 + 800) = 1LL;
+  if ( a4 )
+  {
+    *(_BYTE *)(v8 + 1144) |= 2u;
+    *(_QWORD *)(v8 + 1032) = 0LL;
+    *(_QWORD *)(v8 + 1040) = 1LL;
+  }
+  else
+  {
+    sub_1704600((__int64 *)v8, a1, (__int64)a2);
+    *(_QWORD *)(v8 + 616) = *(_QWORD *)(v8 + 720);
+    sub_1713030(v8);
+    v9 = v8 + 40;
+  }
+  v10 = (__int64 *)qword_BBA80F0;
+  qword_BBA80F0 = v9;
+  *(_QWORD *)(v8 + 40) = &qword_BBA80E8;
+  *(_QWORD *)(v8 + 48) = v10;
+  *v10 = v9;
+  v11 = *(unsigned int *)(v8 + 144);
+  ++dword_BBA80F8;
+  sub_27D82A0(v11);
+  v12 = _mm_loadu_si128(a2);
+  v13 = _mm_loadu_si128(a2 + 1);
+  v14 = _mm_loadu_si128(a2 + 2);
+  v15 = _mm_loadu_si128(a2 + 3);
+  *(_DWORD *)(v8 + 820) = -1;
+  v16 = _mm_loadu_si128(a2 + 4);
+  v17 = _mm_loadu_si128(a2 + 5);
+  *(__m128i *)(v8 + 344) = v12;
+  v18 = _mm_loadu_si128(a2 + 6);
+  v19 = _mm_loadu_si128(a2 + 7);
+  *(__m128i *)(v8 + 360) = v13;
+  v20 = *(unsigned int *)(v8 + 144);
+  *(__m128i *)(v8 + 376) = v14;
+  *(__m128i *)(v8 + 392) = v15;
+  *(__m128i *)(v8 + 408) = v16;
+  *(__m128i *)(v8 + 424) = v17;
+  *(__m128i *)(v8 + 440) = v18;
+  *(__m128i *)(v8 + 456) = v19;
+  sub_17226D0(v20, v8 + 149, 32LL);
+  v21 = sub_17200F0(*(_DWORD *)(v8 + 144));
+  if ( !v21 )
+    goto LABEL_31;
+  if ( (*(_BYTE *)(v21 + 36) & 4) != 0 )
+    *(_BYTE *)(v8 + 1141) |= 8u;
+  if ( a2->m128i_i16[0] == 10 )
+    *(_BYTE *)(v8 + 1143) |= 2u;
+  v22 = ++dword_42C2234;
+  if ( byte_BBAF688 )
+    goto LABEL_15;
+  v23 = 0;
+LABEL_13:
+  if ( !v22 )
+  {
+    byte_BBAF688 = 1;
+    v22 = 1;
+    dword_42C2234 = 1;
+    if ( v23 == 1 )
+    {
+LABEL_30:
+      sub_166F020(v8, 128LL, (__int64)"%s:%d run out of connection index.\n", "allocSSLConn", 276LL);
+LABEL_31:
+      v28 = v8;
+      v8 = 0LL;
+      sub_17222B0(v28);
+      return v8;
+    }
+LABEL_15:
+    v24 = qword_BBA80C8;
+    if ( qword_BBA80C8 )
+    {
+      while ( *(_DWORD *)(v24 + 104) != v22 )
+      {
+        if ( *(_DWORD *)(v24 + 104) > v22 )
+          v24 = *(_QWORD *)(v24 + 128);
+        else
+          v24 = *(_QWORD *)(v24 + 136) & 0xFFFFFFFFFFFFFFFELL;
+        if ( !v24 )
+        {
+          v23 = 1;
+          goto LABEL_13;
+        }
+      }
+      dword_42C2234 = v22 + 1;
+      goto LABEL_30;
+    }
+    byte_BBAF688 = 0;
+    v22 = 1;
+    dword_42C2234 = 1;
+  }
+  *(_DWORD *)(v8 + 104) = v22;
+  sub_1720980(&qword_BBA80D0, v8);
+  sub_1721600(&qword_BBA80C8, v8);
+  sub_166F020(
+    v8,
+    128LL,
+    (__int64)"%s:%d sconn %p (%d:%s)\n",
+    "allocSSLConn",
+    303LL,
+    (const void *)v8,
+    *(unsigned int *)(v8 + 144),
+    (const char *)(v8 + 149));
+  if ( (unsigned int)sub_2060A60(135, 128LL) || (v29 = sub_21258E0(*(_QWORD *)(qword_EF84C80 + 1080))) == 0 )
+    v25 = 0;
+  else
+    v25 = *(_BYTE *)(v29 + 8) == 1;
+  v26 = (8 * v25) | *(_BYTE *)(v8 + 1144) & 0xF7;
+  if ( a3 )
+    v26 |= 0x80u;
+  *(_BYTE *)(v8 + 1144) = v26;
+  return v8;
+}
+```
+
+该函数为FGT自己用来申请管理连接的结构体的函数，通过对该函数下断点，然后访问sslvpnd，可以得到下面的bt：
+
+```
+Breakpoint 3, 0x0000000001722890 in ?? ()
+(gdb) bt
+#0  0x0000000001722890 in ?? () #申请SSL vpn自己的，用来管理连接的结构体
+#1  0x00000000017150cc in ?? () #sub_1714EF0
+#2  0x0000000001715d47 in ?? ()
+#3  0x0000000001716f42 in ?? ()
+#4  0x0000000001717236 in ?? ()
+#5  0x0000000001717919 in ?? ()
+#6  0x000000000044c88f in ?? ()
+#7  0x00000000004554ca in ?? ()
+#8  0x000000000045212c in ?? ()
+#9  0x0000000000454738 in ?? ()
+#10 0x0000000000455061 in ?? ()
+#11 0x00007fad5ad07deb in __libc_start_main () from /usr/lib/x86_64-linux-gnu/libc.so.6
+#12 0x0000000000447daa in ?? ()
+```
+
+
+
