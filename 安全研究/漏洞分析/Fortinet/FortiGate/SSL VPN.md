@@ -1381,7 +1381,7 @@ __int64 __fastcall sub_1713720(__int64 a1)
     if ( v1 )
     {
       sub_1724800(a1, v1);
-      change_sconn_function_table(a1, 0LL);
+      change_sconn_function_table(a1, 0LL);//
     }
     v2 = *(__int64 **)(a1 + 680);
     *(_BYTE *)(a1 + 1143) &= 0xBFu;
@@ -1403,7 +1403,7 @@ __int64 __fastcall sub_1713720(__int64 a1)
       v6 = 0;
       v2[1] = (__int64)v2;
     }
-    change_sconn_function_table(a1, (__int64)v5);
+    change_sconn_function_table(a1, (__int64)v5);//状态转数据结构初始化
     v5[6] = qword_BBA80C0;
     if ( (unsigned int)sub_1724860((__int64)v5) )
       break;
@@ -1421,7 +1421,7 @@ __int64 __fastcall sub_1713720(__int64 a1)
       return 0xFFFFFFFFLL;
     }
     v9 = (__int64 (__fastcall *)(__int64, __int64 *))v5[11];
-    v5[14] = (__int64)v8;
+    v5[14] = (__int64)v8;//设置当前状态，如：ssl_accept、ap_read_request
     if ( !v9 )
       goto LABEL_27;
     v10 = v9(a1, v5);
