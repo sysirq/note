@@ -13,3 +13,7 @@ https://handbook.fortinet.com.cn/系统管理/固件与配置管理/配置管理
 Breaking Fortinet Firmware Encryption
 
 https://bishopfox.com/blog/breaking-fortinet-firmware-encryption
+
+固件切换
+
+https://handbook.fortinet.com.cn/系统管理/固件与配置管理/固件版本管理/固件切换.html
