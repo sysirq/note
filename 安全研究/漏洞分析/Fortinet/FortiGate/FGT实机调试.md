@@ -2,7 +2,9 @@
 
 https://192.168.1.99
 
+### Getting Root Access to the 100D
 
+To get a root shell on the 100D and to install GDB, Frida server, etc. we created a local root exploit for another FortiGate bug ([CVE-2021-44168](https://www.fortiguard.com/psirt/FG-IR-21-201)). Interestingly, much like CVE-2022-42475, CVE-2021-44168 was discovered during the investigation of a compromised FortiGate firewall.
 
 # 资料
 
