@@ -19,3 +19,7 @@ https://bishopfox.com/blog/breaking-fortinet-firmware-encryption
 固件切换
 
 https://handbook.fortinet.com.cn/系统管理/固件与配置管理/固件版本管理/固件切换.html
+
+MASTERING FORTIOS EXPLOITATION - NO DIRECT DEBUGGING REQUIRED
+
+https://occamsec.com/mastering-fortios-exploitation-no-direct-debugging-required/
