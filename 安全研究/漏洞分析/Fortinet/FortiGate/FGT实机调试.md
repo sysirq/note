@@ -6,6 +6,22 @@ https://192.168.1.99
 
 To get a root shell on the 100D and to install GDB, Frida server, etc. we created a local root exploit for another FortiGate bug ([CVE-2021-44168](https://www.fortiguard.com/psirt/FG-IR-21-201)). Interestingly, much like CVE-2022-42475, CVE-2021-44168 was discovered during the investigation of a compromised FortiGate firewall.
 
+# CVE-2021-44168
+
+### 安全提取（移除路径前缀）
+
+使用 --strip-components 忽略文件路径中的危险部分，只保留文件名或较短的路径。例如，假设路径为 ../../../../../data2/bfbin/mkswap：
+
+```
+tar --strip-components=6 -xf archive.tar -C /safe/output/directory
+```
+
+### Build a malicious tarball on Linux
+
+```
+tar Pcf file.tar ./../../../../path/to/file
+```
+
 # 资料
 
 恢复出厂
