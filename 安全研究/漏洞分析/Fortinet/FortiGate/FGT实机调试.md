@@ -22,6 +22,14 @@ tar --strip-components=6 -xf archive.tar -C /safe/output/directory
 tar Pcf file.tar ./../../../../path/to/file
 ```
 
+# 实机数据结构以及CPU个数
+
+### 100D_6_2_5
+
+cpu：4
+sconn大小：
+SSL 结构体大小：6224
+
 # 资料
 
 恢复出厂
