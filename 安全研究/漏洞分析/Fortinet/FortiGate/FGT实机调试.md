@@ -27,7 +27,7 @@ tar Pcf file.tar ./../../../../path/to/file
 ### 100D_6_2_5
 
 cpu：4
-sconn大小：
+sconn大小：1072 ，在jemalloc 中，会被分配到1280字节的内存
 SSL 结构体大小：6224 , 在jemalloc 中，会被分配到7kb内存
 
 # 资料
