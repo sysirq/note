@@ -28,7 +28,7 @@ tar Pcf file.tar ./../../../../path/to/file
 
 cpu：4
 sconn大小：
-SSL 结构体大小：6224
+SSL 结构体大小：6224 , 在jemalloc 中，会被分配到7kb内存
 
 # 资料
 
