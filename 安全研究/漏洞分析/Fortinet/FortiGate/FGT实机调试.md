@@ -30,6 +30,17 @@ cpu：4
 sconn大小：1072 ，在jemalloc 中，会被分配到1280字节的内存
 SSL 结构体大小：6224 , 在jemalloc 中，会被分配到7kb内存
 
+### 有用的脚本
+
+```
+handle SIGPIPE nostop
+b *SSL_new+0x33
+commands
+	printf "ssl struct alloc addr:%p\n",$rax
+	continue
+end
+```
+
 # 资料
 
 恢复出厂
