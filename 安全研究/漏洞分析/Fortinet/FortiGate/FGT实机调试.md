@@ -28,12 +28,54 @@ tar Pcf file.tar ./../../../../path/to/file
 
 cpu：4
 sconn大小：1072 ，在jemalloc 中，会被分配到1280字节的内存
-SSL 结构体大小：6224 , 在jemalloc 中，会被分配到7kb内存
+SSL 结构体大小：6224 , 在jemalloc 中，会被分配到8kb内存
 
-### 有用的脚本
+##### 内存分配函数
+
+je_calloc:
+
+```c
+__int64 __fastcall sub_13993F0(__int64 a1)
+{
+  __int64 result; // rax
+
+  result = sub_E24A70(a1);
+  ++dword_13659CC0;
+  return result;
+}
+```
+
+je_malloc:
+
+```c
+_QWORD *__fastcall sub_12C3CD0(int a1)
+{
+  _QWORD *result; // rax
+
+  result = (_QWORD *)sub_E24A70(a1 + 24);
+  if ( !result )
+  {
+    fwrite("Ouch!  je_malloc failed in malloc_block()\n", 1uLL, 0x2AuLL, stderr);
+    exit(1);
+  }
+  result[1] = 0LL;
+  result[2] = result + 3;
+  *result = (char *)result + a1 + 24;
+  return result;
+}
+```
+
+##### 有用的脚本
 
 ```
 handle SIGPIPE nostop
+
+b *SSL_free
+commands
+	printf "ssl struct free  addr:%p\n",$rdi
+	continue
+end
+
 b *SSL_new+0x33
 commands
 	printf "ssl struct alloc addr:%p\n",$rax
