@@ -77,6 +77,13 @@ FortiProxy version 1.0.0 through 1.0.7
 
 # CVE-2021-44168
 
+### Affected Products
+
+FortiOS versions 6.0.13 and below,
+FortiOS versions 6.2.9 and below,
+FortiOS versions 6.4.7 and below,
+FortiOS versions 7.0.2 and below.
+
 # 资料
 
 https://www.fortiguard.com/psirt?page=1&date=&severity=5&product=&component=&version=

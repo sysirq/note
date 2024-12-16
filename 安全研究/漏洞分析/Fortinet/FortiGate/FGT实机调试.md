@@ -23,3 +23,7 @@ https://handbook.fortinet.com.cn/系统管理/固件与配置管理/固件版本
 MASTERING FORTIOS EXPLOITATION - NO DIRECT DEBUGGING REQUIRED
 
 https://occamsec.com/mastering-fortios-exploitation-no-direct-debugging-required/
+
+CVE-2021-44168
+
+https://github.com/0xhaggis/CVE-2021-44168
