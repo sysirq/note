@@ -104,3 +104,15 @@ https://occamsec.com/mastering-fortios-exploitation-no-direct-debugging-required
 CVE-2021-44168
 
 https://github.com/0xhaggis/CVE-2021-44168
+
+Technical Tip: Installing firmware from system reboot
+
+https://community.fortinet.com/t5/FortiGate/Technical-Tip-Installing-firmware-from-system-reboot/ta-p/190793
+
+Technical Tip: How to connect to the FortiGate and FortiAP console port
+
+https://community.fortinet.com/t5/FortiGate/Technical-Tip-How-to-connect-to-the-FortiGate-and-FortiAP/ta-p/214839
+
+Technical Tip: Formatting and loading FortiGate firmware image using TFTP
+
+https://community.fortinet.com/t5/FortiGate/Technical-Tip-Formatting-and-loading-FortiGate-firmware-image/ta-p/197617/redirect_from_archived_page/true
