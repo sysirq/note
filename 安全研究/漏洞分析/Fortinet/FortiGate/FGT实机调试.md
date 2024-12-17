@@ -83,6 +83,104 @@ commands
 end
 ```
 
+# TFTP PYTHON CODE
+
+```python
+import os
+import socket
+
+# TFTP 默认端口
+TFTP_PORT = 69
+BUFFER_SIZE = 516  # 512 字节数据 + 4 字节头
+TFTP_ROOT = "./tftp_root"  # 文件存储的根目录
+
+# 创建根目录（如果不存在）
+os.makedirs(TFTP_ROOT, exist_ok=True)
+
+def handle_client(data, addr, server_socket):
+    """处理客户端请求"""
+    opcode = int.from_bytes(data[:2], byteorder="big")
+    
+    if opcode == 1:  # 读取请求 (RRQ)
+        filename = data[2:].split(b'\0')[0].decode()
+        filepath = os.path.join(TFTP_ROOT, filename)
+
+        if not os.path.exists(filepath):
+            print(f"文件未找到: {filename}")
+            send_error(server_socket, addr, 1, "文件未找到。")
+            return
+
+        print(f"发送文件: {filename}")
+        with open(filepath, "rb") as file:
+            block = 1
+            while True:
+                data = file.read(512)
+                packet = b'\x00\x03' + block.to_bytes(2, byteorder="big") + data
+                server_socket.sendto(packet, addr)
+
+                # 等待 ACK
+                ack, _ = server_socket.recvfrom(BUFFER_SIZE)
+                ack_block = int.from_bytes(ack[2:4], byteorder="big")
+                if ack_block != block:
+                    print(f"ACK 错误: {ack_block} != {block}")
+                    break
+
+                if len(data) < 512:  # 文件结束
+                    print(f"文件 {filename} 发送完成")
+                    break
+                block += 1
+
+    elif opcode == 2:  # 写入请求 (WRQ)
+        filename = data[2:].split(b'\0')[0].decode()
+        filepath = os.path.join(TFTP_ROOT, filename)
+
+        print(f"接收文件: {filename}")
+        with open(filepath, "wb") as file:
+            block = 0
+            while True:
+                # 发送 ACK
+                ack_packet = b'\x00\x04' + block.to_bytes(2, byteorder="big")
+                server_socket.sendto(ack_packet, addr)
+
+                # 接收数据
+                packet, _ = server_socket.recvfrom(BUFFER_SIZE)
+                opcode = int.from_bytes(packet[:2], byteorder="big")
+                block_num = int.from_bytes(packet[2:4], byteorder="big")
+
+                if opcode != 3 or block_num != block + 1:
+                    print("错误：收到无效数据包")
+                    break
+
+                file.write(packet[4:])
+                if len(packet[4:]) < 512:  # 文件结束
+                    print(f"文件 {filename} 接收完成")
+                    break
+                block += 1
+    else:
+        print("不支持的操作")
+        send_error(server_socket, addr, 4, "不支持的操作")
+
+def send_error(sock, addr, code, message):
+    """发送错误包"""
+    packet = b'\x00\x05' + code.to_bytes(2, byteorder="big") + message.encode() + b'\x00'
+    sock.sendto(packet, addr)
+
+def start_tftp_server():
+    """启动 TFTP 服务器"""
+    print("启动 TFTP 服务器...")
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as server_socket:
+        server_socket.bind(("0.0.0.0", TFTP_PORT))
+        print(f"TFTP 服务器运行在端口 {TFTP_PORT}")
+
+        while True:
+            data, addr = server_socket.recvfrom(BUFFER_SIZE)
+            print(f"收到来自 {addr} 的请求")
+            handle_client(data, addr, server_socket)
+
+if __name__ == "__main__":
+    start_tftp_server()
+```
+
 # 资料
 
 恢复出厂
