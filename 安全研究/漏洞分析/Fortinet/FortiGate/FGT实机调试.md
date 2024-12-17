@@ -116,3 +116,7 @@ https://community.fortinet.com/t5/FortiGate/Technical-Tip-How-to-connect-to-the-
 Technical Tip: Formatting and loading FortiGate firmware image using TFTP
 
 https://community.fortinet.com/t5/FortiGate/Technical-Tip-Formatting-and-loading-FortiGate-firmware-image/ta-p/197617/redirect_from_archived_page/true
+
+Mac终端自带screen连接串口终端
+
+https://blog.csdn.net/fzxhub/article/details/118539712
