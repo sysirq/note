@@ -88,9 +88,17 @@ end
 set pagination off
 hb *0x0000000000E15920 if (($rsi > 6144)&&($rsi<=8192))
 commands
-    silent
+  silent
 	printf "alloc size:0x%x\n",$rsi
 	bt
+	continue
+end
+
+set pagination off
+hb *0x00000000012CAC6F
+commands
+  silent
+	printf "buf alloc addr:       %p\n",$rax
 	continue
 end
 ```
