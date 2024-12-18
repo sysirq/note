@@ -68,19 +68,38 @@ _QWORD *__fastcall sub_12C3CD0(int a1)
 ##### 有用的脚本
 
 ```
+set pagination off
 handle SIGPIPE nostop
 
 b *SSL_free
 commands
+	silent
 	printf "ssl struct free  addr:%p\n",$rdi
 	continue
 end
 
 b *SSL_new+0x33
 commands
+	silent
 	printf "ssl struct alloc addr:%p\n",$rax
 	continue
 end
+
+set pagination off
+hb *0x0000000000E15920 if (($rsi > 6144)&&($rsi<=8192))
+commands
+    silent
+	printf "alloc size:0x%x\n",$rsi
+	bt
+	continue
+end
+```
+
+##### 事件循环
+
+```
+#2  0x0000000001396e2d in ?? ()
+#3  0x0000000001397f90 in ?? ()
 ```
 
 # TFTP PYTHON CODE
