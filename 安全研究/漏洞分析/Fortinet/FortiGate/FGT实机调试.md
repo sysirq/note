@@ -65,6 +65,16 @@ _QWORD *__fastcall sub_12C3CD0(int a1)
 }
 ```
 
+
+
+```
+ call    sub_E25C30 # 内存释放函数
+```
+
+
+
+
+
 ##### 有用的脚本
 
 ```
@@ -94,12 +104,29 @@ commands
 	continue
 end
 
+handle SIGPIPE nostop 
 set pagination off
 hb *0x00000000012CAC6F
 commands
-  silent
+    silent
 	printf "buf alloc addr:       %p\n",$rax
 	continue
+end
+
+set pagination off
+hb *SSL_new+0x33
+commands
+    silent
+	printf "ssl struct alloc addr:%p\n",$rax
+	continue
+end
+
+set pagination off
+hb *0x000000000131239A  
+commands
+    silent
+    printf "enc alloc addr:       %p\n",$rax
+    c
 end
 ```
 
