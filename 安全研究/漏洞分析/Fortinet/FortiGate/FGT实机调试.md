@@ -137,6 +137,68 @@ end
 #3  0x0000000001397f90 in ?? ()
 ```
 
+##### recv buff alloc
+
+```c
+unsigned __int64 __fastcall sub_12CABA0(__int64 a1, __int16 a2)
+{
+  unsigned __int64 v2; // rbx
+  __int64 v3; // rax
+  unsigned __int64 result; // rax
+
+  v2 = sub_12C3F30(a1, 168);
+  *(_QWORD *)(v2 + 80) = a1;
+  *(_DWORD *)(v2 + 48) = 0x2000;
+  *(_DWORD *)v2 = a2 & 0x103;
+  if ( (a2 & 1) != 0 )
+  {
+    *(_QWORD *)(v2 + 32) = sub_E252C0(1LL, 0x2000uLL);// alloc recv buff
+...........................................................
+```
+
+##### recv buff free
+
+```c
+void __fastcall sub_12D9BD0(__int64 a1)
+{
+  unsigned __int64 v2; // rdi
+  unsigned __int64 v3; // rdi
+
+  if ( a1 )
+  {
+    v2 = *(_QWORD *)(a1 + 40);
+    if ( v2 )
+    {
+      sub_E25C30(v2);
+      *(_DWORD *)(a1 + 52) = 0;
+      *(_DWORD *)(a1 + 24) = 0;
+      *(_QWORD *)(a1 + 40) = 0LL;
+    }
+    v3 = *(_QWORD *)(a1 + 32);
+    if ( v3 )
+    {
+      sub_E25C30(v3);//free recv buf
+      *(_QWORD *)(a1 + 32) = 0LL;
+      *(_QWORD *)(a1 + 8) = 0LL;
+      *(_DWORD *)(a1 + 48) = 0;
+      *(_DWORD *)(a1 + 16) = 0;
+    }
+  }
+}
+```
+
+##### Destroy sconn
+
+```c
+sub_13A34A0
+```
+
+##### Alloc sconn
+
+```c
+.text:00000000013A39B9                 call    sub_E252C0
+```
+
 # TFTP PYTHON CODE
 
 ```python
