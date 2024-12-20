@@ -65,13 +65,17 @@ _QWORD *__fastcall sub_12C3CD0(int a1)
 }
 ```
 
-
-
 ```
- call    sub_E25C30 # 内存释放函数
+call    sub_E25C30 # 内存释放函数
 ```
 
+```
+sub_E25660 # realloc 函数
+```
 
+```
+对jemalloc 封装的函数sub_12C3F30
+```
 
 
 
@@ -184,6 +188,41 @@ void __fastcall sub_12D9BD0(__int64 a1)
       *(_DWORD *)(a1 + 16) = 0;
     }
   }
+}
+```
+
+##### recv buff realloc
+
+```c
+__int64 __fastcall sub_12CAEC0(__int64 a1, unsigned int a2)
+{
+  __int64 v2; // rax
+  __int64 v3; // rdx
+  __int64 result; // rax
+
+  v2 = sub_E25660(*(void **)(a1 + 32));
+  if ( v2 )
+  {
+    v3 = *(_QWORD *)(a1 + 8) - *(_QWORD *)(a1 + 32);
+    *(_DWORD *)(a1 + 48) += a2;
+    *(_QWORD *)(a1 + 32) = v2;
+    *(_QWORD *)(a1 + 8) = (int)v3 + v2;
+    result = 0LL;
+  }
+  else
+  {
+    sub_132B4E0(
+      0LL,
+      8,
+      (__int64)"%s,%d, realloc fail, %d, %d.\n",
+      "sv_ap_inbuff_realloc",
+      399LL,
+      a2 + *(_DWORD *)(a1 + 48),
+      a2);
+    *(_DWORD *)(a1 + 160) = *(_DWORD *)(a1 + 160) & 0xFFF80007 | 0x7FFE0;
+    result = 0xFFFFFFFFLL;
+  }
+  return result;
 }
 ```
 
