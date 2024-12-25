@@ -1,4 +1,4 @@
-# 0x00
+# 0x00 固件提取
 
 以下代码均来自https://bishopfox.com/blog/breaking-fortinet-firmware-encryption
 
@@ -368,6 +368,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+```
+
+### 提取固件文件
+
+```
+mkdir firmwarefs
+sudo mount -o ro,loop,offset=512 FGT_100D-v6-build9451-FORTINET.decrypted firmwarefs
 ```
 
 # 资料
