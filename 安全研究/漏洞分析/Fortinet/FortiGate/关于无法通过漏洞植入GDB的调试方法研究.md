@@ -92,6 +92,28 @@ def encrypt(cleartext, key):
 
 ### 固件完整提取代码：
 
+```
+❯ file FGT_*
+
+FGT_100D-v6-build9451-FORTINET:    data
+
+FGT_30E-v6-build0076-FORTINET:     DOS/MBR boot sector; partition 1 : ID=0x83, active, start-CHS (0x7,230,32), end-CHS (0xa,50,40), startsector 126976, 36864 sectors; partition 2 : ID=0x83, start-CHS (0xa,50,41), end-CHS (0xc,125,49), startsector 163840, 36864 sectors; partition 3 : ID=0x83, start-CHS (0xc,125,50), end-CHS (0x10,81,1), startsector 200704, 61440 sectors
+
+❯ xxd -l 80 FGT_100D-v6-build9451-FORTINET.out
+00000000: 90d0 b0f1 bcda 8be8 85bb f79a f6bc 4c40  ..............L@
+00000010: 7f6e 474e 3d2f 0001 2a10 3036 675c 4796  .nGN=/..*.06g\G.
+00000020: 8ca7 ab8e f2af d78e ded2 a9f4 acd5 a3f7  ................
+00000030: 8ed6 aef7 d48a f0ab deb4 c095 bae8 a6e9  ................
+00000040: 86c6 a6e7 aacc 8eed 80be f29f f4be f89f  ................
+
+❯ xxd -l 80 FGT_30E-v6-build0076-FORTINET
+00000000: 0000 0000 0000 1100 0000 0000 ff00 aa55  ...............U
+00000010: 4647 5433 3045 2d36 2e30 302d 4657 2d62  FGT30E-6.00-FW-b
+00000020: 7569 6c64 3030 3736 2d31 3830 3332 392d  uild0076-180329-
+00000030: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000040: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+```
+
 ```python
 #!/usr/bin/env python3
 #
