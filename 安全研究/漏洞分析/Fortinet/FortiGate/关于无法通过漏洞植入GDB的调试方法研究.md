@@ -415,7 +415,7 @@ if __name__ == "__main__":
     main()
 ```
 
-Some other interesting trends emerged at this stage. From the approximately 29k images we decrypted across 28 product lines, there were only 25 unique encryption keys, indicating rampant key reuse. Furthermore, we discovered that valid keys used only alphanumeric characters, so we added an additional key validation step (prior to decryption and content validation) to speed up the key recovery process.
+Some other interesting trends emerged at this stage. From the approximately 29k images we decrypted across 28 product lines, **there were only 25 unique encryption keys, indicating rampant key reuse**. Furthermore, we discovered that valid keys used only alphanumeric characters, so we added an additional key validation step (prior to decryption and content validation) to speed up the key recovery process.
 
 In the end, we found that many of the keys were, in fact, hard coded within Fortinet firmware images, but we were unable to recognize them as keys before we put in the effort to determine their characteristics. Nevertheless, our work provided us with a reliable way to recover the keys whether or not they were hard coded.
 
@@ -439,3 +439,7 @@ https://docs.fortinet.com/document/fortigate/7.4.0/new-features/249947/enhance-b
 forticrack
 
 https://github.com/BishopFox/forticrack
+
+FortiOS image signing and verification
+
+https://docs.fortinet.com/document/fortigate/6.4.0/new-features/530511/fortios-image-signing-and-verification
