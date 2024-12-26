@@ -92,6 +92,8 @@ def encrypt(cleartext, key):
 
 ### 固件完整提取代码：
 
+We returned to our earlier comparison of the file headers of two firmware images:
+
 ```
 ❯ file FGT_*
 
@@ -113,6 +115,14 @@ FGT_30E-v6-build0076-FORTINET:     DOS/MBR boot sector; partition 1 : ID=0x83, a
 00000030: 0000 0000 0000 0000 0000 0000 0000 0000  ................
 00000040: 0000 0000 0000 0000 0000 0000 0000 0000  ................
 ```
+
+As we anticipated, patterns were evident even within the first 80 bytes. The cleartext image began with a series of six null bytes, followed by a single byte value, five more null bytes, then four “magic bytes” that seemed to serve the purpose of a file signature. The next 32 bytes comprised part of the image name (with at least 30 printable characters) and were followed by 32 null bytes.
+
+We compared the headers of several cleartext images and found this pattern to be remarkably consistent. We were able to confirm that the magic bytes were always present and immediately followed by the letters “FG” (if the product was FortiGate). The rest of the image name was not always formatted consistently, but always contained the word “build.” Null bytes from offsets 48 to 79 were consistent as well.
+
+One important thing we noted, however, was that this “file header” did not always appear at the beginning of the file. Several firmware images had one or more blocks with other content (often just null bytes) preceding it, but this header always appeared at a 512-byte block boundary somewhere in the file.
+
+代码：
 
 ```python
 #!/usr/bin/env python3
