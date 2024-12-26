@@ -426,6 +426,55 @@ mkdir firmwarefs
 sudo mount -o ro,loop,offset=512 FGT_100D-v6-build9451-FORTINET.decrypted firmwarefs
 ```
 
+# 机制研究
+
+```
+Please connect TFTP server to Ethernet port "MGMT".
+
+Initiating firmware TFTP Transfer...
+
+MAC:         XX:XX:XX:XX:XX:XX
+#########################################################
+Total 60131371 bytes data downloaded.
+Verifying the integrity of the firmware image.
+
+Total 262144kB unzipped.
+Save as Default firmware/Backup firmware/Run image without saving:[D/B/R]?D
+Programming the boot device now.
+................................................................................................................................................................................................................................................................
+Reading boot image 2720359 bytes.
+Initializing firewall...
+System is starting...
+Resizing shared data partition...done
+Formatting shared data partition ... done!
+Starting system maintenance...
+Scanning /dev/sdb1... (100%)  
+Scanning /dev/sdb3... (100%)   
+
+
+FortiGate-100D login: 
+```
+
+```
+FortiGate # execute restore secondary-image tftp Image.out 192.168.158.10
+This operation will store the firmware to backup partition.
+Do you want to continue? (y/n)y
+Please wait...
+Connect to tftp server 192.168.158.10 ...
+####################################################################################################
+Get image from tftp server OK.
+Verifying the signature of the firmware image.
+Warning: Upgrading to an image with Mature maturity notation.
+Restore to backup partition.
+FortiGate #
+Firmware upgrade in progress ...
+Mount point is not allowed: dev: /dev/sda1, path: /data_secondary, type: ext2, flags: 32782, proc: smit (3661)
+Mount point is not allowed: dev: /dev/sda1, path: /data_secondary, type: reiserfs, flags: 14, proc: smit (3661)
+Done.
+```
+
+通过 字符串 
+
 # 资料
 
 Breaking Fortinet Firmware Encryption
@@ -443,3 +492,11 @@ https://github.com/BishopFox/forticrack
 FortiOS image signing and verification
 
 https://docs.fortinet.com/document/fortigate/6.4.0/new-features/530511/fortios-image-signing-and-verification
+
+Upgrading the firmware
+
+https://docs.fortinet.com/document/fortigate/6.2.16/cookbook/596131/upgrading-the-firmware
+
+Technical Tip: How to upload FortiOS image to the Non-Active partition
+
+https://community.fortinet.com/t5/FortiGate/Technical-Tip-How-to-upload-FortiOS-image-to-the-Non-Active/ta-p/347586
