@@ -489,7 +489,12 @@ firmware格式解析：
 
 用/etc/subcacert2.pem 对 firmware 进行签名（不包括最后的256字节），然后与最后的256字节进行对比，从而完成完整性检查
 
+
+
+
+
 通过字符串：“.rodata:0000000002B72BAA	00000014	C	Check image error.\n”
+
 
 可以找到对image格式检查的函数。
 
