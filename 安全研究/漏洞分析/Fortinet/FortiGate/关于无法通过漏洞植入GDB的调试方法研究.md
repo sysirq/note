@@ -489,6 +489,76 @@ firmware格式解析：
 
 用/etc/subcacert2.pem 对 firmware 进行签名（不包括最后的256字节），然后与最后的256字节进行对比，从而完成完整性检查
 
+通过字符串：“.rodata:0000000002B72BAA	00000014	C	Check image error.\n”
+
+可以找到对image格式检查的函数。
+
+大致的C代码如下：
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <unistd.h>
+#include <stdint.h>
+int main(void)
+{
+	char *file_name = "FGT_100D-v6-build1319-FORTINET.out";
+	FILE *fp = fopen(file_name,"rb");
+	char header_buf[256] = {0};
+	char model[7] = {0};
+	char major_version_number[2] = {0};
+	char minor_version_number[3] = {0};
+	char *build_str_pointer = NULL;
+	char build_version[6] = {0};
+	char *tmp_ptr = NULL;
+	char patch_version[3] = {0};
+
+	if(fp == NULL){
+		printf("fopen %s error ( %s )\n",file_name,strerror(errno));
+		return -1;
+	}
+	
+	if(fread(header_buf,1,0x100,fp)!=0x100)
+	{
+		printf("fread header error (%s)\n",strerror(errno));
+		return -1;
+	}
+	
+	strncpy(model,header_buf+10,6);
+	printf("model:%s\n",model);
+	
+	strncpy(major_version_number,header_buf+0x11,1);
+	printf("major version number: %s\n",major_version_number);
+	
+	strncpy(minor_version_number,header_buf+0x13,2);
+	printf("minor version number: %s\n",minor_version_number);
+	
+	build_str_pointer = strstr(header_buf+10,"build");
+	if(build_str_pointer == NULL){
+		printf("not found build str\n");
+		return -1;
+	}
+	
+	tmp_ptr = strchr(build_str_pointer,'-');
+	if(tmp_ptr == NULL){
+		printf("not found '-' str\n");
+		return -1;
+	}
+	
+	int len = tmp_ptr - (build_str_pointer+5);
+	
+	strncpy(build_version,build_str_pointer+5,len);
+	printf("build version: %s\n",build_version);
+
+	tmp_ptr = strstr(header_buf+10,"patch");
+	strncpy(patch_version,tmp_ptr+5,2);
+	printf("patch version: %s\n",patch_version);
+
+	return 0;
+}
+```
+
 
 
 # 资料
