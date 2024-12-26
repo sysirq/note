@@ -428,6 +428,8 @@ sudo mount -o ro,loop,offset=512 FGT_100D-v6-build9451-FORTINET.decrypted firmwa
 
 # 机制研究
 
+通过 console 安装固件的输出：
+
 ```
 Please connect TFTP server to Ethernet port "MGMT".
 
@@ -455,6 +457,8 @@ Scanning /dev/sdb3... (100%)
 FortiGate-100D login: 
 ```
 
+通过cli更新固件的输出
+
 ```
 FortiGate # execute restore secondary-image tftp Image.out 192.168.158.10
 This operation will store the firmware to backup partition.
@@ -473,7 +477,19 @@ Mount point is not allowed: dev: /dev/sda1, path: /data_secondary, type: reiserf
 Done.
 ```
 
-通过 字符串 
+![image-20241226144759117](images/image-20241226144759117.png)
+
+### FGT 7.2.0
+
+用/etc/subcacert2.pem 对firmware 进行完整性检查
+
+firmware格式解析：
+
+- 最后256字节为signature
+
+用/etc/subcacert2.pem 对 firmware 进行签名（不包括最后的256字节），然后与最后的256字节进行对比，从而完成完整性检查
+
+
 
 # 资料
 
