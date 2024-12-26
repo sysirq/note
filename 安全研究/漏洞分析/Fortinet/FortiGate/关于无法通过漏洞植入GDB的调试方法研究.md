@@ -227,6 +227,7 @@ def derive_block_key(ciphertext):
     known_plaintext = 0x00
 
     # Derive the key for this block
+    # You will note that we reversed the first and second halves of the key after recovery – this is because of the position of the known plaintext we chose. Offset 48 from the start of the ciphertext block corresponds to offset 16 from the start of the key, so we actually recover the last half of the key before the first half.
     for i in range(32):
         key_offset = (i + 16) % 32  # mod 32 to wrap around key
         plaintext_offset = i + 48
