@@ -1,6 +1,6 @@
 # 0x00 固件提取
 
-以下代码均来自https://bishopfox.com/blog/breaking-fortinet-firmware-encryption
+以下代码、内容均来自https://bishopfox.com/blog/breaking-fortinet-firmware-encryption
 
 ### 固件解密逻辑
 
@@ -414,6 +414,10 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+Some other interesting trends emerged at this stage. From the approximately 29k images we decrypted across 28 product lines, there were only 25 unique encryption keys, indicating rampant key reuse. Furthermore, we discovered that valid keys used only alphanumeric characters, so we added an additional key validation step (prior to decryption and content validation) to speed up the key recovery process.
+
+In the end, we found that many of the keys were, in fact, hard coded within Fortinet firmware images, but we were unable to recognize them as keys before we put in the effort to determine their characteristics. Nevertheless, our work provided us with a reliable way to recover the keys whether or not they were hard coded.
 
 ### 提取固件文件
 
