@@ -244,6 +244,7 @@ def derive_key(ciphertext):
             pool.apply_async(
                 derive_block_key,
                 (  # Each worker attacks the 80-byte header of a 512-byte block
+                   # As we discovered during our analysis, the “file header” did not always appear at the start of every file, so it was necessary to split the encrypted image into 512-byte blocks and attempt to derive a key from each block. Fortunately, the weak block cipher did not prevent us from processing the blocks in parallel.
                     ciphertext[
                         block_num * BLOCK_SIZE : block_num * BLOCK_SIZE
                         + block_header_size
