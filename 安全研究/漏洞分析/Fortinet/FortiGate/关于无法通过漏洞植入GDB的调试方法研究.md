@@ -559,6 +559,16 @@ int main(void)
 }
 ```
 
+output:
+
+```
+model:FG100D
+major version number: 6
+minor version number: 02
+build version: 1319
+patch version: 12
+```
+
 
 
 # 资料
