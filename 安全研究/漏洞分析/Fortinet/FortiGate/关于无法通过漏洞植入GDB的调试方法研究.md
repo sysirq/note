@@ -122,6 +122,17 @@ We compared the headers of several cleartext images and found this pattern to be
 
 One important thing we noted, however, was that this “file header” did not always appear at the beginning of the file. Several firmware images had one or more blocks with other content (often just null bytes) preceding it, but this header always appeared at a 512-byte block boundary somewhere in the file.
 
+Thus, our strategy became apparent:
+
+- Read 32 bytes from the first 512-byte block of ciphertext, starting at offset 48.
+- Encrypt each of these bytes with its corresponding known plaintext (in each case, a null byte) to produce a key.
+- Use the key to decrypt the first 80 bytes of the block and validate that the content matches the standard file header:
+-- 4 “magic bytes” at offset 12
+-- 30 printable characters at offset 16
+-- The word “build” somewhere in that 30-character string
+- Repeat the above for each 512-byte block in the file until a valid key is found.
+- Use the valid key to decrypt the entire firmware image.
+
 代码：
 
 ```python
