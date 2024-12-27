@@ -681,7 +681,7 @@ if __name__ == "__main__":
 
 ```
 
-# 尝试结果
+# 关于通过修改firmware的尝试结果
 
 ### 通过console 来替换firmware 
 
@@ -695,7 +695,7 @@ if __name__ == "__main__":
 Error : Boot image on disk: %s is corrupted, please try to update the firmware again !\n 
 ```
 
-通过逆向分析，发现是写入 /dev/sdb1 出错》？？？不应该
+通过逆向分析，发现是写入 /dev/sdb1 出错》？？？不应该，但是正常的原始firmware写入是成功的
 
 # 资料
 

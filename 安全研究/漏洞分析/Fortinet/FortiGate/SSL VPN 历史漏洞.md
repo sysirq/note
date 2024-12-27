@@ -79,6 +79,10 @@ FortiProxy version 1.0.0 through 1.0.7
 
 A download of code without integrity check vulnerability [CWE-494] in the "execute restore src-vis" command of FortiOS may allow a local authenticated attacker to download arbitrary files on the device via specially crafted update packages.
 
+### 通过该漏洞完成调试环境植入
+
+https://github.com/0xhaggis/CVE-2021-44168
+
 ### Affected Products
 
 FortiOS versions 6.0.13 and below,
