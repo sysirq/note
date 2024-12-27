@@ -609,3 +609,7 @@ https://community.fortinet.com/t5/FortiGate/Technical-Tip-How-to-upload-FortiOS-
 Troubleshooting Tip: Unable to boot the firewall or load firmware image
 
 https://community.fortinet.com/t5/FortiGate/Troubleshooting-Tip-Unable-to-boot-the-firewall-or-load-firmware/ta-p/267570
+
+Fortinet Zero-Day and Custom Malware Used by Suspected Chinese Actor in Espionage Operation
+
+https://cloud.google.com/blog/topics/threat-intelligence/fortinet-malware-ecosystem
