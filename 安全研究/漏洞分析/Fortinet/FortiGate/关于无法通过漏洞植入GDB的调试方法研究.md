@@ -685,7 +685,7 @@ if __name__ == "__main__":
 
 ### 通过console 来替换firmware 
 
-会报 Test failt 错误
+会报 Test failt 错误，貌似是bios 完整性检查
 
 ### 通过 CLI 来替换 firmware 
 
@@ -694,6 +694,8 @@ if __name__ == "__main__":
 ```
 Error : Boot image on disk: %s is corrupted, please try to update the firmware again !\n 
 ```
+
+通过逆向分析，发现是写入 /dev/sdb1 出错》？？？不应该
 
 # 资料
 
