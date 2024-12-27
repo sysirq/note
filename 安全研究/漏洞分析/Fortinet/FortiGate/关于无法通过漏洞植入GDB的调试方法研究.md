@@ -601,3 +601,7 @@ https://docs.fortinet.com/document/fortigate/6.2.16/cookbook/596131/upgrading-th
 Technical Tip: How to upload FortiOS image to the Non-Active partition
 
 https://community.fortinet.com/t5/FortiGate/Technical-Tip-How-to-upload-FortiOS-image-to-the-Non-Active/ta-p/347586
+
+Troubleshooting Tip: Unable to boot the firewall or load firmware image
+
+https://community.fortinet.com/t5/FortiGate/Troubleshooting-Tip-Unable-to-boot-the-firewall-or-load-firmware/ta-p/267570
