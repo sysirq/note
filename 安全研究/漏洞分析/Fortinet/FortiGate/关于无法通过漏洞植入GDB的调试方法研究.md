@@ -574,7 +574,11 @@ build version: 1319
 patch version: 12
 ```
 
+# bug 解决
 
+```
+Error : Boot image on disk: %s is corrupted, please try to update the firmware again !\n 
+```
 
 # 资料
 
