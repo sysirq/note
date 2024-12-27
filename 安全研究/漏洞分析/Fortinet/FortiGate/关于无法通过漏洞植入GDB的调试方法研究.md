@@ -681,13 +681,28 @@ if __name__ == "__main__":
 
 ```
 
-# 关于通过修改firmware的尝试结果
+< OUTPUT FILENAME > 参数为：
 
-### 通过console 来替换firmware 
+```
+sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12$ xxd -l 80 FGT_100D-v6-build1319-FORTINET.out
+00000000: 1f8b 0808 a3f0 6263 0003 4647 3130 3044  ......bc..FG100D
+00000010: 2d36 2e30 322d 4657 2d62 7569 6c64 3133  -6.02-FW-build13
+00000020: 3139 2d32 3231 3130 322d 7061 7463 6831  19-221102-patch1
+00000030: 3200 ecfd 7550 96ff fef7 7b03 2a69 9012  2...uP....{.*i..
+00000040: 2a0d 124a 83a8 80a2 34a8 b494 88a8 80a4  *..J....4.......
+sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12$ ../forticrack/fortiencrypt.py FGT_100D-v6-build1319-FORTINET.decrypted FG100D-6.02-FW-build1319-221102-patch12 oAbBIcDde7FfgGHhiIjJ7KlLmsnN3OPP
+[+] Encrypting FGT_100D-v6-build1319-FORTINET.decrypted
+```
+
+可以用上面的C代码对结果进行检查
+
+# 关于通过修改firmware进行替换的尝试结果
+
+### 通过console 来替换修改后的firmware 
 
 会报 Test failt 错误，貌似是bios 完整性检查
 
-### 通过 CLI 来替换 firmware 
+### 通过 CLI 来替换 修改后的firmware 
 
 会报：
 
