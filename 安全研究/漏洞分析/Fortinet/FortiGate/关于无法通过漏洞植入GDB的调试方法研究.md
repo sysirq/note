@@ -574,7 +574,122 @@ build version: 1319
 patch version: 12
 ```
 
-# bug 解决
+# 固件加密脚本
+
+```python
+#!/usr/bin/env python3
+import sys
+import os
+import re
+import subprocess
+import multiprocessing
+import functools
+
+BLOCK_SIZE = 512
+
+def encrypt(cleartext, key, num_bytes=None):
+    if num_bytes is None or num_bytes > len(cleartext):
+        num_bytes = len(cleartext)
+    if num_bytes > BLOCK_SIZE:
+        num_bytes = BLOCK_SIZE
+    
+
+    key_offset = 0
+    block_offset = 0
+    ciphertext = bytearray()
+    previous_ciphertext_byte = 0xFF
+
+    while block_offset < num_bytes:
+        cleartext_byte = cleartext[block_offset] + key_offset
+        xor = previous_ciphertext_byte ^ cleartext_byte ^ key[key_offset]
+        xor = (xor + 256) & 0xFF
+        ciphertext.append(xor)
+
+        block_offset += 1
+        key_offset = (key_offset + 1) & 0x1F
+        previous_ciphertext_byte = xor
+
+    return bytes(ciphertext)
+
+def encrypt_file(cleartext,key,output_file):
+    num_blocks = (len(cleartext) + BLOCK_SIZE - 1) // BLOCK_SIZE
+    with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+        worker = functools.partial(encrypt, key=key)
+        worker_map = pool.map_async(
+            worker,
+            [
+                cleartext[block_num * BLOCK_SIZE : block_num * BLOCK_SIZE + BLOCK_SIZE]
+                for block_num in range(num_blocks)
+            ],
+        )
+        worker_map.wait()
+        results = worker_map.get()
+    if not results:
+        return False
+
+    ciphertext = b"".join(results)
+    
+    with open(output_file, "wb") as outfile:
+        outfile.write(ciphertext)
+    return True
+
+def main():
+    # Parse input
+    if len(sys.argv) < 4 or sys.argv[1] in ["-h", "--help"]:
+        print("Usage: python3 fortiencrypt.py <INPUT FILENAME> <OUTPUT FILENAME> <key>")
+        sys.exit(0)
+    decrypted_file = sys.argv[1]
+    encrypted_file = sys.argv[2]
+    key = sys.argv[3].encode('utf-8')
+
+    print(f"[+] Encrypting {decrypted_file}")
+    
+    with open(decrypted_file, 'rb') as file:
+        cleartext = file.read()
+    if encrypt_file(cleartext,key,encrypted_file):
+        print(f"[+] Encrypting {decrypted_file} done!!!")
+    else:
+        print(f"[-] Encrypting {decrypted_file} error!!!")
+        sys.exit(1)
+    
+    #gzip
+    result = subprocess.run(
+        [
+            f"gzip",
+            "-9",  
+            "-c", 
+            encrypted_file,
+        ],
+            check=False, 
+            capture_output=True,
+    )
+    os.remove(f"{encrypted_file}")
+    if result.stdout:
+        print(f"[+] gzip run success")
+    else:
+        raise ValueError("error when run gzip")
+    
+    print(f"[+] after gzip len: {len(result.stdout)}")
+    data = result.stdout + bytes(256) # signature
+    print(f"[+] after append signature len: {len(data)}")
+    
+    with open(encrypted_file, "wb") as outfile:
+        outfile.write(data)
+
+if __name__ == "__main__":
+    main()
+
+```
+
+# 尝试结果
+
+### 通过console 来替换firmware 
+
+会报 Test failt 错误
+
+### 通过 CLI 来替换 firmware 
+
+会报：
 
 ```
 Error : Boot image on disk: %s is corrupted, please try to update the firmware again !\n 
