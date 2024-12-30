@@ -480,11 +480,67 @@ LABEL_9:
 }
 ```
 
-该函数逻辑为：
+通过该函数，我们可以获取到各种用于解密的key值（off_3994560）
 
 ```python
+import ida_bytes
+
+start_address = 0x0000000003994180
+end_address   = 0x0000000003994560
+data_size = end_address - start_address
+data = ida_bytes.get_bytes(start_address,data_size)
+
+i = 0
+while i < len(data):
+    print(data[i:i+32])
+    i+=32 
+```
+
+out：
 
 ```
+b'a9bBCc0dpEFsgGHhkQj1kKoLJInNoOPP'
+b'c3bOCc7d5EmjgGHhPISJkKlLmMTQo4PP'
+b'c3bOCc7d5EmjgghhPISJkkllmMTQo4PP'
+b'aAbBCcDdeESsgGHhkQj1kKoLJInNoOPP'
+b'oAbBIcDde7FfgGHhiIjJ7TdLAsnN3OPP'
+b'oAbBIcDde7FfgGHhiIjJ7KlLmsnN3OPP'
+b'aAfBcCmMeEFfgJHhiIjJkqlLmInNo8PP'
+b'aAbBcCmMeEFfgGHhiIjJkqlLmInNo8pP'
+b'aAbBCcDdeEFfgGHhiIjJkKlLmMnNoOPP'
+b'aAbBCcDdeEFfgGHhiIjJkKlLmMnNoOPP'
+b'aAbBCcDdeiFMg0HhiIjuhUHLmMnNoOPP'
+b'aAbNCcxdeE3btGDhi8AMkK7Lm9nM6McP'
+b'aAbBCcDdeiFMg0HhiIjuhUHLmMnNoOPP'
+b'aAbNCcDdeE3bgGDhi8jMkKLLm9nM6McP'
+b'mPnNCcXdeE3bgGDhi8jMkKLLm9nH6McP'
+b'mPnNCcXdeE3bgGDhi8jMkKLLm9nH6McP'
+b'aAvRCcQdeE3bgGDhi8jZkKLLm9nY6McP'
+b'aAbNCcxdeE3btGDhi8AMkK7Lm9nM6McP'
+b'aAbNCcxdeE3btGDhi8AMkK7Lm9nM6McP'
+b'bA8BWlDd0BFfCQ3h8IAJ8KZLmMCNzOzP'
+b'BA8BWlDD0BFFCQ3H8IAJ8KZLmMCNzOzP'
+b'aAbNCcxdeE3btGDhi8AMkK7Lm9nM6McP'
+b'aA8BWlDd0EFfCQUh8IAJMKZLmMCNYOzP'
+b'bTbJCcKdeE3dgGDhi8jYkKLLm9nU4McP'
+b'aA8BWlDd0EFfCQUh8IAJMKZLmMCNYOzP'
+b'n26B9laP0EFfiQBhiSAQWKXem7CnYizJ'
+b'aA8BWlDd0EFfCQUh8IAJMKZLmMCNYOzP'
+b'n2479laP0EFSiQBh8SAQMaXEm7CNY1zP'
+b'n26B9laP0pFf3QBh8SAQMKXEm7CNYiKP'
+b'n26B9l3P0EFXiQBh8SAQMKXEmLCNYizP'
+b'n86B9laP0EFfiQBh8SAQ1KXEm7CNYizX'
+```
+
+对于FGT 6_2_5 用于解密的key为：
+
+```
+oAbBIcDde7FfgGHhiIjJ7KlLmsnN3OPP
+```
+
+
+
+
 
 # 参考资料
 
