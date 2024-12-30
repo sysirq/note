@@ -745,3 +745,7 @@ https://community.fortinet.com/t5/FortiGate/Troubleshooting-Tip-Unable-to-boot-t
 Fortinet Zero-Day and Custom Malware Used by Suspected Chinese Actor in Espionage Operation
 
 https://cloud.google.com/blog/topics/threat-intelligence/fortinet-malware-ecosystem
+
+zlib学习小结
+
+https://blog.csdn.net/cp3alai/article/details/51282338
