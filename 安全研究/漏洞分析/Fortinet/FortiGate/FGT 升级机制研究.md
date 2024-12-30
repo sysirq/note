@@ -563,6 +563,8 @@ int decrypt(uint8_t *ciphertext,uint8_t *key){
 
 
 ```c
+// gcc -lz
+
 #include <stdio.h>
 #include <zlib.h>
 #include <stdlib.h>
@@ -910,6 +912,7 @@ int main(int argc,char *argv[])
 	free(buffer);
 	return 0;
 }
+
 ```
 
 
