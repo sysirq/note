@@ -483,37 +483,6 @@ LABEL_9:
 该函数逻辑为：
 
 ```python
-# Decrypt data
-def decrypt(ciphertext, key, num_bytes=None):
-    if num_bytes is None or num_bytes > len(ciphertext):
-        num_bytes = len(ciphertext)
-    if num_bytes > BLOCK_SIZE:
-        num_bytes = BLOCK_SIZE
-
-    key_offset = 0
-    block_offset = 0
-    cleartext = bytearray()
-    previous_ciphertext_byte = 0xFF  # IV is always FF
-
-    while block_offset < num_bytes:
-        # For each byte in the block, bitwise XOR the current byte with the
-        # previous byte (both ciphertext) and the corresponding key byte
-        ciphertext_byte = ciphertext[block_offset]
-        xor = (
-            previous_ciphertext_byte ^ ciphertext_byte ^ key[key_offset]
-        ) - key_offset  # subtract the key offset to undo obfuscation
-        xor = (xor + 256) & 0xFF  # mod 256 to loop negatives
-        cleartext.append(xor)
-
-        # Proceed to next byte
-        block_offset += 1
-        key_offset = (
-            key_offset + 1  # increment key offset
-        ) & 0x1F  # mod 32 to loop around the key
-        previous_ciphertext_byte = ciphertext_byte
-
-    # Reached end of block
-    return bytes(cleartext)
 
 ```
 
