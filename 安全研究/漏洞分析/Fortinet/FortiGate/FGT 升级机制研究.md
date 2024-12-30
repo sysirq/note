@@ -417,5 +417,73 @@ LABEL_40:
 该函数的主要逻辑为：
 
 - 跳过固件文件的gz header
-- 然后用libz库，以512为块进行解压缩
+- 然后用libz库，以512字节为块进行解压缩
 - 对512字节解压缩完毕的内容进行解密 ( 该版本对应的解密函数为 sub_20C0800 )
+
+```c
+void __fastcall sub_20C0800(__int64 a1, int a2, int a3)
+{
+  _BYTE *v3; // r9
+  int v4; // esi
+  __int64 v5; // r10
+  int v6; // esi
+  __int64 v7; // rcx
+  char v8; // al
+  char v9; // bl
+  char v10; // r12
+  char v11; // r8
+
+  v3 = off_3994560;
+  if ( off_3994560 )
+  {
+    if ( (a2 & 0x1FF) != 0 )
+    {
+      sub_1930AC0('\x02\x9B\xC3&');
+    }
+    else
+    {
+      v4 = a2 >> 9;
+      if ( v4 > 0 )
+      {
+        v5 = a1 + (((unsigned int)(v4 - 1) + 1LL) << 9);
+        do
+        {
+          v6 = 0;
+          v7 = 0LL;
+          v8 = 0xFF;
+          do
+          {
+            while ( 1 )
+            {
+              v9 = *(_BYTE *)(a1 + v7);
+              v10 = v3[v6];
+              v6 = ((_BYTE)v6 + 1) & 0x1F;
+              v11 = v7 & 0x1F;
+              if ( !a3 )
+                break;
+              v8 ^= v10 ^ (v9 + v11);
+              *(_BYTE *)(a1 + v7++) = v8;
+              if ( v7 == 512 )
+                goto LABEL_9;
+            }
+            *(_BYTE *)(a1 + v7++) = (v10 ^ v9 ^ v8) - v11;
+            v8 = v9;
+          }
+          while ( v7 != 512 );
+LABEL_9:
+          a1 += 512LL;
+        }
+        while ( a1 != v5 );
+      }
+    }
+  }
+}
+```
+
+该函数逻辑为：
+
+# 参考资料
+
+Breaking Fortinet Firmware Encryption
+
+https://bishopfox.com/blog/breaking-fortinet-firmware-encryption
