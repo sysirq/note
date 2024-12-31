@@ -1,4 +1,4 @@
-# 代码逆向分析
+# 升级代码逆向分析
 
 通过字符串：
 
@@ -560,7 +560,7 @@ int decrypt(uint8_t *ciphertext,uint8_t *key){
 }
 ```
 
-解压代码：
+解压解密代码：
 
 ```c
 #include <stdio.h>
@@ -913,6 +913,29 @@ int main(int argc,char *argv[])
 	free(buffer);
 	return 0;
 }
+```
+
+output:
+
+```
+sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12$ ./decompress FGT_100D-v6-build1319-FORTINET.out FGT_ORIG
+file size: 60581933
+gz header len  : 50
+compressed len : 60581627
+found key for decrypt:oAbBIcDde7FfgGHhiIjJ7KlLmsnN3OPP
+分区 1: 类型 0x83,分区标志 80, 起始 LBA 1, 大小 524288 扇区
+分区 2: 类型 0x83,分区标志 0, 起始 LBA 524289, 大小 524288 扇区
+分区 3: 类型 0x83,分区标志 0, 起始 LBA 1048577, 大小 524288 扇区
+mbr size:512
+decompressed len:268435968
+
+Decompression complete.
+```
+
+分析发现，解压后的大小为：
+
+```
+512字节的MBR + 256MB == 512 + 268435456 == 268435968 == decompressed len
 ```
 
 
