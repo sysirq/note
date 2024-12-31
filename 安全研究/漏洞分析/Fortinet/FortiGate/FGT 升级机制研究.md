@@ -199,7 +199,7 @@ LABEL_27:
       unlink("/tmp/uploadxxxx");
       return (unsigned int)v5;
     }
-    if ( (unsigned int)sub_23E8050(&v16, v10 == 1) || (unsigned int)sub_27CD0B0("/tmp/uploadxxxx", 0) )//固件signature检查，最后的256字节
+    if ( (unsigned int)sub_23E8050(&v16, v10 == 1) || (unsigned int)sub_27CD0B0("/tmp/uploadxxxx", 0) )//固件signature检查，最后的256字节为signature，该函数也会将最后的signature去掉
     {
       LODWORD(v5) = 0;
       unlink("/tmp/uploadxxxx");
@@ -218,93 +218,89 @@ LABEL_27:
 
 
 
-sub_27CDBD0固件格式检查
+sub_239E780 --> sub_27CDBD0 固件格式检查
 
 
 
 ```c
-__int64 __fastcall sub_2087D20(char *filename, __int64 a2, int a3)
+__int64 __fastcall sub_27CDBD0(char *filename, __int64 a2, int a3)
 {
-  unsigned int v4; // ebx
+  unsigned int v3; // er12
+  int v4; // er15
   int v5; // er15
-  int v6; // er15
-  int v7; // eax
+  int v6; // eax
+  int v8; // er15
   int v9; // er15
   int v10; // er15
   int v11; // er15
   int v12; // er15
   int v13; // er15
   int v14; // er15
-  int v15; // er15
-  __int64 v16; // [rsp+6h] [rbp-16Ah] BYREF
-  int v17; // [rsp+Eh] [rbp-162h]
-  char dest[7]; // [rsp+12h] [rbp-15Eh] BYREF
-  char s2[7]; // [rsp+19h] [rbp-157h] BYREF
-  char v20[16]; // [rsp+20h] [rbp-150h] BYREF
-  char v21[10]; // [rsp+30h] [rbp-140h] BYREF
-  char v22[254]; // [rsp+3Ah] [rbp-136h] BYREF
-  unsigned __int64 v23; // [rsp+138h] [rbp-38h]
+  __int64 v16; // [rsp+14h] [rbp-16Ch] BYREF
+  int v17; // [rsp+1Ch] [rbp-164h]
+  __int16 v18; // [rsp+20h] [rbp-160h]
+  char dest[7]; // [rsp+22h] [rbp-15Eh] BYREF
+  char s2[7]; // [rsp+29h] [rbp-157h] BYREF
+  char v21[16]; // [rsp+30h] [rbp-150h] BYREF
+  __m128i v22[16]; // [rsp+40h] [rbp-140h] BYREF
+  unsigned __int64 v23; // [rsp+148h] [rbp-38h]
 
-  v16 = 0LL;
   v23 = __readfsqword(0x28u);
+  v18 = 0;
+  v16 = 0LL;
   v17 = 0;
-  if ( (int)sub_2087650(filename, &v16, v21) < 0 )
+  if ( (int)sub_27CD190(filename, (__int64)&v16, v22) < 0 )
     return (unsigned int)-1;
   if ( (_WORD)v16 == 5 && !BYTE4(v16) && WORD1(v16) == 271 )
     BYTE4(v16) = 7;
-  strncpy(dest, v22, 6uLL);
+  strncpy(dest, &v22[0].m128i_i8[10], 6uLL);    // model
   dest[6] = 0;
-  sub_2087CF0(s2, 7LL);
-  v4 = strncmp(dest, s2, 6uLL);
-  if ( v4 )
+  sub_27CD940(s2, 7LL);
+  v3 = sub_27CDA30(s2, dest);
+  if ( v3 )
     return (unsigned int)-1;
-  v5 = (unsigned __int8)v16;
-  if ( v5 < (int)strtol("6", 0LL, 10)
-    || (v12 = (unsigned __int8)v16, v12 <= (int)strtol("6", 0LL, 10))
-    && (BYTE1(v16) <= 1u || BYTE1(v16) == 2 && WORD1(v16) <= 0x475u) )
+  v4 = (unsigned __int8)v16;
+  if ( v4 < (int)strtol("7", 0LL, 10)
+    || (v8 = (unsigned __int8)v16, v8 <= (int)strtol("7", 0LL, 10))
+    && (BYTE1(v16) <= 1u || BYTE1(v16) == 2 && WORD1(v16) <= 0x484u) )
   {
-    v6 = (unsigned __int8)v16;
-    if ( (unsigned __int8)v16 <= 4u )
-    {
-      v4 = -591;
-      puts("Downgrading to the given image is not supported. Please burn the image from BIOS.");
-      return v4;
-    }
-    if ( v6 < (int)strtol("2", 0LL, 10)
+    v5 = (unsigned __int8)v16;
+    if ( v5 < (int)strtol("2", 0LL, 10)
       || (v9 = (unsigned __int8)v16, v9 == (unsigned int)strtol("2", 0LL, 10))
-      && (v13 = BYTE1(v16), v13 < (int)strtol("80", 0LL, 10))
+      && (v14 = BYTE1(v16), v14 < (int)strtol("80", 0LL, 10))
       || (v10 = (unsigned __int8)v16, v10 == (unsigned int)strtol("2", 0LL, 10))
-      && (v14 = BYTE1(v16), v14 == (unsigned int)strtol("80", 0LL, 10))
-      && (v15 = WORD1(v16), v15 < (int)strtol("71", 0LL, 10)) )
+      && (v12 = BYTE1(v16), v12 == (unsigned int)strtol("80", 0LL, 10))
+      && (v13 = WORD1(v16), v13 < (int)strtol("71", 0LL, 10)) )
     {
-      v4 = 2;
+      v3 = 2;
     }
     else
     {
       v11 = (unsigned __int8)v16;
       if ( v11 == (unsigned int)strtol("3", 0LL, 10) )
-        v4 = 3;
+        v3 = 3;
     }
   }
   else
   {
-    v4 = 1;
+    v3 = 1;
   }
   if ( a2 )
   {
     *(_QWORD *)a2 = v16;
     *(_DWORD *)(a2 + 8) = v17;
+    *(_WORD *)(a2 + 12) = v18;
   }
-  v7 = sub_2087170(filename);
-  if ( v7 < 0 )
-    return (unsigned int)v7;
-  if ( a3 && (unsigned int)sub_1A104B0(filename) )
-    sub_1A183E0(v20, v20);
-  return v4;
+  v6 = sub_27CB990(filename);
+  if ( v6 < 0 )
+    return (unsigned int)v6;
+  if ( a3 && (unsigned int)sub_1FCAFF0(filename, "/tmp/sig.dat", (__int64)v21) )
+    sub_1FD3EF0((__int64)v21);
+  return v3;
 }
 ```
 
-对于函数sub_2087650，该逻辑为：
+对于函数sub_239E780 --> sub_27CDBD0 --> sub_27CD190，该逻辑为：
 ```c
 #include <stdio.h>
 #include <string.h>
@@ -378,6 +374,153 @@ minor version number: 02
 build version: 1319
 patch version: 12
 ```
+
+
+
+对于函数sub_239E780 --> sub_27CDBD0 --> sub_27CB990：
+
+```c
+__int64 __fastcall sub_27CB990(char *filename)
+{
+  unsigned int v1; // ebx
+  FILE *v2; // rax
+  FILE *v3; // r14
+  int v4; // eax
+  int v5; // er12
+  int v6; // eax
+  unsigned int v7; // eax
+  unsigned int v8; // eax
+  __int64 v9; // rdx
+  unsigned int v11; // edx
+  __int64 v12; // rsi
+  __int64 v13; // rsi
+  __int64 v14; // rdx
+  unsigned int v15; // eax
+  __int64 v16; // rcx
+  int *v17; // rax
+  int v18; // [rsp+8h] [rbp-2358h]
+  unsigned int v19; // [rsp+Ch] [rbp-2354h]
+  __int64 v20[14]; // [rsp+10h] [rbp-2350h] BYREF
+  struct stat stat_buf; // [rsp+80h] [rbp-22E0h] BYREF
+  __int64 v22; // [rsp+118h] [rbp-2248h] BYREF
+  char v23[512]; // [rsp+120h] [rbp-2240h] BYREF
+  char ptr[8200]; // [rsp+320h] [rbp-2040h] BYREF
+  unsigned __int64 v25; // [rsp+2328h] [rbp-38h]
+
+  v25 = __readfsqword(0x28u);
+  v1 = crc32(0LL, 0LL, 0LL);
+  if ( __xstat(1, filename, &stat_buf) || (v2 = fopen(filename, "r"), (v3 = v2) == 0LL) )
+  {
+    message((__int64)"Cannot open file %s\n", filename);
+    return (unsigned int)-1;
+  }
+  v4 = fread(ptr, 1uLL, 0x2000uLL, v2);
+  v5 = v4;
+  if ( v4 < 0 )
+  {
+    message((__int64)"Cannot read from file %s\n", filename);
+    v19 = -1;
+    goto LABEL_15;
+  }
+  v6 = sub_27CB880(ptr, (unsigned int)v4);
+  if ( v6 < 0 )
+  {
+    v17 = __errno_location();
+    message((__int64)"check_gz_header() failed (%d)\n", (unsigned int)*v17);
+    v19 = -1;
+    goto LABEL_15;
+  }
+  v18 = v6;
+  memset(v20, 0, sizeof(v20));
+  v7 = inflateInit2_(v20, 4294967281LL, "1.2.11", 112LL);
+  v19 = v7;
+  if ( v7 )
+  {
+    message((__int64)"inflateInit2() error: %d\n", v7);
+    v19 = -1;
+    goto LABEL_15;
+  }
+  if ( !v5 )
+    goto LABEL_17;
+  LODWORD(v20[1]) = v5 - v18;
+  for ( v20[0] = (__int64)&ptr[v18]; ; v20[0] = (__int64)ptr )
+  {
+    do
+    {
+      v20[3] = (__int64)v23;
+      LODWORD(v20[4]) = 512;
+      v8 = inflate(v20, 0LL);
+      v9 = (unsigned int)(512 - LODWORD(v20[4]));
+      if ( v8 == 2 || v8 == -3 || v8 == -4 )
+      {
+        message((__int64)"inflate() error: %d\n", v8);
+        v19 = -1;
+        goto LABEL_14;
+      }
+      if ( v8 == 1 )
+      {
+        if ( (_DWORD)v9 )
+          v1 = crc32(v1, v23, v9);
+        v11 = v20[1];
+        v12 = v20[0];
+        if ( LODWORD(v20[1]) <= 7 )
+        {
+          if ( LODWORD(v20[1]) )
+          {
+            v15 = 0;
+            do
+            {
+              v16 = v15++;
+              *((_BYTE *)&v22 + v16) = *(_BYTE *)(v12 + v16);
+            }
+            while ( v15 < v11 );
+          }
+          if ( (fread((char *)&v22 + v11, 1uLL, 8 - v11, v3) & 0x80000000) != 0LL )
+          {
+            message((__int64)"Cannot read from file %s\n", filename);
+LABEL_27:
+            v19 = -1;
+            goto LABEL_14;
+          }
+        }
+        else
+        {
+          v22 = *(_QWORD *)v20[0];
+        }
+        v13 = (BYTE1(v22) << 8) + (BYTE2(v22) << 16) + (unsigned __int8)v22 + (BYTE3(v22) << 24);
+        v14 = (HIBYTE(v22) << 24) + (BYTE5(v22) << 8) + (BYTE6(v22) << 16) + (unsigned int)BYTE4(v22);
+        if ( v20[5] == v14 )
+        {
+          if ( v1 == (_DWORD)v13 )
+            goto LABEL_14;
+          message((__int64)"gzfile: CRC32 doesn't match!\n", v13, v14);
+        }
+        else
+        {
+          message((__int64)"gzfile: ISIZE doesn't match! %lu, %u\n", v20[5], v14);
+        }
+        goto LABEL_27;
+      }
+      v1 = crc32(v1, v23, v9);
+    }
+    while ( !LODWORD(v20[4]) );
+LABEL_17:
+    LODWORD(v20[1]) = fread(ptr, 1uLL, 0x2000uLL, v3);
+    if ( ferror(v3) )
+      goto LABEL_27;
+    if ( !LODWORD(v20[1]) )
+      break;
+  }
+  v19 = 0;
+LABEL_14:
+  inflateEnd(v20);
+LABEL_15:
+  fclose(v3);
+  return v19;
+}
+```
+
+
 
 
 
