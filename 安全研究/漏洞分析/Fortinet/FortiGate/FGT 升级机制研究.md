@@ -1865,6 +1865,272 @@ Decompression complete.
 
 # 固件加密压缩
 
+```c
+#include <stdio.h>
+#include <zlib.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
+
+#define CHUNK_SIZE 512
+
+#pragma pack(push, 1)
+typedef struct {
+    uint8_t id1;         // 固定为 0x1F
+    uint8_t id2;         // 固定为 0x8B
+    uint8_t compression; // 压缩方法（0x08 表示 DEFLATE）
+    uint8_t flags;       // 标志位
+    uint32_t mtime;      // 修改时间
+    uint8_t xflags;      // 额外标志
+    uint8_t os;          // 操作系统类型
+} GzipHeader;
+#pragma pack(pop)
+
+// cleartext 长度一定为512字节，如果不为的话表示有问题， key 长度为 32字节
+int encrypt( uint8_t *cleartext, uint8_t *key)
+{
+	size_t block_offset = 0;
+	size_t key_offset = 0;
+	uint8_t previous_ciphertext_byte = 0xFF;
+	uint8_t xor = 0;
+
+	while (block_offset < CHUNK_SIZE)
+	{
+        xor = (cleartext[block_offset] + (block_offset & 0x1F)) ^ key[key_offset] ^ previous_ciphertext_byte;
+        previous_ciphertext_byte = xor;
+        cleartext[block_offset] = xor;
+        key_offset = (key_offset + 1) & 0x1f;
+		block_offset++;
+	}
+
+	return 0;
+}
+
+int firmware_compress(uint8_t *input_data, size_t input_data_size, char *key, char *out_file_name)
+{
+    z_stream stream;
+    int ret;
+    unsigned char ciphertext[CHUNK_SIZE];
+    FILE *fp;
+    memset(&stream, 0, sizeof(stream));
+    char *compress_buf = NULL;
+    char *gz_header = NULL;
+    GzipHeader header = {
+        .id1 = 0x1F,
+        .id2 = 0x8B,
+        .compression = 0x08,  // 使用 DEFLATE 压缩
+        .flags = 0x08,        // 表示包含文件名（FNAME）
+        .mtime = 0,           // 修改时间设为 0
+        .xflags = 0,          // 无额外标志
+        .os = 0x03            // Unix 系统
+    };
+    size_t gz_header_len = 0;
+    size_t compress_out = 0;
+    size_t input_data_offset = 0;
+    unsigned int crc = crc32(0L, Z_NULL, 0); // 初始化 CRC32
+    uint8_t garbage_data[2078] = {0};
+
+    if(input_data_size % CHUNK_SIZE != 0){
+        
+        printf("input_data_size %% CHUNK_SIZE != 0");
+        return -1;
+    }
+
+    //encrypt
+    while(input_data_offset < input_data_size){
+        encrypt(input_data + input_data_offset,key);
+
+        crc = crc32(crc, input_data + input_data_offset, CHUNK_SIZE);
+        input_data_offset += CHUNK_SIZE;
+    }
+
+    printf("crc: %u\n",crc);
+
+    compress_buf = malloc(input_data_size);
+    if (compress_buf == NULL)
+    {
+        printf("alloc compress buf error\n");
+        return -1;
+    }
+
+    fp = fopen(out_file_name, "wb");
+    if (fp == NULL)
+    {
+        printf("open out file error\n");
+        free(compress_buf);
+        return -1;
+    }
+
+    ret = deflateInit2_(&stream, Z_DEFAULT_COMPRESSION, Z_DEFLATED, -15, 8, Z_DEFAULT_STRATEGY, "1.2.11", sizeof(stream));;
+    if (ret != Z_OK)
+    {
+        fprintf(stderr, "deflateInit failed: %d\n", ret);
+        fclose(fp);
+        free(compress_buf);
+        return ret;
+    }
+
+    stream.next_in = input_data;
+    stream.avail_in = input_data_size;
+
+    stream.next_out = compress_buf;
+    stream.avail_out = input_data_size;
+
+    ret = deflate(&stream, Z_FINISH);
+    if (ret != Z_STREAM_END) {
+        fprintf(stderr, "deflate failed: %d\n", ret);
+        deflateEnd(&stream);
+        fclose(fp);
+        free(compress_buf);
+        return -1;
+    }
+
+    compress_out = stream.total_out;
+    printf("compressed out:%lu\n",compress_out);
+
+    //create gz header
+    gz_header_len = sizeof(header)+strlen(out_file_name)+1;
+    gz_header = malloc(gz_header_len);
+    if(gz_header == NULL){
+        printf("malloc gzip header buff error\n");
+        deflateEnd(&stream);
+        fclose(fp);
+        free(compress_buf);
+        return -1;
+    }
+
+    memset(gz_header,0,gz_header_len);
+    memcpy(gz_header,&header,sizeof(header));
+    memcpy(gz_header + sizeof(header),out_file_name,strlen(out_file_name));
+    
+    printf("sizeof(GzipHeader):%lu\n",sizeof(GzipHeader));
+    printf("gz header len:%lu\n",gz_header_len);
+
+    //write result to file
+    fwrite(gz_header,1,gz_header_len,fp);
+    fwrite(compress_buf,1,compress_out,fp);
+    fwrite(&crc,1,4,fp);
+    fwrite(&input_data_size,1,4,fp);
+    fwrite(garbage_data,1,sizeof(garbage_data),fp);
+
+    free(gz_header);
+    deflateEnd(&stream);
+    fclose(fp);
+    free(compress_buf);
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc != 4)
+    {
+        printf("usage: %s <FIRMWARE NAME> <ENCRYPT OUT FILE> <KEY>\n", argv[0]);
+        return 0;
+    }
+    int fd = open(argv[1], O_RDONLY);
+    char *out_file_name = argv[2];
+    char *key = argv[3];
+    if (fd == -1)
+    {
+        perror("Failed to open file");
+        return -1;
+    }
+
+    struct stat file_stat;
+    if (fstat(fd, &file_stat) == -1)
+    {
+        perror("Failed to get file size");
+        close(fd);
+        return -1;
+    }
+
+    printf("file size: %ld\n", file_stat.st_size);
+
+    size_t file_size = file_stat.st_size;
+    if( (file_size % CHUNK_SIZE) != 0 ){
+        printf("Not valid firmware: file_size %% CHUNK_SIZE != 0\n");
+        close(fd);
+        return -1;
+    }
+
+    char *buffer = malloc(file_size);
+    if (!buffer)
+    {
+        perror("Failed to allocate memory");
+        close(fd);
+        return -1;
+    }
+
+
+
+    size_t bytes_read = 0;
+    while (bytes_read < file_size)
+    {
+        ssize_t result = read(fd, buffer + bytes_read, file_size - bytes_read);
+        if (result < 0)
+        {
+            perror("Failed to read file");
+            free(buffer);
+            close(fd);
+            return -1;
+        }
+        bytes_read += result;
+    }
+    close(fd);
+
+    firmware_compress(buffer, file_size, key, out_file_name);
+
+    free(buffer);
+    return 0;
+}
+```
+
+out:
+
+```
+sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12$ gcc compress_firmware.c -lz -o compress_firmware
+sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12$ ./compress_firmware FGTOUT FG100D-6.02-FW-build1319-221102-patch12 oAbBIcDde7FfgGHhiIjJ7KlLmsnN3OPP
+file size: 268435968
+crc: 2226910769
+compressed out:60576114
+sizeof(GzipHeader):10
+gz header len:50
+sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12$ ./check_firmware FG100D-6.02-FW-build1319-221102-patch12
+file size: 60578250
+model:FG100D
+major version number: 6
+minor version number: 02
+build version: 1319
+patch version: 12
+gz header len  : 50
+compressed len : 60578200
+decompressed len:268435968
+strm.avail_in: 2086
+CRC32 match   ! Calculated: 2226910769, Expected: 2226910769
+ISIZE match   ! Calculated: 268435968, Expected: 268435968
+
+Decompression complete.
+sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12$ ./check_firmware FGT_100D-v6-build1319-FORTINET.out
+file size: 60581933
+model:FG100D
+major version number: 6
+minor version number: 02
+build version: 1319
+patch version: 12
+gz header len  : 50
+compressed len : 60581883
+decompressed len:268435968
+strm.avail_in: 2086
+CRC32 match   ! Calculated: 2226910769, Expected: 2226910769
+ISIZE match   ! Calculated: 268435968, Expected: 268435968
+
+Decompression complete.
+```
+
 
 
 
