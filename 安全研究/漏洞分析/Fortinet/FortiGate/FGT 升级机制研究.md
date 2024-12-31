@@ -646,7 +646,7 @@ uint64_t check_gz_header(const uint8_t *buffer, size_t buffer_size)
     return header_length; // 返回头部长度
 }
 
-int check_firmware_valid(uint8_t *input_data, size_t input_data_size)
+int check_firmware_gz_file_format_valid(uint8_t *input_data, size_t input_data_size)
 {
     z_stream strm;
     unsigned char out_buffer[CHUNK_SIZE];
@@ -722,6 +722,49 @@ int check_firmware_valid(uint8_t *input_data, size_t input_data_size)
 
 }
 
+int check_firmware_gz_name_valid(char *header_buf)
+{
+    char model[7] = {0};
+	char major_version_number[2] = {0};
+	char minor_version_number[3] = {0};
+	char *build_str_pointer = NULL;
+	char build_version[6] = {0};
+	char *tmp_ptr = NULL;
+	char patch_version[3] = {0};
+
+	strncpy(model,header_buf+10,6);
+	printf("model:%s\n",model);
+	
+	strncpy(major_version_number,header_buf+0x11,1);
+	printf("major version number: %s\n",major_version_number);
+	
+	strncpy(minor_version_number,header_buf+0x13,2);
+	printf("minor version number: %s\n",minor_version_number);
+	
+	build_str_pointer = strstr(header_buf+10,"build");
+	if(build_str_pointer == NULL){
+		printf("not found build str\n");
+		return -1;
+	}
+	
+	tmp_ptr = strchr(build_str_pointer,'-');
+	if(tmp_ptr == NULL){
+		printf("not found '-' str\n");
+		return -1;
+	}
+	
+	int len = tmp_ptr - (build_str_pointer+5);
+	
+	strncpy(build_version,build_str_pointer+5,len);
+	printf("build version: %s\n",build_version);
+
+	tmp_ptr = strstr(header_buf+10,"patch");
+	strncpy(patch_version,tmp_ptr+5,2);
+	printf("patch version: %s\n",patch_version);
+
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
     if (argc != 2)
@@ -770,10 +813,17 @@ int main(int argc, char *argv[])
     }
     close(fd);
 
+    if(check_firmware_gz_name_valid(buffer) == -1){
+        printf("check_firmware_gz_name_invalid\n");
+        free(buffer);
+        close(fd);
+        return -1;
+    }
+
     size_t gz_header_len = check_gz_header(buffer, file_size);
     printf("gz header len  : %ld\n", gz_header_len);
     printf("compressed len : %ld\n", file_size - gz_header_len);
-    check_firmware_valid(buffer + gz_header_len, file_size - gz_header_len);
+    check_firmware_gz_file_format_valid(buffer + gz_header_len, file_size - gz_header_len);
 
     free(buffer);
     return 0;
@@ -783,14 +833,21 @@ int main(int argc, char *argv[])
 Output:
 
 ```
-sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12$ ./a.out FGT_100D-v6-build1319-FORTINET.out 
+sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12$ ./check_firmware FGT_100D-v6-build1319-FORTINET.out
 file size: 60581933
+model:FG100D
+major version number: 6
+minor version number: 02
+build version: 1319
+patch version: 12
 gz header len  : 50
 compressed len : 60581883
 decompressed len:268435968
-file size:268435968
+strm.avail_in: 2086
 CRC32 match   ! Calculated: 2226910769, Expected: 2226910769
 ISIZE match   ! Calculated: 268435968, Expected: 268435968
+
+Decompression complete.
 ```
 
 
