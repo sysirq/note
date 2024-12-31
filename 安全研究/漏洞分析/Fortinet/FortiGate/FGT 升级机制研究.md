@@ -862,7 +862,7 @@ Decompression complete.
 
 
 
-# 升级代码逆向分析
+# 固件解密代码逆向分析
 
 通过字符串：
 
