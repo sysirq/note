@@ -692,20 +692,26 @@ int check_firmware_gz_file_format_valid(uint8_t *input_data, size_t input_data_s
 
     printf("decompressed len:%ld\n", strm.total_out);
 
-    unsigned int file_crc = *(unsigned int *)(input_data + input_data_size - strm.avail_in); // 前4字节为 CRC32
+    unsigned int file_crc = *(unsigned int *)(input_data + input_data_size - strm.avail_in);      // 前4字节为 CRC32
     unsigned int file_size = *(unsigned int *)(input_data + input_data_size - strm.avail_in + 4); // 后4字节为 ISIZE
 
-    printf("strm.avail_in: %u\n",strm.avail_in);
+    printf("strm.avail_in: %u\n", strm.avail_in);
 
-    if (crc != file_crc) {
+    if (crc != file_crc)
+    {
         printf("CRC32 mismatch! Calculated: %u, Expected: %u\n", crc, file_crc);
-    }else{
+    }
+    else
+    {
         printf("CRC32 match   ! Calculated: %u, Expected: %u\n", crc, file_crc);
     }
 
-    if (strm.total_out != file_size) {
+    if (strm.total_out != file_size)
+    {
         printf("ISIZE mismatch! Calculated: %lu, Expected: %u\n", strm.total_out, file_size);
-    }else{
+    }
+    else
+    {
         printf("ISIZE match   ! Calculated: %lu, Expected: %u\n", strm.total_out, file_size);
     }
 
@@ -719,50 +725,51 @@ int check_firmware_gz_file_format_valid(uint8_t *input_data, size_t input_data_s
         fprintf(stderr, "\nDecompression failed.\n");
         return -1;
     }
-
 }
 
 int check_firmware_gz_name_valid(char *header_buf)
 {
     char model[7] = {0};
-	char major_version_number[2] = {0};
-	char minor_version_number[3] = {0};
-	char *build_str_pointer = NULL;
-	char build_version[6] = {0};
-	char *tmp_ptr = NULL;
-	char patch_version[3] = {0};
+    char major_version_number[2] = {0};
+    char minor_version_number[3] = {0};
+    char *build_str_pointer = NULL;
+    char build_version[6] = {0};
+    char *tmp_ptr = NULL;
+    char patch_version[3] = {0};
 
-	strncpy(model,header_buf+10,6);
-	printf("model:%s\n",model);
-	
-	strncpy(major_version_number,header_buf+0x11,1);
-	printf("major version number: %s\n",major_version_number);
-	
-	strncpy(minor_version_number,header_buf+0x13,2);
-	printf("minor version number: %s\n",minor_version_number);
-	
-	build_str_pointer = strstr(header_buf+10,"build");
-	if(build_str_pointer == NULL){
-		printf("not found build str\n");
-		return -1;
-	}
-	
-	tmp_ptr = strchr(build_str_pointer,'-');
-	if(tmp_ptr == NULL){
-		printf("not found '-' str\n");
-		return -1;
-	}
-	
-	int len = tmp_ptr - (build_str_pointer+5);
-	
-	strncpy(build_version,build_str_pointer+5,len);
-	printf("build version: %s\n",build_version);
+    strncpy(model, header_buf + 10, 6);
+    printf("model:%s\n", model);
 
-	tmp_ptr = strstr(header_buf+10,"patch");
-	strncpy(patch_version,tmp_ptr+5,2);
-	printf("patch version: %s\n",patch_version);
+    strncpy(major_version_number, header_buf + 0x11, 1);
+    printf("major version number: %s\n", major_version_number);
 
-	return 0;
+    strncpy(minor_version_number, header_buf + 0x13, 2);
+    printf("minor version number: %s\n", minor_version_number);
+
+    build_str_pointer = strstr(header_buf + 10, "build");
+    if (build_str_pointer == NULL)
+    {
+        printf("not found build str\n");
+        return -1;
+    }
+
+    tmp_ptr = strchr(build_str_pointer, '-');
+    if (tmp_ptr == NULL)
+    {
+        printf("not found '-' str\n");
+        return -1;
+    }
+
+    int len = tmp_ptr - (build_str_pointer + 5);
+
+    strncpy(build_version, build_str_pointer + 5, len);
+    printf("build version: %s\n", build_version);
+
+    tmp_ptr = strstr(header_buf + 10, "patch");
+    strncpy(patch_version, tmp_ptr + 5, 2);
+    printf("patch version: %s\n", patch_version);
+
+    return 0;
 }
 
 int main(int argc, char *argv[])
@@ -813,7 +820,8 @@ int main(int argc, char *argv[])
     }
     close(fd);
 
-    if(check_firmware_gz_name_valid(buffer) == -1){
+    if (check_firmware_gz_name_valid(buffer) == -1)
+    {
         printf("check_firmware_gz_name_invalid\n");
         free(buffer);
         close(fd);
