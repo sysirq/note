@@ -560,11 +560,9 @@ int decrypt(uint8_t *ciphertext,uint8_t *key){
 }
 ```
 
-
+解压代码：
 
 ```c
-// gcc -lz
-
 #include <stdio.h>
 #include <zlib.h>
 #include <stdlib.h>
@@ -843,6 +841,7 @@ int decompress(uint8_t *input_data,size_t input_data_size,char *out_file_name)
 
 		if(is_first_chunk == 1){
 			print_mbr_info(cleartext);
+			printf("mbr size:%d\n",(*(unsigned int*)(cleartext+0x94) + *(unsigned int*)(cleartext+0x90))<<9 );
 			is_first_chunk = 0;
 		}
 
@@ -853,12 +852,12 @@ int decompress(uint8_t *input_data,size_t input_data_size,char *out_file_name)
 	inflateEnd(&strm);
 
 	if (ret == Z_STREAM_END) {
-        	fprintf(stderr, "\nDecompression complete.\n");
-        	return 0;
-    	} else {
-        	fprintf(stderr, "\nDecompression failed.\n");
-    		return -1;
-    	}
+        fprintf(stderr, "\nDecompression complete.\n");
+        return 0;
+    } else {
+        fprintf(stderr, "\nDecompression failed.\n");
+    	return -1;
+    }
 }
 
 int main(int argc,char *argv[])
@@ -912,7 +911,6 @@ int main(int argc,char *argv[])
 	free(buffer);
 	return 0;
 }
-
 ```
 
 
