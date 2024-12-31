@@ -851,6 +851,8 @@ int decompress(uint8_t *input_data,size_t input_data_size,char *out_file_name)
 
 	inflateEnd(&strm);
 
+	printf("decompressed len:%ld\n",strm.total_out);
+
 	if (ret == Z_STREAM_END) {
         fprintf(stderr, "\nDecompression complete.\n");
         return 0;
