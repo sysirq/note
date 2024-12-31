@@ -1686,6 +1686,7 @@ int decompress(uint8_t *input_data, size_t input_data_size, char *out_file_name)
 	if (inflateInit2_(&strm, 4294967281, "1.2.11", sizeof(strm)) != Z_OK)
 	{
 		printf("inflate Init error\n");
+		fclose(fp);
 		return -1;
 	}
 
@@ -1702,14 +1703,17 @@ int decompress(uint8_t *input_data, size_t input_data_size, char *out_file_name)
 		case Z_STREAM_ERROR:
 			fprintf(stderr, "inflate failed: Z_STREAM_ERROR\n");
 			inflateEnd(&strm);
+			fclose(fp);
 			return -1;
 		case Z_MEM_ERROR:
 			fprintf(stderr, "inflate failed: Z_MEM_ERROR\n");
 			inflateEnd(&strm);
+			fclose(fp);
 			return -1;
 		case Z_DATA_ERROR:
 			fprintf(stderr, "inflate failed: Z_DATA_ERROR\n");
 			inflateEnd(&strm);
+			fclose(fp);
 			return -1;
 		}
 
@@ -1731,7 +1735,9 @@ int decompress(uint8_t *input_data, size_t input_data_size, char *out_file_name)
 			if (key == NULL)
 			{
 				printf("not found valid key for firmware decrypt\n");
-				exit(0);
+				inflateEnd(&strm);
+				fclose(fp);
+				return -1;
 			}
 		}
 
@@ -1749,6 +1755,7 @@ int decompress(uint8_t *input_data, size_t input_data_size, char *out_file_name)
 	} while (ret != Z_STREAM_END);
 
 	inflateEnd(&strm);
+	fclose(fp);
 
 	printf("decompressed len:%ld\n", strm.total_out);
 
