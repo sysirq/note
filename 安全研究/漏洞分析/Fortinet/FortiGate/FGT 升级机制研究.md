@@ -1286,7 +1286,7 @@ LABEL_40:
 - 跳过512字节的MBR，将后续的256MB写入磁盘，256MB数据写入磁盘完毕后，才写入MBR
 
 ```c
-void __fastcall sub_20C0800(__int64 a1, int a2, int a3)
+void __fastcall sub_20C0800(__int64 a1, int a2, int a3)//a3 控制是加密，还是解密，解密时a3为0
 {
   _BYTE *v3; // r9
   int v4; // esi
@@ -1331,7 +1331,7 @@ void __fastcall sub_20C0800(__int64 a1, int a2, int a3)
               if ( v7 == 512 )
                 goto LABEL_9;
             }
-            *(_BYTE *)(a1 + v7++) = (v10 ^ v9 ^ v8) - v11;
+            *(_BYTE *)(a1 + v7++) = (v10 ^ v9 ^ v8) - v11;//解密逻辑
             v8 = v9;
           }
           while ( v7 != 512 );
