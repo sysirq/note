@@ -1438,43 +1438,42 @@ int decrypt(uint8_t *ciphertext,uint8_t *key){
 #include <sys/stat.h>
 #include <errno.h>
 
-#define  CHUNK_SIZE 512
+#define CHUNK_SIZE 512
 #define GZ_INVALID_HEADER 0xFFFFFFFF
 
 char *keys[] = {
-"a9bBCc0dpEFsgGHhkQj1kKoLJInNoOPP",
-"c3bOCc7d5EmjgGHhPISJkKlLmMTQo4PP",
-"c3bOCc7d5EmjgghhPISJkkllmMTQo4PP",
-"aAbBCcDdeESsgGHhkQj1kKoLJInNoOPP",
-"oAbBIcDde7FfgGHhiIjJ7TdLAsnN3OPP",
-"oAbBIcDde7FfgGHhiIjJ7KlLmsnN3OPP",
-"aAfBcCmMeEFfgJHhiIjJkqlLmInNo8PP",
-"aAbBcCmMeEFfgGHhiIjJkqlLmInNo8pP",
-"aAbBCcDdeEFfgGHhiIjJkKlLmMnNoOPP",
-"aAbBCcDdeEFfgGHhiIjJkKlLmMnNoOPP",
-"aAbBCcDdeiFMg0HhiIjuhUHLmMnNoOPP",
-"aAbNCcxdeE3btGDhi8AMkK7Lm9nM6McP",
-"aAbBCcDdeiFMg0HhiIjuhUHLmMnNoOPP",
-"aAbNCcDdeE3bgGDhi8jMkKLLm9nM6McP",
-"mPnNCcXdeE3bgGDhi8jMkKLLm9nH6McP",
-"mPnNCcXdeE3bgGDhi8jMkKLLm9nH6McP",
-"aAvRCcQdeE3bgGDhi8jZkKLLm9nY6McP",
-"aAbNCcxdeE3btGDhi8AMkK7Lm9nM6McP",
-"aAbNCcxdeE3btGDhi8AMkK7Lm9nM6McP",
-"bA8BWlDd0BFfCQ3h8IAJ8KZLmMCNzOzP",
-"BA8BWlDD0BFFCQ3H8IAJ8KZLmMCNzOzP",
-"aAbNCcxdeE3btGDhi8AMkK7Lm9nM6McP",
-"aA8BWlDd0EFfCQUh8IAJMKZLmMCNYOzP",
-"bTbJCcKdeE3dgGDhi8jYkKLLm9nU4McP",
-"aA8BWlDd0EFfCQUh8IAJMKZLmMCNYOzP",
-"n26B9laP0EFfiQBhiSAQWKXem7CnYizJ",
-"aA8BWlDd0EFfCQUh8IAJMKZLmMCNYOzP",
-"n2479laP0EFSiQBh8SAQMaXEm7CNY1zP",
-"n26B9laP0pFf3QBh8SAQMKXEm7CNYiKP",
-"n26B9l3P0EFXiQBh8SAQMKXEmLCNYizP",
-"n86B9laP0EFfiQBh8SAQ1KXEm7CNYizX",
-NULL
-};
+	"a9bBCc0dpEFsgGHhkQj1kKoLJInNoOPP",
+	"c3bOCc7d5EmjgGHhPISJkKlLmMTQo4PP",
+	"c3bOCc7d5EmjgghhPISJkkllmMTQo4PP",
+	"aAbBCcDdeESsgGHhkQj1kKoLJInNoOPP",
+	"oAbBIcDde7FfgGHhiIjJ7TdLAsnN3OPP",
+	"oAbBIcDde7FfgGHhiIjJ7KlLmsnN3OPP",
+	"aAfBcCmMeEFfgJHhiIjJkqlLmInNo8PP",
+	"aAbBcCmMeEFfgGHhiIjJkqlLmInNo8pP",
+	"aAbBCcDdeEFfgGHhiIjJkKlLmMnNoOPP",
+	"aAbBCcDdeEFfgGHhiIjJkKlLmMnNoOPP",
+	"aAbBCcDdeiFMg0HhiIjuhUHLmMnNoOPP",
+	"aAbNCcxdeE3btGDhi8AMkK7Lm9nM6McP",
+	"aAbBCcDdeiFMg0HhiIjuhUHLmMnNoOPP",
+	"aAbNCcDdeE3bgGDhi8jMkKLLm9nM6McP",
+	"mPnNCcXdeE3bgGDhi8jMkKLLm9nH6McP",
+	"mPnNCcXdeE3bgGDhi8jMkKLLm9nH6McP",
+	"aAvRCcQdeE3bgGDhi8jZkKLLm9nY6McP",
+	"aAbNCcxdeE3btGDhi8AMkK7Lm9nM6McP",
+	"aAbNCcxdeE3btGDhi8AMkK7Lm9nM6McP",
+	"bA8BWlDd0BFfCQ3h8IAJ8KZLmMCNzOzP",
+	"BA8BWlDD0BFFCQ3H8IAJ8KZLmMCNzOzP",
+	"aAbNCcxdeE3btGDhi8AMkK7Lm9nM6McP",
+	"aA8BWlDd0EFfCQUh8IAJMKZLmMCNYOzP",
+	"bTbJCcKdeE3dgGDhi8jYkKLLm9nU4McP",
+	"aA8BWlDd0EFfCQUh8IAJMKZLmMCNYOzP",
+	"n26B9laP0EFfiQBhiSAQWKXem7CnYizJ",
+	"aA8BWlDd0EFfCQUh8IAJMKZLmMCNYOzP",
+	"n2479laP0EFSiQBh8SAQMaXEm7CNY1zP",
+	"n26B9laP0pFf3QBh8SAQMKXEm7CNYiKP",
+	"n26B9l3P0EFXiQBh8SAQMKXEmLCNYizP",
+	"n86B9laP0EFfiQBh8SAQ1KXEm7CNYizX",
+	NULL};
 
 /* gzip header struct
 offset len      name    desc
@@ -1488,86 +1487,104 @@ offset len      name    desc
 */
 
 // 检查 GZIP 文件头并返回头部长度
-uint64_t check_gz_header(const uint8_t *buffer, size_t buffer_size) {
-    if (!buffer || buffer_size < 10) {
-        return GZ_INVALID_HEADER; // 缓冲区无效或长度不足
-    }
+uint64_t check_gz_header(const uint8_t *buffer, size_t buffer_size)
+{
+	if (!buffer || buffer_size < 10)
+	{
+		return GZ_INVALID_HEADER; // 缓冲区无效或长度不足
+	}
 
-    // 检查 GZIP 标识符
-    if (buffer[0] != 0x1F || buffer[1] != 0x8B) {
-        return GZ_INVALID_HEADER; // ID1 和 ID2 不匹配
-    }
+	// 检查 GZIP 标识符
+	if (buffer[0] != 0x1F || buffer[1] != 0x8B)
+	{
+		return GZ_INVALID_HEADER; // ID1 和 ID2 不匹配
+	}
 
-    // 检查压缩方法（CM）是否为 DEFLATE，以及标志字节（FLG）
-    if (buffer[2] != 8 || (buffer[3] & 0xE0) != 0) {
-        return GZ_INVALID_HEADER; // 非 DEFLATE 或标志字节非法
-    }
+	// 检查压缩方法（CM）是否为 DEFLATE，以及标志字节（FLG）
+	if (buffer[2] != 8 || (buffer[3] & 0xE0) != 0)
+	{
+		return GZ_INVALID_HEADER; // 非 DEFLATE 或标志字节非法
+	}
 
-    size_t header_length = 10; // 基本头部长度
-    uint8_t flags = buffer[3]; // 标志字节
+	size_t header_length = 10; // 基本头部长度
+	uint8_t flags = buffer[3]; // 标志字节
 
-    // 处理 FEXTRA（扩展字段）
-    if (flags & 0x04) {
-        if (header_length + 2 > buffer_size) {
-            return GZ_INVALID_HEADER; // 缓冲区不足
-        }
-        size_t extra_length = buffer[header_length] | (buffer[header_length + 1] << 8);
-        header_length += 2 + extra_length;
-        if (header_length > buffer_size) {
-            return GZ_INVALID_HEADER; // 缓冲区不足
-        }
-    }
+	// 处理 FEXTRA（扩展字段）
+	if (flags & 0x04)
+	{
+		if (header_length + 2 > buffer_size)
+		{
+			return GZ_INVALID_HEADER; // 缓冲区不足
+		}
+		size_t extra_length = buffer[header_length] | (buffer[header_length + 1] << 8);
+		header_length += 2 + extra_length;
+		if (header_length > buffer_size)
+		{
+			return GZ_INVALID_HEADER; // 缓冲区不足
+		}
+	}
 
-    // 处理 FNAME（文件名）
-    if (flags & 0x08) {
-        while (header_length < buffer_size && buffer[header_length] != '\0') {
-            header_length++;
-        }
-        if (header_length >= buffer_size) {
-            return GZ_INVALID_HEADER; // 缓冲区不足
-        }
-        header_length++; // 跳过 '\0'
-    }
+	// 处理 FNAME（文件名）
+	if (flags & 0x08)
+	{
+		while (header_length < buffer_size && buffer[header_length] != '\0')
+		{
+			header_length++;
+		}
+		if (header_length >= buffer_size)
+		{
+			return GZ_INVALID_HEADER; // 缓冲区不足
+		}
+		header_length++; // 跳过 '\0'
+	}
 
-    // 处理 FCOMMENT（注释）
-    if (flags & 0x10) {
-        while (header_length < buffer_size && buffer[header_length] != '\0') {
-            header_length++;
-        }
-        if (header_length >= buffer_size) {
-            return GZ_INVALID_HEADER; // 缓冲区不足
-        }
-        header_length++; // 跳过 '\0'
-    }
+	// 处理 FCOMMENT（注释）
+	if (flags & 0x10)
+	{
+		while (header_length < buffer_size && buffer[header_length] != '\0')
+		{
+			header_length++;
+		}
+		if (header_length >= buffer_size)
+		{
+			return GZ_INVALID_HEADER; // 缓冲区不足
+		}
+		header_length++; // 跳过 '\0'
+	}
 
-    // 处理 FHCRC（头部校验）
-    if (flags & 0x02) {
-        header_length += 2;
-        if (header_length > buffer_size) {
-            return GZ_INVALID_HEADER; // 缓冲区不足
-        }
-    }
+	// 处理 FHCRC（头部校验）
+	if (flags & 0x02)
+	{
+		header_length += 2;
+		if (header_length > buffer_size)
+		{
+			return GZ_INVALID_HEADER; // 缓冲区不足
+		}
+	}
 
-    // 最终检查头部长度
-    if (header_length > buffer_size) {
-        return GZ_INVALID_HEADER; // 缓冲区不足
-    }
+	// 最终检查头部长度
+	if (header_length > buffer_size)
+	{
+		return GZ_INVALID_HEADER; // 缓冲区不足
+	}
 
-    return header_length; // 返回头部长度
+	return header_length; // 返回头部长度
 }
 
-//ciphertext 长度为512字节， key 长度为 32字节
-int decrypt(uint8_t *ciphertext,uint8_t *cleartext,uint8_t *key){
+// ciphertext 长度为512字节， key 长度为 32字节
+int decrypt(uint8_t *ciphertext, uint8_t *cleartext, uint8_t *key)
+{
 	size_t block_offset = 0;
 	size_t key_offset = 0;
 	uint8_t previous_ciphertext_byte = 0xFF;
 	uint8_t xor = 0;
 
-	while(block_offset < CHUNK_SIZE){
+	while (block_offset < CHUNK_SIZE)
+	{
 		xor = (key[key_offset] ^ (ciphertext[block_offset]) ^ previous_ciphertext_byte) - (block_offset & 0x1F);
 		previous_ciphertext_byte = ciphertext[block_offset];
 		cleartext[block_offset] = xor;
-		key_offset = (key_offset+1) & 0x1f;
+		key_offset = (key_offset + 1) & 0x1f;
 		block_offset++;
 	}
 
@@ -1581,64 +1598,74 @@ int decrypt(uint8_t *ciphertext,uint8_t *cleartext,uint8_t *key){
 #define SIGNATURE_OFFSET 510
 #define MBR_SIGNATURE 0xAA55
 
-typedef struct {
-    uint8_t boot_flag;       // 启动标志
-    uint8_t start_chs[3];    // 起始CHS地址
-    uint8_t partition_type;  // 分区类型
-    uint8_t end_chs[3];      // 结束CHS地址
-    uint32_t start_lba;      // 起始LBA地址
-    uint32_t size_in_sectors; // 分区大小（扇区数）
+typedef struct
+{
+	uint8_t boot_flag;		  // 启动标志
+	uint8_t start_chs[3];	  // 起始CHS地址
+	uint8_t partition_type;	  // 分区类型
+	uint8_t end_chs[3];		  // 结束CHS地址
+	uint32_t start_lba;		  // 起始LBA地址
+	uint32_t size_in_sectors; // 分区大小（扇区数）
 } PartitionEntry;
 
-int check_valid_mbr(uint8_t* mbr){
+int check_valid_mbr(uint8_t *mbr)
+{
 	uint16_t signature = *(uint16_t *)(mbr + SIGNATURE_OFFSET);
 	uint8_t *partition_table = mbr + PARTITION_TABLE_OFFSET;
 	uint32_t previous_lba_end = 0;
 	if (signature != MBR_SIGNATURE)
 		return -1;
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++)
+	{
 		PartitionEntry *entry = (PartitionEntry *)(partition_table + i * PARTITION_ENTRY_SIZE);
-		if (entry->partition_type != 0x00) {
-			if (entry->boot_flag != 0x00 && entry->boot_flag != 0x80) {//0x00: 非活动分区 , 0x80: 活动分区（最多一个）。
+		if (entry->partition_type != 0x00)
+		{
+			if (entry->boot_flag != 0x00 && entry->boot_flag != 0x80)
+			{ // 0x00: 非活动分区 , 0x80: 活动分区（最多一个）。
 				return -1;
 			}
 
-			if (entry->size_in_sectors == 0) {
-                return -1;
-            }
+			if (entry->size_in_sectors == 0)
+			{
+				return -1;
+			}
 
-			if(previous_lba_end != 0){
-				if(previous_lba_end != entry->start_lba)
+			if (previous_lba_end != 0)
+			{
+				if (previous_lba_end != entry->start_lba)
 					return -1;
-				if(previous_lba_end > entry->start_lba)
+				if (previous_lba_end > entry->start_lba)
 					return -1;
 			}
 
 			previous_lba_end = entry->start_lba + entry->size_in_sectors;
-		} 
-	}
-	return 0;
-}
-
-int print_mbr_info(uint8_t* mbr)
-{
-	uint8_t *partition_table = mbr + PARTITION_TABLE_OFFSET;
-	for (int i = 0; i < 4; i++) {
-		PartitionEntry *entry = (PartitionEntry *)(partition_table + i * PARTITION_ENTRY_SIZE);
-
-		if (entry->partition_type != 0x00) {
-			if (entry->boot_flag != 0x00 && entry->boot_flag != 0x80) {
-				return -1;
-			}
-
-			printf("分区 %d: 类型 0x%02X,分区标志 %x, 起始 LBA %u, 大小 %u 扇区\n",
-                   i + 1, entry->partition_type,entry->boot_flag, entry->start_lba, entry->size_in_sectors);
 		}
 	}
 	return 0;
 }
 
-int decompress(uint8_t *input_data,size_t input_data_size,char *out_file_name)
+int print_mbr_info(uint8_t *mbr)
+{
+	uint8_t *partition_table = mbr + PARTITION_TABLE_OFFSET;
+	for (int i = 0; i < 4; i++)
+	{
+		PartitionEntry *entry = (PartitionEntry *)(partition_table + i * PARTITION_ENTRY_SIZE);
+
+		if (entry->partition_type != 0x00)
+		{
+			if (entry->boot_flag != 0x00 && entry->boot_flag != 0x80)
+			{
+				return -1;
+			}
+
+			printf("分区 %d: 类型 0x%02X,分区标志 %x, 起始 LBA %u, 大小 %u 扇区\n",
+				   i + 1, entry->partition_type, entry->boot_flag, entry->start_lba, entry->size_in_sectors);
+		}
+	}
+	return 0;
+}
+
+int decompress(uint8_t *input_data, size_t input_data_size, char *out_file_name)
 {
 	z_stream strm;
 	char *key = NULL;
@@ -1646,135 +1673,151 @@ int decompress(uint8_t *input_data,size_t input_data_size,char *out_file_name)
 	unsigned char cleartext[CHUNK_SIZE];
 	int ret;
 	FILE *fp;
-	memset(&strm,0,sizeof(z_stream));
+	memset(&strm, 0, sizeof(z_stream));
 	int is_first_chunk = 1;
-	
-	fp = fopen(out_file_name,"wb");
-	if(fp == NULL){
+
+	fp = fopen(out_file_name, "wb");
+	if (fp == NULL)
+	{
 		printf("open out file error\n");
 		return -1;
 	}
 
-	if(inflateInit2_(&strm,4294967281,"1.2.11",sizeof(strm)) != Z_OK){
+	if (inflateInit2_(&strm, 4294967281, "1.2.11", sizeof(strm)) != Z_OK)
+	{
 		printf("inflate Init error\n");
 		return -1;
 	}
-	
+
 	strm.next_in = input_data;
 	strm.avail_in = input_data_size;
 
-	do{
+	do
+	{
 		strm.next_out = out_buffer;
 		strm.avail_out = CHUNK_SIZE;
 		ret = inflate(&strm, Z_NO_FLUSH);
-		switch(ret){
-			case Z_STREAM_ERROR:
-				fprintf(stderr, "inflate failed: Z_STREAM_ERROR\n");
-				inflateEnd(&strm);
-				return -1;
-			case Z_MEM_ERROR:
-				fprintf(stderr, "inflate failed: Z_MEM_ERROR\n");
-				inflateEnd(&strm);
-				return -1;
-			case Z_DATA_ERROR:
-				fprintf(stderr, "inflate failed: Z_DATA_ERROR\n");
-				inflateEnd(&strm);
-				return -1;
-
-		
+		switch (ret)
+		{
+		case Z_STREAM_ERROR:
+			fprintf(stderr, "inflate failed: Z_STREAM_ERROR\n");
+			inflateEnd(&strm);
+			return -1;
+		case Z_MEM_ERROR:
+			fprintf(stderr, "inflate failed: Z_MEM_ERROR\n");
+			inflateEnd(&strm);
+			return -1;
+		case Z_DATA_ERROR:
+			fprintf(stderr, "inflate failed: Z_DATA_ERROR\n");
+			inflateEnd(&strm);
+			return -1;
 		}
 
-		if(key == NULL){
+		if (key == NULL)
+		{
 			int i = 0;
-			while(keys[i] != NULL){
-				decrypt(out_buffer,cleartext,keys[i]);
-				if(check_valid_mbr(cleartext) == 0){
+			while (keys[i] != NULL)
+			{
+				decrypt(out_buffer, cleartext, keys[i]);
+				if (check_valid_mbr(cleartext) == 0)
+				{
 					key = keys[i];
-					printf("found key for decrypt:%s\n",key);
+					printf("found key for decrypt:%s\n", key);
 					break;
 				}
 				i++;
 			}
 
-			if(key == NULL){
+			if (key == NULL)
+			{
 				printf("not found valid key for firmware decrypt\n");
 				exit(0);
 			}
 		}
 
-		decrypt(out_buffer,cleartext,key);
+		decrypt(out_buffer, cleartext, key);
 
-		if(is_first_chunk == 1){
+		if (is_first_chunk == 1)
+		{
 			print_mbr_info(cleartext);
-			printf("mbr size:%d\n",(*(unsigned int*)(cleartext+0x94) + *(unsigned int*)(cleartext+0x90))<<9 );
+			printf("mbr size:%d\n", (*(unsigned int *)(cleartext + 0x94) + *(unsigned int *)(cleartext + 0x90)) << 9);
 			is_first_chunk = 0;
 		}
 
-		fwrite(cleartext,CHUNK_SIZE - strm.avail_out,1,fp);
-		
-	}while(ret != Z_STREAM_END);
+		fwrite(cleartext, CHUNK_SIZE - strm.avail_out, 1, fp);
+
+	} while (ret != Z_STREAM_END);
 
 	inflateEnd(&strm);
 
-	printf("decompressed len:%ld\n",strm.total_out);
+	printf("decompressed len:%ld\n", strm.total_out);
 
-	if (ret == Z_STREAM_END) {
-        fprintf(stderr, "\nDecompression complete.\n");
-        return 0;
-    } else {
-        fprintf(stderr, "\nDecompression failed.\n");
-    	return -1;
-    }
+	if (ret == Z_STREAM_END)
+	{
+		fprintf(stderr, "\nDecompression complete.\n");
+		return 0;
+	}
+	else
+	{
+		fprintf(stderr, "\nDecompression failed.\n");
+		return -1;
+	}
 }
 
-int main(int argc,char *argv[])
+int main(int argc, char *argv[])
 {
-	if(argc != 3){
-		printf("usage: %s <FIRMWARE NAME> <DECRYPT OUT FILE>\n",argv[0]);
+	if (argc != 3)
+	{
+		printf("usage: %s <FIRMWARE NAME> <DECRYPT OUT FILE>\n", argv[0]);
 		return 0;
 	}
 	int fd = open(argv[1], O_RDONLY);
 	char *out_file_name = argv[2];
-	if(fd == -1){
+	if (fd == -1)
+	{
 		perror("Failed to open file");
 		return -1;
 	}
 
 	struct stat file_stat;
-	if(fstat(fd,&file_stat) == -1){
+	if (fstat(fd, &file_stat) == -1)
+	{
 		perror("Failed to get file size");
 		close(fd);
 		return -1;
 	}
 
-	printf("file size: %ld\n",file_stat.st_size);
-	
-	size_t file_size = file_stat.st_size - 256;//skip signature
+	printf("file size: %ld\n", file_stat.st_size);
+
+	size_t file_size = file_stat.st_size - 256; // skip signature
 	char *buffer = malloc(file_size);
-    	if (!buffer) {
-        	perror("Failed to allocate memory");
-        	close(fd);
-        	return -1;
-    	}
+	if (!buffer)
+	{
+		perror("Failed to allocate memory");
+		close(fd);
+		return -1;
+	}
 
 	size_t bytes_read = 0;
-    	while (bytes_read < file_size) {
+	while (bytes_read < file_size)
+	{
 		ssize_t result = read(fd, buffer + bytes_read, file_size - bytes_read);
-        	if (result < 0) {
-            		perror("Failed to read file");
-            		free(buffer);
-            		close(fd);
-            		return -1;
-        	}
-        	bytes_read += result;
-    	}
+		if (result < 0)
+		{
+			perror("Failed to read file");
+			free(buffer);
+			close(fd);
+			return -1;
+		}
+		bytes_read += result;
+	}
 	close(fd);
-	
-	size_t gz_header_len = check_gz_header(buffer,file_size);
-	printf("gz header len  : %ld\n",gz_header_len);
-	printf("compressed len : %ld\n",file_size - gz_header_len);
-	decompress(buffer + gz_header_len ,file_size - gz_header_len,out_file_name);
-	
+
+	size_t gz_header_len = check_gz_header(buffer, file_size);
+	printf("gz header len  : %ld\n", gz_header_len);
+	printf("compressed len : %ld\n", file_size - gz_header_len);
+	decompress(buffer + gz_header_len, file_size - gz_header_len, out_file_name);
+
 	free(buffer);
 	return 0;
 }
