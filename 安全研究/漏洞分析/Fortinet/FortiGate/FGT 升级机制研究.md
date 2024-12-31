@@ -199,7 +199,7 @@ LABEL_27:
       unlink("/tmp/uploadxxxx");
       return (unsigned int)v5;
     }
-    if ( (unsigned int)sub_23E8050(&v16, v10 == 1) || (unsigned int)sub_27CD0B0("/tmp/uploadxxxx", 0) )//固件signature检查，最后的256字节为signature，该函数也会将最后的signature去掉 "Low-Encryption(LENC) mode don't support image verification, skipped."
+    if ( (unsigned int)sub_23E8050(&v16, v10 == 1) || (unsigned int)sub_27CD0B0("/tmp/uploadxxxx", 0) )//固件signature检查，最后的256字节为signature，该函数也会将最后的signature去掉 。 "Low-Encryption(LENC) mode don't support image verification, skipped."
     {
       LODWORD(v5) = 0;
       unlink("/tmp/uploadxxxx");
