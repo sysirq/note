@@ -785,6 +785,19 @@ int main(int argc, char *argv[])
 }
 ```
 
+Output:
+
+```
+sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12$ ./a.out FGT_100D-v6-build1319-FORTINET.out 
+file size: 60581933
+gz header len  : 50
+compressed len : 60581883
+decompressed len:268435968
+file size:268435968
+CRC32 match   ! Calculated: 2226910769, Expected: 2226910769
+ISIZE match   ! Calculated: 268435968, Expected: 268435968
+```
+
 
 
 
