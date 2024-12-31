@@ -649,13 +649,9 @@ uint64_t check_gz_header(const uint8_t *buffer, size_t buffer_size)
 int check_firmware_valid(uint8_t *input_data, size_t input_data_size)
 {
     z_stream strm;
-    char *key = NULL;
     unsigned char out_buffer[CHUNK_SIZE];
-    unsigned char cleartext[CHUNK_SIZE];
     int ret;
-    FILE *fp;
     memset(&strm, 0, sizeof(z_stream));
-    int is_first_chunk = 1;
     unsigned int crc = crc32(0L, Z_NULL, 0); // 初始化 CRC32
 
     if (inflateInit2_(&strm, 4294967281, "1.2.11", sizeof(strm)) != Z_OK)
@@ -699,7 +695,7 @@ int check_firmware_valid(uint8_t *input_data, size_t input_data_size)
     unsigned int file_crc = *(unsigned int *)(input_data + input_data_size - strm.avail_in); // 前4字节为 CRC32
     unsigned int file_size = *(unsigned int *)(input_data + input_data_size - strm.avail_in + 4); // 后4字节为 ISIZE
 
-    printf("file size:%d\n",file_size);
+    printf("strm.avail_in: %u\n",strm.avail_in);
 
     if (crc != file_crc) {
         printf("CRC32 mismatch! Calculated: %u, Expected: %u\n", crc, file_crc);
@@ -734,7 +730,6 @@ int main(int argc, char *argv[])
         return 0;
     }
     int fd = open(argv[1], O_RDONLY);
-    char *out_file_name = argv[2];
     if (fd == -1)
     {
         perror("Failed to open file");
