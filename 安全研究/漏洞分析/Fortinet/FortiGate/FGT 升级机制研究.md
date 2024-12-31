@@ -191,7 +191,7 @@ LABEL_27:
     && (unsigned int)sub_2090E00("TFTP file: ", 0LL)
     && !(unsigned int)sub_239E5F0(v21, nptr, "/tmp/uploadxxxx") )//从TFTP下载固件
   {
-    v10 = sub_27CDBD0("/tmp/uploadxxxx", (__int64)&v16, 1);
+    v10 = sub_27CDBD0("/tmp/uploadxxxx", (__int64)&v16, 1);//固件格式检查
     if ( v10 < 0 )
     {
       LODWORD(v5) = 0;
@@ -199,7 +199,7 @@ LABEL_27:
       unlink("/tmp/uploadxxxx");
       return (unsigned int)v5;
     }
-    if ( (unsigned int)sub_23E8050(&v16, v10 == 1) || (unsigned int)sub_27CD0B0("/tmp/uploadxxxx", 0) )
+    if ( (unsigned int)sub_23E8050(&v16, v10 == 1) || (unsigned int)sub_27CD0B0("/tmp/uploadxxxx", 0) )//固件signature检查，最后的256字节
     {
       LODWORD(v5) = 0;
       unlink("/tmp/uploadxxxx");
@@ -218,7 +218,7 @@ LABEL_27:
 
 
 
-sub_440810 首先 对固件长度进行检查，查看是否是
+sub_27CDBD0固件格式检查
 
 
 
