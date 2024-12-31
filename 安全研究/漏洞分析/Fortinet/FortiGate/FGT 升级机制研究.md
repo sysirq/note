@@ -301,7 +301,7 @@ LABEL_47:
             sub_1930AC0((unsigned int)"Cannot open file %s\n", (unsigned int)s, v69, v70, v71, v72);
             goto LABEL_40;
           }
-          v93 = sub_20C14F0(buf);
+          v93 = sub_20C14F0(buf);//恒定为512
           sub_20C1560(v108, 1LL);
           if ( (int)sub_20C12B0(a2, v108) < 0 )
           {
