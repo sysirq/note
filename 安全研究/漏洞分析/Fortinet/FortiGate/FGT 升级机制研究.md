@@ -1571,7 +1571,7 @@ uint64_t check_gz_header(const uint8_t *buffer, size_t buffer_size)
 	return header_length; // 返回头部长度
 }
 
-// ciphertext 长度为512字节， key 长度为 32字节
+// ciphertext 长度一定为512字节，如果不为的话表示有问题， key 长度为 32字节
 int decrypt(uint8_t *ciphertext, uint8_t *cleartext, uint8_t *key)
 {
 	size_t block_offset = 0;
@@ -1698,6 +1698,14 @@ int decompress(uint8_t *input_data, size_t input_data_size, char *out_file_name)
 		strm.next_out = out_buffer;
 		strm.avail_out = CHUNK_SIZE;
 		ret = inflate(&strm, Z_NO_FLUSH);
+
+		if(CHUNK_SIZE - strm.avail_out != CHUNK_SIZE){
+			fprintf(stderr, "inflate out size not equ CHUNK_SIZE\n");
+			inflateEnd(&strm);
+			fclose(fp);
+			return -1;
+		}
+
 		switch (ret)
 		{
 		case Z_STREAM_ERROR:
