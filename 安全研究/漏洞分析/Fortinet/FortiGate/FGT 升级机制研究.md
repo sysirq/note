@@ -1,3 +1,386 @@
+```
+FortiGate-100D login: admin
+Password: *****
+Welcome!
+
+FortiGate-100D # execute restore image tftp image.out 192.168.1.110
+This operation will replace the current firmware version!
+Do you want to continue? (y/n)y
+
+Please wait...
+
+Connect to tftp server 192.168.1.110 ...
+#########################################################
+
+Get image from tftp server OK.
+The new image does not have a valid RSA signature.
+
+Checking new firmware integrity ... pass
+
+Please wait for system to restart.
+
+
+Firmware upgrade in progress ...
+Error : Boot image on disk: /dev/sdb1 is corrupted, please try to update the firmware again !
+ Bad upgrade image. Abort.
+Done.
+
+
+The system is going down NOW !!
+
+Please stand by while rebooting the system.
+Restarting system.
+FortiGate-100D (17:36-08.07.2014)
+Ver:05000006
+Serial number:FG100D3G17803968
+RAM activation
+CPU(00:000106ca bfebfbff): MP initialization
+CPU(01:000106ca bfebfbff): MP initialization
+CPU(02:000106ca bfebfbff): MP initialization
+CPU(03:000106ca bfebfbff): MP initialization
+Total RAM: 4096MB
+Enabling cache...Done.
+Scanning PCI bus...Done.
+Allocating PCI resources...Done.
+Enabling PCI resources...Done.
+Zeroing IRQ settings...Done.
+Verifying PIRQ tables...Done.
+Boot up, boot device capacity: 15272MB.
+Press any key to display configuration menu...
+......
+
+Reading boot image 2721475 bytes.
+Initializing firewall...
+System is starting...
+Starting system maintenance...
+Scanning /dev/sdb2... (100%)   
+Scanning /dev/sdb3... (100%)   
+Detected failed upgrade on backup partition
+
+
+FortiGate-100D login: admin
+Password: *****
+Welcome!
+```
+
+# 固件格式分析
+
+通过字符串：
+
+```
+.rodata:0000000003417E28	0000001F	C	Get image from tftp server OK.
+```
+
+可以找到固件格式检查代码：
+
+```c
+__int64 __fastcall sub_239E780(int a1, const char **a2)
+{
+  char *v3; // r12
+  char *v4; // r13
+  __int64 v5; // r12
+  unsigned int v6; // er13
+  void *v8; // rsi
+  int v9; // ebx
+  int v10; // eax
+  int *v11; // rax
+  __int64 v12; // rax
+  __int64 v13; // r12
+  __int64 v14; // rbx
+  char *s2; // [rsp+8h] [rbp-168h] BYREF
+  __int64 v16; // [rsp+12h] [rbp-15Eh] BYREF
+  int v17; // [rsp+1Ah] [rbp-156h]
+  __int16 v18; // [rsp+1Eh] [rbp-152h]
+  char s1[32]; // [rsp+20h] [rbp-150h] BYREF
+  char nptr[128]; // [rsp+40h] [rbp-130h] BYREF
+  char v21[136]; // [rsp+C0h] [rbp-B0h] BYREF
+  unsigned __int64 v22; // [rsp+148h] [rbp-28h]
+
+  v22 = __readfsqword(0x28u);
+  v18 = 0;
+  s2 = 0LL;
+  v16 = 0LL;
+  v17 = 0;
+  if ( a1 <= 0 )
+  {
+    LODWORD(v5) = 0;
+    fwrite("Incomplete command.\n", 1uLL, 0x14uLL, stderr);
+    putchar(10);
+    sub_90A8C0("disk_erase_help");
+    sub_908AC0();
+    return (unsigned int)v5;
+  }
+  s1[0] = 0;
+  sub_2814F20((__int64)&s2, 0LL);
+  v3 = s2;
+  if ( !s2 )
+  {
+    LODWORD(v5) = 1;
+    fwrite("Boot disk not found.\n", 1uLL, 0x15uLL, stderr);
+    return (unsigned int)v5;
+  }
+  v4 = (char *)*a2;
+  if ( !strcmp(*a2, "boot") )
+  {
+    sub_292B4D0(s1, v3, 0x20uLL);
+  }
+  else
+  {
+    s1[0] = 0;
+    v8 = (void *)sub_9078F0(v4);
+    if ( v8 )
+      sub_292B4D0(s1, v8, 0x20uLL);
+  }
+  if ( !s1[0] || (LODWORD(v5) = sub_28330F0(s1), (_DWORD)v5) )
+  {
+    LODWORD(v5) = -56;
+    fprintf(stderr, "Disk [%s] not found.\n", *a2);
+    return (unsigned int)v5;
+  }
+  if ( !strcmp(s1, s2) )
+  {
+    v6 = 1;
+    if ( (unsigned int)sub_239E690() )
+    {
+      fwrite("Cannot erase boot device on this Fortigate.\n", 1uLL, 0x2CuLL, stderr);
+      return (unsigned int)v5;
+    }
+  }
+  else
+  {
+    v6 = 0;
+  }
+  if ( !(unsigned int)sub_2091410(
+                        "\n"
+                        "WARNING\n"
+                        "This will permanently erase all data from the storage media.\n"
+                        "(This may take as short as a few minutes or over an hour depending on the size\n"
+                        "of the disk and the number of times you wish to overwrite the disk.)\n"
+                        "WARNING\n"
+                        "\n") )
+    return (unsigned int)v5;
+  if ( !(unsigned int)sub_2090E00("How many times do you wish to overwrite the media? ", 0LL) )
+    return (unsigned int)v5;
+  v9 = strtol(nptr, 0LL, 10);
+  if ( v9 <= 0 )
+    return (unsigned int)v5;
+  if ( !v6 )
+  {
+LABEL_27:
+    v12 = sub_44B1E0();
+    v13 = v12;
+    if ( v12 )
+    {
+      v14 = (unsigned int)sub_44B1F0(v12, s1, (unsigned int)v9, v6);
+      sub_44B220(v13, v14);
+      v5 = (_DWORD)v14 != 0;
+    }
+    else
+    {
+      LODWORD(v5) = -24;
+    }
+    return (unsigned int)v5;
+  }
+  if ( !(unsigned int)sub_2091410("Restore the image after erasing.\n") )
+  {
+    if ( !(unsigned int)sub_2091410("Erasing boot disk will make VM unbootable.\n") )
+      return (unsigned int)v5;
+    goto LABEL_27;
+  }
+  if ( (unsigned int)sub_2090E00("TFTP server: ", 0LL)
+    && (unsigned int)sub_2090E00("TFTP file: ", 0LL)
+    && !(unsigned int)sub_239E5F0(v21, nptr, "/tmp/uploadxxxx") )//从TFTP下载固件
+  {
+    v10 = sub_27CDBD0("/tmp/uploadxxxx", (__int64)&v16, 1);
+    if ( v10 < 0 )
+    {
+      LODWORD(v5) = 0;
+      fwrite("Invalid image.\n", 1uLL, 0xFuLL, stderr);
+      unlink("/tmp/uploadxxxx");
+      return (unsigned int)v5;
+    }
+    if ( (unsigned int)sub_23E8050(&v16, v10 == 1) || (unsigned int)sub_27CD0B0("/tmp/uploadxxxx", 0) )
+    {
+      LODWORD(v5) = 0;
+      unlink("/tmp/uploadxxxx");
+      return (unsigned int)v5;
+    }
+    if ( rename("/tmp/uploadxxxx", "/tmp/upfile") )
+    {
+      v11 = __errno_location();
+      fprintf(stderr, "Rename image error:%d.\n", (unsigned int)*v11);
+    }
+    goto LABEL_27;
+  }
+  return (unsigned int)v5;
+}
+```
+
+
+
+sub_440810 首先 对固件长度进行检查，查看是否是
+
+
+
+```c
+__int64 __fastcall sub_2087D20(char *filename, __int64 a2, int a3)
+{
+  unsigned int v4; // ebx
+  int v5; // er15
+  int v6; // er15
+  int v7; // eax
+  int v9; // er15
+  int v10; // er15
+  int v11; // er15
+  int v12; // er15
+  int v13; // er15
+  int v14; // er15
+  int v15; // er15
+  __int64 v16; // [rsp+6h] [rbp-16Ah] BYREF
+  int v17; // [rsp+Eh] [rbp-162h]
+  char dest[7]; // [rsp+12h] [rbp-15Eh] BYREF
+  char s2[7]; // [rsp+19h] [rbp-157h] BYREF
+  char v20[16]; // [rsp+20h] [rbp-150h] BYREF
+  char v21[10]; // [rsp+30h] [rbp-140h] BYREF
+  char v22[254]; // [rsp+3Ah] [rbp-136h] BYREF
+  unsigned __int64 v23; // [rsp+138h] [rbp-38h]
+
+  v16 = 0LL;
+  v23 = __readfsqword(0x28u);
+  v17 = 0;
+  if ( (int)sub_2087650(filename, &v16, v21) < 0 )
+    return (unsigned int)-1;
+  if ( (_WORD)v16 == 5 && !BYTE4(v16) && WORD1(v16) == 271 )
+    BYTE4(v16) = 7;
+  strncpy(dest, v22, 6uLL);
+  dest[6] = 0;
+  sub_2087CF0(s2, 7LL);
+  v4 = strncmp(dest, s2, 6uLL);
+  if ( v4 )
+    return (unsigned int)-1;
+  v5 = (unsigned __int8)v16;
+  if ( v5 < (int)strtol("6", 0LL, 10)
+    || (v12 = (unsigned __int8)v16, v12 <= (int)strtol("6", 0LL, 10))
+    && (BYTE1(v16) <= 1u || BYTE1(v16) == 2 && WORD1(v16) <= 0x475u) )
+  {
+    v6 = (unsigned __int8)v16;
+    if ( (unsigned __int8)v16 <= 4u )
+    {
+      v4 = -591;
+      puts("Downgrading to the given image is not supported. Please burn the image from BIOS.");
+      return v4;
+    }
+    if ( v6 < (int)strtol("2", 0LL, 10)
+      || (v9 = (unsigned __int8)v16, v9 == (unsigned int)strtol("2", 0LL, 10))
+      && (v13 = BYTE1(v16), v13 < (int)strtol("80", 0LL, 10))
+      || (v10 = (unsigned __int8)v16, v10 == (unsigned int)strtol("2", 0LL, 10))
+      && (v14 = BYTE1(v16), v14 == (unsigned int)strtol("80", 0LL, 10))
+      && (v15 = WORD1(v16), v15 < (int)strtol("71", 0LL, 10)) )
+    {
+      v4 = 2;
+    }
+    else
+    {
+      v11 = (unsigned __int8)v16;
+      if ( v11 == (unsigned int)strtol("3", 0LL, 10) )
+        v4 = 3;
+    }
+  }
+  else
+  {
+    v4 = 1;
+  }
+  if ( a2 )
+  {
+    *(_QWORD *)a2 = v16;
+    *(_DWORD *)(a2 + 8) = v17;
+  }
+  v7 = sub_2087170(filename);
+  if ( v7 < 0 )
+    return (unsigned int)v7;
+  if ( a3 && (unsigned int)sub_1A104B0(filename) )
+    sub_1A183E0(v20, v20);
+  return v4;
+}
+```
+
+对于函数sub_2087650，该逻辑为：
+```c
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <unistd.h>
+#include <stdint.h>
+int main(void)
+{
+	char *file_name = "FGT_100D-v6-build1319-FORTINET.out";
+	FILE *fp = fopen(file_name,"rb");
+	char header_buf[256] = {0};
+	char model[7] = {0};
+	char major_version_number[2] = {0};
+	char minor_version_number[3] = {0};
+	char *build_str_pointer = NULL;
+	char build_version[6] = {0};
+	char *tmp_ptr = NULL;
+	char patch_version[3] = {0};
+
+	if(fp == NULL){
+		printf("fopen %s error ( %s )\n",file_name,strerror(errno));
+		return -1;
+	}
+	
+	if(fread(header_buf,1,0x100,fp)!=0x100)
+	{
+		printf("fread header error (%s)\n",strerror(errno));
+		return -1;
+	}
+	
+	strncpy(model,header_buf+10,6);
+	printf("model:%s\n",model);
+	
+	strncpy(major_version_number,header_buf+0x11,1);
+	printf("major version number: %s\n",major_version_number);
+	
+	strncpy(minor_version_number,header_buf+0x13,2);
+	printf("minor version number: %s\n",minor_version_number);
+	
+	build_str_pointer = strstr(header_buf+10,"build");
+	if(build_str_pointer == NULL){
+		printf("not found build str\n");
+		return -1;
+	}
+	
+	tmp_ptr = strchr(build_str_pointer,'-');
+	if(tmp_ptr == NULL){
+		printf("not found '-' str\n");
+		return -1;
+	}
+	
+	int len = tmp_ptr - (build_str_pointer+5);
+	
+	strncpy(build_version,build_str_pointer+5,len);
+	printf("build version: %s\n",build_version);
+
+	tmp_ptr = strstr(header_buf+10,"patch");
+	strncpy(patch_version,tmp_ptr+5,2);
+	printf("patch version: %s\n",patch_version);
+
+	return 0;
+}
+```
+
+output:
+
+```
+model:FG100D
+major version number: 6
+minor version number: 02
+build version: 1319
+patch version: 12
+```
+
+
+
 # 升级代码逆向分析
 
 通过字符串：
