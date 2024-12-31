@@ -314,7 +314,7 @@ LABEL_48:
           }
         }
       }
-      if ( v31 > v93 && (int)sub_438B90(v32, buf, 512) < 0 )
+      if ( v31 > v93 && (int)sub_438B90(v32, buf, 512) < 0 )//跳过第一块mbr，后面才进行mbr的写入
         goto LABEL_63;
       v96 = buf;
       v97 = 512;
