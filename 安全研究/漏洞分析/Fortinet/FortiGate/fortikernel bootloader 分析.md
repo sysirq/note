@@ -1,3 +1,5 @@
+# 0x00
+
 ```asm
 seg000:0000000000000000                 mov     eax, 18h # 初始化段寄存器
 seg000:0000000000000005                 mov     ds, eax
@@ -59,6 +61,8 @@ seg000:0000000000000091                 db    0
 seg000:0000000000000092                 db    0
 ```
 
+# 0x01
+
 ```asm
 seg000:0000000000000200 loc_200:                                ; DATA XREF: seg000:0000000000467AC0↓o
 seg000:0000000000000200                                         ; seg000:00000000005B3750↓o ...
@@ -77,3 +81,74 @@ seg000:0000000000000214                 ltr     ax
 seg000:0000000000000217                 jmp     loc_100000
 ```
 
+# 0x02
+
+```asm
+seg000:0000000000100000
+seg000:0000000000100000
+seg000:0000000000100000 sub_100000      proc near               ; CODE XREF: seg000:0000000000000217↑j
+seg000:0000000000100000                                         ; DATA XREF: sub_100000↓o ...
+seg000:0000000000100000                 lea     rbp, sub_100000
+seg000:0000000000100007                 sub     rbp, 200000h    # 偏移地址计算
+seg000:000000000010000E                 mov     rax, rbp
+seg000:0000000000100011                 and     eax, (offset loc_1FFFFD+2)
+seg000:0000000000100016                 test    eax, eax
+seg000:0000000000100018                 jnz     loc_10018A
+seg000:000000000010001E                 lea     rdx, sub_100000
+seg000:0000000000100025                 mov     rax, 8000000000h
+seg000:000000000010002F                 cmp     rdx, rax
+seg000:0000000000100032                 jnb     loc_10018A
+seg000:0000000000100038                 add     cs:qword_59F000, rbp
+seg000:000000000010003F                 add     cs:qword_59F880, rbp
+seg000:0000000000100046                 add     cs:qword_59FFF8, rbp
+seg000:000000000010004D                 add     cs:qword_5A0000, rbp
+seg000:0000000000100054                 add     cs:qword_5A1FF0, rbp
+seg000:000000000010005B                 add     cs:qword_5A1FF8, rbp
+seg000:0000000000100062                 add     cs:qword_5A2FD0, rbp
+seg000:0000000000100069                 lea     rdi, sub_100000
+seg000:0000000000100070                 and     rdi, 0FFFFFFFFFFE00000h
+seg000:0000000000100077                 mov     rax, rdi
+seg000:000000000010007A                 shr     rax, 1Eh
+seg000:000000000010007E                 and     rax, 1FFh
+seg000:0000000000100084                 jz      short loc_1000B7
+seg000:0000000000100086                 lea     rdx, [rbp+6A6063h]
+seg000:000000000010008D                 lea     rbx, qword_5A0000
+seg000:0000000000100094                 mov     [rbx+rax*8], rdx
+seg000:0000000000100098                 mov     rax, rdi
+seg000:000000000010009B                 shr     rax, 15h
+seg000:000000000010009F                 and     rax, 1FFh
+seg000:00000000001000A5                 lea     rdx, [rdi+1E3h]
+seg000:00000000001000AC                 lea     rbx, qword_5A6000
+seg000:00000000001000B3                 mov     [rbx+rax*8], rdx
+seg000:00000000001000B7
+seg000:00000000001000B7 loc_1000B7:                             ; CODE XREF: sub_100000+84↑j
+seg000:00000000001000B7                 lea     rdi, unk_5A5000
+seg000:00000000001000BE                 lea     r8, [rdi+1000h]
+seg000:00000000001000C5
+seg000:00000000001000C5 loc_1000C5:                             ; CODE XREF: sub_100000+D8↓j
+seg000:00000000001000C5                 test    qword ptr [rdi], 1
+seg000:00000000001000CC                 jz      short loc_1000D1
+seg000:00000000001000CE                 add     [rdi], rbp
+seg000:00000000001000D1
+seg000:00000000001000D1 loc_1000D1:                             ; CODE XREF: sub_100000+CC↑j
+seg000:00000000001000D1                 add     rdi, 8
+seg000:00000000001000D5                 cmp     rdi, r8
+seg000:00000000001000D8                 jnz     short loc_1000C5
+seg000:00000000001000DA                 add     cs:qword_5A7010, rbp
+seg000:00000000001000E1                 add     cs:qword_645000, rbp
+seg000:00000000001000E8                 add     cs:qword_645FF8, rbp
+seg000:00000000001000EF                 jmp     short loc_100100
+seg000:00000000001000EF ; ---------------------------------------------------------------------------
+seg000:00000000001000F1                 align 20h
+seg000:0000000000100100
+seg000:0000000000100100 loc_100100:                             ; CODE XREF: sub_100000+EF↑j
+seg000:0000000000100100                 mov     eax, 0A0h
+seg000:0000000000100105                 mov     cr4, rax
+seg000:0000000000100108                 mov     rax, 69F000h
+seg000:000000000010010F                 add     rax, cs:qword_5A7010
+seg000:0000000000100116                 mov     cr3, rax
+seg000:0000000000100119                 mov     rax, 0FFFFFFFF80200122h
+seg000:0000000000100120                 jmp     rax # 关键：jmp rax: 跳转到新的分页模式地址，进入的新执行路径。
+seg000:0000000000100122 ; ---------------------------------------------------------------------------
+seg000:0000000000100122                 mov     eax, 80000001h # 该地址应该已经更新为0FFFFFFFF80200122h
+```
