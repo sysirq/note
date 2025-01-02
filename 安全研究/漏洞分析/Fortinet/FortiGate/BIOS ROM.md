@@ -74,7 +74,8 @@ sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12/kernel$ xxd -l 1024 flatk
 ```
 
 
-
+- Two bytes indicate the beginning of an extension code section: 055h followed by 0AAh.
+- Immediately following the two-byte preamble bytes is a third byte that gives the length of the additional BIOS. The number represents the amount of blocks 512 bytes long, needed to hold the extra code.
 
 
 # 资料
@@ -90,3 +91,7 @@ https://mark0.net/forum/index.php?topic=883.0
 Some Notes on ROM Extensions
 
 https://www.rigacci.org/docs/biblio/online/firmware/romext.htm#:~:text=A%20ROM%20extension%20is%20a,which%20resides%20at%20C000%2DC7FF.
+
+BIOS Articles
+
+https://sites.google.com/site/pinczakko/bios-articles
