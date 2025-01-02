@@ -84,6 +84,272 @@ sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12/kernel$ xxd -l 1024 flatk
 dd if=flatkc of=fortikernel.out bs=1 skip=512
 ```
 
+# 内核检查
+
+```c
+#include <stdio.h>
+#include <zlib.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
+
+#define CHUNK_SIZE 512
+#define GZ_INVALID_HEADER 0xFFFFFFFF
+
+/* gzip header struct
+offset len      name    desc
+0	1	ID1	必须为 0x1F
+1	1	ID2	必须为 0x8B
+2	1	CM	压缩方法，通常为 8 (DEFLATE)
+3	1	FLG	标志字节
+4	4	MTIME	修改时间
+8	1	XFL	额外标志
+9	1	OS	操作系统类型
+*/
+
+// 检查 GZIP 文件头并返回头部长度
+uint64_t check_gz_header(const uint8_t *buffer, size_t buffer_size)
+{
+    if (!buffer || buffer_size < 10)
+    {
+        return GZ_INVALID_HEADER; // 缓冲区无效或长度不足
+    }
+
+    // 检查 GZIP 标识符
+    if (buffer[0] != 0x1F || buffer[1] != 0x8B)
+    {
+        return GZ_INVALID_HEADER; // ID1 和 ID2 不匹配
+    }
+
+    // 检查压缩方法（CM）是否为 DEFLATE，以及标志字节（FLG）
+    if (buffer[2] != 8 || (buffer[3] & 0xE0) != 0)
+    {
+        return GZ_INVALID_HEADER; // 非 DEFLATE 或标志字节非法
+    }
+
+    size_t header_length = 10; // 基本头部长度
+    uint8_t flags = buffer[3]; // 标志字节
+
+    // 处理 FEXTRA（扩展字段）
+    if (flags & 0x04)
+    {
+        if (header_length + 2 > buffer_size)
+        {
+            return GZ_INVALID_HEADER; // 缓冲区不足
+        }
+        size_t extra_length = buffer[header_length] | (buffer[header_length + 1] << 8);
+        header_length += 2 + extra_length;
+        if (header_length > buffer_size)
+        {
+            return GZ_INVALID_HEADER; // 缓冲区不足
+        }
+    }
+
+    // 处理 FNAME（文件名）
+    if (flags & 0x08)
+    {
+        while (header_length < buffer_size && buffer[header_length] != '\0')
+        {
+            header_length++;
+        }
+        if (header_length >= buffer_size)
+        {
+            return GZ_INVALID_HEADER; // 缓冲区不足
+        }
+        header_length++; // 跳过 '\0'
+    }
+
+    // 处理 FCOMMENT（注释）
+    if (flags & 0x10)
+    {
+        while (header_length < buffer_size && buffer[header_length] != '\0')
+        {
+            header_length++;
+        }
+        if (header_length >= buffer_size)
+        {
+            return GZ_INVALID_HEADER; // 缓冲区不足
+        }
+        header_length++; // 跳过 '\0'
+    }
+
+    // 处理 FHCRC（头部校验）
+    if (flags & 0x02)
+    {
+        header_length += 2;
+        if (header_length > buffer_size)
+        {
+            return GZ_INVALID_HEADER; // 缓冲区不足
+        }
+    }
+
+    // 最终检查头部长度
+    if (header_length > buffer_size)
+    {
+        return GZ_INVALID_HEADER; // 缓冲区不足
+    }
+
+    return header_length; // 返回头部长度
+}
+
+int check_kernel_valid(uint8_t *input_data, size_t input_data_size)
+{
+    z_stream strm;
+    unsigned char out_buffer[CHUNK_SIZE];
+    int ret;
+    memset(&strm, 0, sizeof(z_stream));
+    unsigned int crc = crc32(0L, Z_NULL, 0); // 初始化 CRC32
+
+    if (inflateInit2_(&strm, 4294967281, "1.2.11", sizeof(strm)) != Z_OK)
+    {
+        printf("inflate Init error\n");
+        return -1;
+    }
+
+    strm.next_in = input_data;
+    strm.avail_in = input_data_size;
+
+    do
+    {
+        strm.next_out = out_buffer;
+        strm.avail_out = CHUNK_SIZE;
+        ret = inflate(&strm, Z_NO_FLUSH);
+        switch (ret)
+        {
+        case Z_STREAM_ERROR:
+            fprintf(stderr, "inflate failed: Z_STREAM_ERROR\n");
+            inflateEnd(&strm);
+            return -1;
+        case Z_MEM_ERROR:
+            fprintf(stderr, "inflate failed: Z_MEM_ERROR\n");
+            inflateEnd(&strm);
+            return -1;
+        case Z_DATA_ERROR:
+            fprintf(stderr, "inflate failed: Z_DATA_ERROR\n");
+            inflateEnd(&strm);
+            return -1;
+        }
+
+        size_t have = CHUNK_SIZE - strm.avail_out;
+        crc = crc32(crc, out_buffer, have);
+    } while (ret != Z_STREAM_END);
+
+    inflateEnd(&strm);
+
+    printf("decompressed len:%ld\n", strm.total_out);
+
+    unsigned int file_crc = *(unsigned int *)(input_data + input_data_size - strm.avail_in);      // 前4字节为 CRC32
+    unsigned int file_size = *(unsigned int *)(input_data + input_data_size - strm.avail_in + 4); // 后4字节为 ISIZE
+
+    printf("strm.avail_in: %u\n", strm.avail_in);
+
+    if (crc != file_crc)
+    {
+        printf("CRC32 mismatch! Calculated: %u, Expected: %u\n", crc, file_crc);
+    }
+    else
+    {
+        printf("CRC32 match   ! Calculated: %u, Expected: %u\n", crc, file_crc);
+    }
+
+    if (strm.total_out != file_size)
+    {
+        printf("ISIZE mismatch! Calculated: %lu, Expected: %u\n", strm.total_out, file_size);
+    }
+    else
+    {
+        printf("ISIZE match   ! Calculated: %lu, Expected: %u\n", strm.total_out, file_size);
+    }
+
+    if (ret == Z_STREAM_END)
+    {
+        fprintf(stderr, "\nDecompression complete.\n");
+        return 0;
+    }
+    else
+    {
+        fprintf(stderr, "\nDecompression failed.\n");
+        return -1;
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc != 2)
+    {
+        printf("usage: %s <KERNEL NAME>\n", argv[0]);
+        return 0;
+    }
+    int fd = open(argv[1], O_RDONLY);
+    if (fd == -1)
+    {
+        perror("Failed to open file");
+        return -1;
+    }
+
+    struct stat file_stat;
+    if (fstat(fd, &file_stat) == -1)
+    {
+        perror("Failed to get file size");
+        close(fd);
+        return -1;
+    }
+
+    printf("file size: %ld\n", file_stat.st_size);
+
+    size_t file_size = file_stat.st_size;
+    char *buffer = malloc(file_size);
+    if (!buffer)
+    {
+        perror("Failed to allocate memory");
+        close(fd);
+        return -1;
+    }
+
+    size_t bytes_read = 0;
+    while (bytes_read < file_size)
+    {
+        ssize_t result = read(fd, buffer + bytes_read, file_size - bytes_read);
+        if (result < 0)
+        {
+            perror("Failed to read file");
+            free(buffer);
+            close(fd);
+            return -1;
+        }
+        bytes_read += result;
+    }
+    close(fd);
+
+    size_t gz_header_len = check_gz_header(buffer, file_size);
+    printf("gz header len  : %ld\n", gz_header_len);
+    printf("compressed len : %ld\n", file_size - gz_header_len);
+    check_kernel_valid(buffer + gz_header_len, file_size - gz_header_len);
+
+    free(buffer);
+    return 0;
+}
+```
+
+output:
+
+```
+sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12/kernel$ ../../Tools/check_kernel fortikernel.out 
+file size: 2720963
+gz header len  : 26
+compressed len : 2720937
+decompressed len:6606848
+strm.avail_in: 8
+CRC32 match   ! Calculated: 1930918917, Expected: 1930918917
+ISIZE match   ! Calculated: 6606848, Expected: 6606848
+
+Decompression complete.
+```
+
 # 资料
 
 BIOS Extension
