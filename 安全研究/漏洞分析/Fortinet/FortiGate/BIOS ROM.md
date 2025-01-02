@@ -78,6 +78,12 @@ sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12/kernel$ xxd -l 1024 flatk
 - Immediately following the two-byte preamble bytes is a third byte that gives the length of the additional BIOS. The number represents the amount of blocks 512 bytes long, needed to hold the extra code.
 
 
+# 内核提取
+
+```
+dd if=flatkc of=fortikernel.out bs=1 skip=512
+```
+
 # 资料
 
 BIOS Extension
