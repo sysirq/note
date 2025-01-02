@@ -2132,8 +2132,38 @@ Decompression complete.
 ```
 
 
+# 挂载并修改
 
+```
+sysirq@sysirq-machine:~/Work/Fortinet/FortiGate_6_2_12$ fdisk -l disk.img 
+Disk disk.img: 256 MiB, 268435968 bytes, 524289 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x00000000
 
+Device     Boot   Start     End Sectors  Size Id Type
+disk.img1  *          1  524288  524288  256M 83 Linux
+disk.img2        524289 1048576  524288  256M 83 Linux
+disk.img3       1048577 1572864  524288  256M 83 Linux
+```
+
+镜像文件的分区通常不是直接可挂载的。需要通过偏移量计算分区起始位置。
+
+计算偏移量:
+
+- 每个扇区大小是 512 字节，起始位置是 1 扇区，因此偏移量为：
+
+```
+1 * 512 = 512 字节
+```
+
+- 使用mount挂载
+
+```
+sudo mount -o loop,offset=512 disk.img /mnt/disk
+```
 
 # 参考资料
 
