@@ -266,6 +266,129 @@ void __fastcall __noreturn sub_FFFFFFFF807081C0()
 
 那么sub_FFFFFFFF80708726函数 就是 start_kernel 函数
 
+
+
+# 0x05
+
+start_kernel 函数的最后一个调用为rest_init()函数
+
+```c
+void __noreturn sub_FFFFFFFF80708726()
+{
+................................
+  sub_FFFFFFFF8055649C(); // rest_init 函数
+}
+```
+
+# 0x06
+
+根据 reset_init 函数， 找到 kernel_init 函数
+
+```asm
+sub_FFFFFFFF8055649C proc near
+push    rax
+call    sub_FFFFFFFF8028DD47
+mov     edx, 0A00h
+xor     esi, esi
+mov     rdi, 0FFFFFFFF80708AADh # kernel_init 函数
+call    sub_FFFFFFFF80207CC4
+mov     edx, 600h
+xor     esi, esi
+mov     rdi, 0FFFFFFFF80271EF9h
+call    sub_FFFFFFFF80207CC4
+mov     rsi, 0FFFFFFFF806B0820h
+mov     edi, eax
+call    sub_FFFFFFFF8026F5A5
+mov     cs:0FFFFFFFF8079D9D0h, rax
+mov     rdi, 0FFFFFFFF8072EFA0h
+call    sub_FFFFFFFF8024D7A0
+mov     rdi, gs:0B5C0h
+call    sub_FFFFFFFF8072C385
+call    sub_FFFFFFFF8055FCE3
+pop     rdx
+jmp     sub_FFFFFFFF802007D1
+sub_FFFFFFFF8055649C endp
+```
+
+# 0x07
+
+kernel_init 函数的最后一个函数为调用用户空间init程序的函数
+
+```c
+void __noreturn sub_FFFFFFFF80708AAD()
+{
+............................
+  sub_FFFFFFFF8055E0D5();
+}
+```
+
+# 0x08
+
+```asm
+seg000:FFFFFFFF8055E0D5 sub_FFFFFFFF8055E0D5 proc near          ; CODE XREF: sub_FFFFFFFF80708AAD:loc_FFFFFFFF80708BBC↓p
+seg000:FFFFFFFF8055E0D5                 push    rax
+seg000:FFFFFFFF8055E0D6                 call    sub_FFFFFFFF802778FE
+seg000:FFFFFFFF8055E0DB                 call    sub_FFFFFFFF8021511A
+seg000:FFFFFFFF8055E0E0                 mov     cs:dword_FFFFFFFF806F02A0, 1
+seg000:FFFFFFFF8055E0EA                 mov     rax, gs:0B5C0h
+seg000:FFFFFFFF8055E0F3                 mov     rax, [rax+3F8h]
+seg000:FFFFFFFF8055E0FA                 or      dword ptr [rax+5Ch], 40h
+seg000:FFFFFFFF8055E0FE                 mov     rdi, cs:0FFFFFFFF80750090h
+seg000:FFFFFFFF8055E105                 test    rdi, rdi
+seg000:FFFFFFFF8055E108                 jz      short loc_FFFFFFFF8055E139
+seg000:FFFFFFFF8055E10A                 mov     cs:qword_FFFFFFFF806A8280, rdi
+seg000:FFFFFFFF8055E111                 mov     rdx, 0FFFFFFFF806A8160h
+seg000:FFFFFFFF8055E118                 mov     rsi, 0FFFFFFFF806A8280h
+seg000:FFFFFFFF8055E11F                 call    kernel_execve
+seg000:FFFFFFFF8055E124                 mov     rsi, cs:0FFFFFFFF80750090h
+seg000:FFFFFFFF8055E12B                 mov     rdi, 0FFFFFFFF806244F9h
+seg000:FFFFFFFF8055E132                 xor     eax, eax
+seg000:FFFFFFFF8055E134                 call    sub_FFFFFFFF8055E438
+seg000:FFFFFFFF8055E139
+seg000:FFFFFFFF8055E139 loc_FFFFFFFF8055E139:                   ; CODE XREF: sub_FFFFFFFF8055E0D5+33↑j
+seg000:FFFFFFFF8055E139                 mov     rdi, cs:0FFFFFFFF80750098h
+seg000:FFFFFFFF8055E140                 test    rdi, rdi
+seg000:FFFFFFFF8055E143                 jz      short loc_FFFFFFFF8055E174
+seg000:FFFFFFFF8055E145                 mov     cs:qword_FFFFFFFF806A8280, rdi
+seg000:FFFFFFFF8055E14C                 mov     rdx, 0FFFFFFFF806A8160h
+seg000:FFFFFFFF8055E153                 mov     rsi, 0FFFFFFFF806A8280h
+seg000:FFFFFFFF8055E15A                 call    kernel_execve
+seg000:FFFFFFFF8055E15F                 mov     rsi, cs:0FFFFFFFF80750098h
+seg000:FFFFFFFF8055E166                 mov     rdi, 0FFFFFFFF80624860h
+seg000:FFFFFFFF8055E16D                 xor     eax, eax
+seg000:FFFFFFFF8055E16F                 call    sub_FFFFFFFF8055E438
+seg000:FFFFFFFF8055E174
+seg000:FFFFFFFF8055E174 loc_FFFFFFFF8055E174:                   ; CODE XREF: sub_FFFFFFFF8055E0D5+6E↑j
+seg000:FFFFFFFF8055E174                 mov     rdi, 0FFFFFFFF80624511h
+seg000:FFFFFFFF8055E17B                 mov     cs:qword_FFFFFFFF806A8280, rdi
+seg000:FFFFFFFF8055E182                 mov     rdx, 0FFFFFFFF806A8160h
+seg000:FFFFFFFF8055E189                 mov     rsi, 0FFFFFFFF806A8280h
+seg000:FFFFFFFF8055E190                 call    kernel_execve
+seg000:FFFFFFFF8055E195                 mov     rdi, 0FFFFFFFF8062451Ch
+seg000:FFFFFFFF8055E19C                 mov     cs:qword_FFFFFFFF806A8280, rdi
+seg000:FFFFFFFF8055E1A3                 mov     rdx, 0FFFFFFFF806A8160h
+seg000:FFFFFFFF8055E1AA                 mov     rsi, 0FFFFFFFF806A8280h
+seg000:FFFFFFFF8055E1B1                 call    kernel_execve
+seg000:FFFFFFFF8055E1B6                 mov     rdi, 0FFFFFFFF80624526h
+seg000:FFFFFFFF8055E1BD                 mov     cs:qword_FFFFFFFF806A8280, rdi
+seg000:FFFFFFFF8055E1C4                 mov     rdx, 0FFFFFFFF806A8160h
+seg000:FFFFFFFF8055E1CB                 mov     rsi, 0FFFFFFFF806A8280h
+seg000:FFFFFFFF8055E1D2                 call    kernel_execve
+seg000:FFFFFFFF8055E1D7                 mov     rdi, 0FFFFFFFF80624530h
+seg000:FFFFFFFF8055E1DE                 mov     cs:qword_FFFFFFFF806A8280, rdi
+seg000:FFFFFFFF8055E1E5                 mov     rdx, 0FFFFFFFF806A8160h
+seg000:FFFFFFFF8055E1EC                 mov     rsi, 0FFFFFFFF806A8280h
+seg000:FFFFFFFF8055E1F3                 call    kernel_execve
+seg000:FFFFFFFF8055E1F8                 mov     rdi, 0FFFFFFFF80624898h
+seg000:FFFFFFFF8055E1FF                 xor     eax, eax
+seg000:FFFFFFFF8055E201                 call    panic
+seg000:FFFFFFFF8055E201 sub_FFFFFFFF8055E0D5 endp
+```
+
+
+
+
+
 # 快速定位
 
 对于向这种 ， 
