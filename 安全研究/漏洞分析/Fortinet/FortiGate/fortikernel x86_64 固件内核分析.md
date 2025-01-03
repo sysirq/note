@@ -1,3 +1,5 @@
+以下分析以6.2.12 100d 的内核为主
+
 # 0x00
 
 ```asm
@@ -359,22 +361,22 @@ seg000:FFFFFFFF8055E16D                 xor     eax, eax
 seg000:FFFFFFFF8055E16F                 call    sub_FFFFFFFF8055E438
 seg000:FFFFFFFF8055E174
 seg000:FFFFFFFF8055E174 loc_FFFFFFFF8055E174:                   ; CODE XREF: sub_FFFFFFFF8055E0D5+6E↑j
-seg000:FFFFFFFF8055E174                 mov     rdi, 0FFFFFFFF80624511h
+seg000:FFFFFFFF8055E174                 mov     rdi, 0FFFFFFFF80624511h #/sbin/init
 seg000:FFFFFFFF8055E17B                 mov     cs:qword_FFFFFFFF806A8280, rdi
 seg000:FFFFFFFF8055E182                 mov     rdx, 0FFFFFFFF806A8160h
 seg000:FFFFFFFF8055E189                 mov     rsi, 0FFFFFFFF806A8280h
 seg000:FFFFFFFF8055E190                 call    kernel_execve
-seg000:FFFFFFFF8055E195                 mov     rdi, 0FFFFFFFF8062451Ch
+seg000:FFFFFFFF8055E195                 mov     rdi, 0FFFFFFFF8062451Ch #/etc/init
 seg000:FFFFFFFF8055E19C                 mov     cs:qword_FFFFFFFF806A8280, rdi
 seg000:FFFFFFFF8055E1A3                 mov     rdx, 0FFFFFFFF806A8160h
 seg000:FFFFFFFF8055E1AA                 mov     rsi, 0FFFFFFFF806A8280h
 seg000:FFFFFFFF8055E1B1                 call    kernel_execve
-seg000:FFFFFFFF8055E1B6                 mov     rdi, 0FFFFFFFF80624526h
+seg000:FFFFFFFF8055E1B6                 mov     rdi, 0FFFFFFFF80624526h # /bin/init
 seg000:FFFFFFFF8055E1BD                 mov     cs:qword_FFFFFFFF806A8280, rdi
 seg000:FFFFFFFF8055E1C4                 mov     rdx, 0FFFFFFFF806A8160h
 seg000:FFFFFFFF8055E1CB                 mov     rsi, 0FFFFFFFF806A8280h
 seg000:FFFFFFFF8055E1D2                 call    kernel_execve
-seg000:FFFFFFFF8055E1D7                 mov     rdi, 0FFFFFFFF80624530h
+seg000:FFFFFFFF8055E1D7                 mov     rdi, 0FFFFFFFF80624530h # /bin/sh
 seg000:FFFFFFFF8055E1DE                 mov     cs:qword_FFFFFFFF806A8280, rdi
 seg000:FFFFFFFF8055E1E5                 mov     rdx, 0FFFFFFFF806A8160h
 seg000:FFFFFFFF8055E1EC                 mov     rsi, 0FFFFFFFF806A8280h
@@ -385,7 +387,7 @@ seg000:FFFFFFFF8055E201                 call    panic
 seg000:FFFFFFFF8055E201 sub_FFFFFFFF8055E0D5 endp
 ```
 
-
+分析发现，该函数，并不会存在向虚拟机版本一样存在内核完整性检查机制？？？？？？
 
 
 
