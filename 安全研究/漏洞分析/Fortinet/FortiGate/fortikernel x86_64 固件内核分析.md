@@ -229,7 +229,7 @@ void __fastcall __noreturn sub_FFFFFFFF8070826F(__int64 a1, unsigned __int64 a2)
   }
   while ( v7 != 0xFFFFFFFF80708140ui64 );
   __lidt(word_FFFFFFFF806A95E0);
-  sub_FFFFFFFF807081C0();
+  sub_FFFFFFFF807081C0();//x86_64_start_reservations
 }
 ```
 
@@ -258,7 +258,7 @@ void __fastcall __noreturn sub_FFFFFFFF807081C0()
   sub_FFFFFFFF802198E8();
   sub_FFFFFFFF80714C50(v4, 0xFFFFFFFF806244B8ui64);
   sub_FFFFFFFF80708361(v5);
-  sub_FFFFFFFF80708726();
+  sub_FFFFFFFF80708726();//start_kernel
 }
 ```
 
