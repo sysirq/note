@@ -160,3 +160,106 @@ seg000:0000000000100122                 mov     eax, 80000001h # 该地址应该
 ```
 Edit-->Segments-->Rebase Program
 ```
+
+# 0x03
+
+```asm
+seg000:FFFFFFFF80200122                 mov     eax, 80000001h
+................................................
+................................................
+................................................
+................................................
+seg000:FFFFFFFF8020017C                 mov     rax, cs:qword_FFFFFFFF806EDAE0
+seg000:FFFFFFFF80200183                 push    0
+seg000:FFFFFFFF80200185                 push    10h
+seg000:FFFFFFFF80200187                 push    rax
+seg000:FFFFFFFF80200188                 retfq
+```
+
+跳转到 cs:qword_FFFFFFFF806EDAE0 存储的地址
+
+```asm
+seg000:FFFFFFFF806EDAE0 qword_FFFFFFFF806EDAE0 dq 0FFFFFFFF8070826Fh
+```
+
+# 0x04 
+
+```c
+// write access to const memory has been detected, the output may be wrong!
+void __fastcall __noreturn sub_FFFFFFFF8070826F(__int64 a1, unsigned __int64 a2)
+{
+  int v2; // eax
+  unsigned __int64 v3; // kr00_8
+  unsigned __int64 v4; // rax
+  unsigned __int64 v5; // rsi
+  unsigned __int64 v6; // rax
+  unsigned __int64 v7; // rax
+  __int64 v8; // rcx
+
+  memset((void *)0xFFFFFFFF8074D000i64, 0, 9084928ui64);
+  qword_FFFFFFFF8069F000 = 0i64;
+  v2 = 0;
+  if ( _bittest(&v2, 0xDu) )
+  {
+    v3 = __readeflags();
+    _disable();
+    v4 = __readcr4();
+    v5 = v4;
+    LOBYTE(v5) = v4 & 0x7F;
+    __writecr4(v5);
+    __writecr4(v4);
+    __writeeflags(v3);
+  }
+  else
+  {
+    v6 = __readcr3();
+    __writecr3(v6);
+  }
+  MEMORY[0xFFFFFFFF80750270] = 0x20000i64;
+  v7 = 0xFFFFFFFF80708000ui64;
+  v8 = 0xFFFFFFFF8074F000ui64;
+  do
+  {
+    LOWORD(a2) = v7;
+    a2 = (v7 >> 16 << 48) | (a2 & 0xFFFF00000000FFFFui64 | 0x8E0000100000i64) & 0xFFFFFFFFFFFFi64;
+    *(_QWORD *)v8 = a2;
+    *(_QWORD *)(v8 + 8) = HIDWORD(v7);
+    v7 += 10i64;
+    v8 += 16i64;
+  }
+  while ( v7 != 0xFFFFFFFF80708140ui64 );
+  __lidt(word_FFFFFFFF806A95E0);
+  sub_FFFFFFFF807081C0();
+}
+```
+
+跟进到尾部调用sub_FFFFFFFF807081C0
+
+```c
+void __fastcall __noreturn sub_FFFFFFFF807081C0()
+{
+  __int64 v0; // rdi
+  _DWORD *v1; // rsi
+  __int64 v2; // rcx
+  _DWORD *v3; // rdi
+  __int64 v4; // rcx
+  __int64 v5; // rcx
+
+  v1 = (_DWORD *)(v0 - 0x780000000000i64);
+  v2 = 1024i64;
+  v3 = (_DWORD *)&unk_FFFFFFFF80730300;
+  while ( v2 )
+  {
+    *v3++ = *v1++;
+    --v2;
+  }
+  sub_FFFFFFFF8071B3BA();
+  sub_FFFFFFFF802198E8();
+  sub_FFFFFFFF802198E8();
+  sub_FFFFFFFF80714C50(v4, 0xFFFFFFFF806244B8ui64);
+  sub_FFFFFFFF80708361(v5);
+  sub_FFFFFFFF80708726();
+}
+```
+
+通过与fortigate 7.2.0的内核进行对比 ，sub_FFFFFFFF807081C0 函数疑似为x86_64_start_reservations
