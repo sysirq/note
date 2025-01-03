@@ -265,3 +265,14 @@ void __fastcall __noreturn sub_FFFFFFFF807081C0()
 通过fortigate 6.2.12 与fortigate 7.2.0的内核进行对比（都是3.2.16的内核版本） ，sub_FFFFFFFF807081C0 函数疑似为x86_64_start_reservations
 
 那么sub_FFFFFFFF80708726函数 就是 start_kernel 函数
+
+# 快速定位
+
+对于向这种 ， 
+
+```asm
+mov     rdx, 0FFFFFFFF806244B8h  # 是个字符串 db 'TEXT DATA BSS',0
+mov     rsi, rbx
+mov     rdi, rax
+call    sub_FFFFFFFF80714C50
+```
