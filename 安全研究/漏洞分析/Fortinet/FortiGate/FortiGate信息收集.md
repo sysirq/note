@@ -15,6 +15,7 @@ show system admin
 /data/config/vd_root_firewall_policy.gz
 /data/config/sys_vd_root+root.conf.gz
 /dev/cmdb/sslvpn_websession
+/dev/cmdb/.hidden/sslvpn/sslvpn_websession 
 ```
 
 # 资料
