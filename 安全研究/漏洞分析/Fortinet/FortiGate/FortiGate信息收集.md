@@ -23,3 +23,5 @@ show system admin
 Hackers leak configs and VPN credentials for 15,000 FortiGate devices
 
 https://www.bleepingcomputer.com/news/security/hackers-leak-configs-and-vpn-credentials-for-15-000-fortigate-devices/
+
+https://github.com/inm7ripe/Fortigate-password-recovery/issues/1
