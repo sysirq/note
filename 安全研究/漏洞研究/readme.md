@@ -5,3 +5,11 @@ https://i.blackhat.com/USA-19/Wednesday/us-19-Tsai-Infiltrating-Corporate-Intran
 Attacking SSL VPN - Part 2: Breaking the Fortigate SSL VPN
 
 https://devco.re/blog/2019/08/09/attacking-ssl-vpn-part-2-breaking-the-Fortigate-ssl-vpn/
+
+VPN Gremlin: User Impersonation Attack in Multiple SSL VPNs – Part 1
+
+https://www.txone.com/blog/user-impersonation-attack-in-multiple-ssl-vpns-part-1/
+
+VPN Gremlin: User Impersonation Attack in Multiple SSL VPNs – Part 2
+
+https://www.txone.com/blog/user-impersonation-attack-in-multiple-ssl-vpns-part-2/
