@@ -2162,7 +2162,7 @@ disk.img3       1048577 1572864  524288  256M 83 Linux
 - 使用mount挂载
 
 ```
-sudo mount -o loop,offset=512 disk.img /mnt/disk
+sudo mount -o loop,offset=512 disk.img mnt
 ```
 
 # 参考资料
