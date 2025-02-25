@@ -218,6 +218,208 @@ DECIMAL       HEXADECIMAL     DESCRIPTION
 0             0x0             Squashfs filesystem, little endian, version 4.0, compression:xz, size: 95667665 bytes, 8170 inodes, blocksize: 131072 bytes, created: 2022-01-04 06:11:09
 ```
 
+# 环境配置
+
+提取 usr/local/zyxel-gui/htdocs/ztp 所有文件内容到 /var/www/ztp 中
+
+```
+sysirq@debian:/var/www/ztp$ ls
+activation_fail.html     apply_fail.html  fonts           twoFAsms.html           ztp_enabled.html
+activationfail.html      cgi-bin          images          verification_fail.html  ztp_reg.html
+activation_success.html  css              twoFAapps.html  zld_enabled.html
+```
+
+
+配置apache服务器，
+
+```
+sudo apt install apache2
+sudo a2enmod cgi
+```
+
+```
+sudo vim /etc/apache2/apache2.conf
+```
+
+将以下内容添加到文件的末尾：
+
+```
+#########     Adding capaility to run CGI-scripts #################
+ServerName localhost
+ScriptAlias /ztp/cgi-bin/ /var/www/ztp/cgi-bin/
+Options +ExecCGI
+AddHandler cgi-script .cgi .pl .py
+```
+
+sudo vim /etc/apache2/conf-available/serve-cgi-bin.conf，修改文件内容：
+
+```
+ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+<Directory "/usr/lib/cgi-bin">
+    AllowOverride None
+    Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+    Require all granted
+</Directory>   
+```
+
+为：
+
+```
+ScriptAlias /ztp/cgi-bin/ /var/www/ztp/cgi-bin/
+<Directory "/var/www/ztp/cgi-bin">
+		AllowOverride None
+		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		Require all granted
+</Directory>
+```
+
+编写一个测试文件/var/www/ztp/cgi-bin/first.py：
+
+```python
+#!/usr/bin/env python3
+import cgitb
+
+cgitb.enable()
+
+print("Content-Type: text/html;charset=utf-8")
+print ("Content-type:text/html\r\n")
+print("<H1> Hello, From python server :) </H1>")
+```
+
+
+```
+sudo service apache2 restart
+```
+
+测试：
+
+```
+sysirq@debian:/var/www/ztp/cgi-bin$ curl http://localhost/ztp/cgi-bin/first.py
+<H1> Hello, From python server :) </H1>
+```
+
+
+
+目标版本的python版为2.7
+
+```
+sysirq@debian:~/Work/iot/CVE-2022-30525/_520ABPS0C0.ri.extracted/_240.extracted/root/compress.img/_compress.img.extracted/squashfs-root$ ls usr/bin/python
+usr/bin/python
+sysirq@debian:~/Work/iot/CVE-2022-30525/_520ABPS0C0.ri.extracted/_240.extracted/root/compress.img/_compress.img.extracted/squashfs-root$ ls usr/bin/python -hl
+lrwxrwxrwx 1 sysirq sysirq 7 Jan  4  2022 usr/bin/python -> python2
+sysirq@debian:~/Work/iot/CVE-2022-30525/_520ABPS0C0.ri.extracted/_240.extracted/root/compress.img/_compress.img.extracted/squashfs-root$ ls usr/bin/python2 -hl
+lrwxrwxrwx 1 sysirq sysirq 9 Jan  4  2022 usr/bin/python2 -> python2.7
+```
+
+
+
+```
+sysirq@debian:/var/www/ztp/cgi-bin$ cat handler.py | head -n 30
+#!/usr/bin/python
+
+import sys
+import cgi
+import json
+import subprocess
+import os
+import threading
+import select
+import signal
+import time
+import base64
+import logging
+import re
+import subprocess
+from xml.dom import minidom
+import socket
+import datetime
+
+import lib_cmd_interface
+import lib_wan_setting
+import lib_cmd_devinfo
+import lib_usb_setting
+import lib_cmd_pcap
+import lib_remote_assist
+import lib_cmd_language
+from ztpinclude import ZTPSTATUS as ZTP_STATUS_PATH
+```
+
+- debian12 安装 python2.7
+
+
+It is still possible, firstly open /etc/apt/sources.list
+
+and add this new line, which adds Debian 9 software to apt-get sources:
+
+```
+deb http://archive.debian.org/debian/ stretch contrib main non-free
+```
+
+then in bash type the following command:
+
+```
+sudo apt-get update
+
+sudo apt-get install python2.7
+```
+
+Now you should be able to use python2.7 in Debian12.
+
+Don't forget to remove that new line in /etc/apt/sources.list,otherwise it may affect your future apt-get
+
+- debian12 安装 pip2
+
+```
+curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+sudo python2.7 get-pip.py
+pip2 --version
+```
+
+- python2.7 模块安装
+
+根据cat  /var/log/apache2/error.log  信息，我们需要全局安装 requests模块
+
+```
+sudo pip2 install requests
+```
+
+- 需要创建命令程序/usr/sbin/sdwan_iface_ipc 用于模拟
+
+```
+--- RUN CMD: setWanPortSt ---
+command: setWanPortSt
+{u'proto': u'dhcp', u'vlan_tagged': u'1', u'vlanid': u'5', u'mtu': u'; touch /tmp/hack;', u'command': u'setWanPortSt', u'data': u'hi', u'port': u'4'}
+cmdLine = /usr/sbin/sdwan_iface_ipc 11 WAN3 4 ; touch /tmp/hack; 5 >/dev/null 2>&1
+sh: 1: /usr/sbin/sdwan_iface_ipc: not found
+32512
+cmd thread return error
+Internal err=500
+err=Unknown Error[503]
+Ret {'message': 'Internal Server Error', 'code': 10001, 'result': ''}
+```
+
+```
+root@debian:/etc/apache2# cat /usr/sbin/sdwan_iface_ipc
+#!/bin/bash
+
+
+root@debian:/etc/apache2# chmod +x /usr/sbin/sdwan_iface_ipc
+```
+
+**Tips**
+
+如果出现500错误，可以直接在 handler.py 第一行直接指定 python 版本为 2.7
+```
+#!/usr/bin/python2.7
+
+import sys
+import cgi
+import json
+import subprocess
+import os
+...
+```
+
 # 参考资料
 
 Zyxel firmware extraction and password analysis
