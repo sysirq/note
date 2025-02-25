@@ -422,6 +422,42 @@ import os
 
 # ATP100分析
 
+入口：
+
+```
+squashfs-root/usr/local/zyxel-gui
+```
+
+配置文件分析：
+
+```
+AcceptPathInfo Off
+DirectoryIndex weblogin.cgi
+AuthZyxelRedirect /
+AuthZyxelSkipPattern /images/ /lib/ /mobile/ /weblogin.cgi /admin.cgi /login.cgi /error.cgi /redirect.cgi /I18N.js /language /logo/ /ext-js/web-pages/login/no_granted.html /ssltun.jar /sslapp.jar /VncViewer.jar /Forwarder.jar /eps.jar /css/ /sdwan_intro.html /sdwan_intro_video.html /videos/ /webauth_error.cgi /webauth_relogin.cgi /SSHTermApplet-jdk1.3.1-dependencies-signed.jar /SSHTermApplet-jdkbug-workaround-signed.jar /SSHTermApplet-signed.jar /commons-logging.properties /org.apache.commons.logging.LogFactory /fetch_ap_info.cgi /agree.cgi /walled_garden.cgi /payment_transaction.cgi /paypal_pdt.cgi /redirect_pdt.cgi /securepay.cgi /authorize_dot_net.cgi /payment_failed.cgi /customize/ /multi-portal/ /free_time.cgi /free_time_redirect.cgi /free_time_transaction.cgi /free_time_failed.cgi /js/ /terms_of_service.html /dynamic_script.cgi /ext-js/ext/ext-all.js /ext-js/ext/adapter/ext/ext-base.js /ext-js/ext/resources/css/ext-all.css /ext-js/app/common/zyFunction.js /ext-js/app/common/zld_product_spec.js /cf_hdf_blockpage.cgi \
+/libcdr_blockpage.cgi \
+/libcdr_blockpage.html \
+/libcdr_cloud_blockpage.html \
+/2FA-access.cgi \
+/webauth_ga.cgi \
+/ztp/cgi-bin/ztp_reg.py /ztp/ztp_enabled.html /ztp/css /ztp/images /ztp/fonts \
+/change-expired-password.html /chg_exp_pwd.cgi ext-js/web-pages/login/chgpw_expired.html /ext-all.css /ext-all.js /appLite.js zld_product_spec.js /showCLI.js /zyVType.js /persist-min.js /zyExtend.js /zyFunction.js /zyComponent.js /language_panel.js /ext-lang-en.js /language.js /login.css /custmiz_page.js /chgpw_expired.js /retrieveData.js /MultiSelect.js /ItemSelector.js /cmdStore.js /favicon.ico /PagingStore.js /zyform.js /ext-theme-classic-all.css /content_line.gif /content_bg.jpg /login_img.gif /login_bg.jpg /advance_bg.gif /reset.css \
+
+AuthZyxelSkipUserPattern 127.0.0.1:10443 127.0.0.1:10444 /images/ /I18N.js /language /weblogin.cgi /admin.cgi /login.cgi /redirect.cgi /welcome.cgi /access.cgi /setuser.cgi /grant_access.html /eps_grant_access.html /eps.jar /user/ /cgi-bin/ /EPS_INIT /EPS_RESULT /RevProxy/ /Exchange/ /exchweb/ /public/ /Socks/ /CnfSocks/ /cifs/ /uploadcifs/ /epc/ /frame_access.html /eps_frame_access.html /dummy.html /dummy_eps.html /access_eps.html /logo/ /ext-js/ /fetch_ap_info.cgi /agree.cgi /walled_garden.cgi /payment_transaction.cgi /paypal_pdt.cgi /redirect_pdt.cgi /securepay.cgi /authorize_dot_net.cgi /payment_failed.cgi /free_time.cgi /free_time_redirect.cgi /free_time_transaction.cgi /free_time_failed.cgi /cf_hdf_blockpage.cgi \
+/libcdr_blockpage.cgi \
+/cdr_cloud_block_page.html \
+/2FA-access.cgi \
+/webauth_ga.cgi \
+/ztp/cgi-bin/ztp_reg.py /ztp/ztp_enabled.html /ztp/css /ztp/images /ztp/fonts \
+/change-expired-password.html /chg_exp_pwd.cgi ext-js/web-pages/login/chgpw_expired.html /ext-all.css /ext-all.js /appLite.js zld_product_spec.js /showCLI.js /zyVType.js /persist-min.js /zyExtend.js /zyFunction.js /zyComponent.js /language_panel.js /ext-lang-en.js /language.js /login.css /custmiz_page.js /chgpw_expired.js /retrieveData.js /MultiSelect.js /ItemSelector.js /cmdStore.js /favicon.ico /PagingStore.js /zyform.js /ext-theme-classic-all.css /content_line.gif /content_bg.jpg /login_img.gif /login_bg.jpg /advance_bg.gif /reset.css \
+
+AuthZyxelSkipTwoFaPattern /ext-js/app/view/object/authmeth/twoFA/2FAVerify.html /ext-js/ext/ux/grid/FiltersFeature.js /ext-js/app/view/object/authmeth/twoFA/2FAVerify.js /ext-js/ext/ux/form/field/BoxSelect/BoxSelect.js /ext-js/ext/ux/toggleslide/ToggleSlide.js /ext-js/ext/ux/toggleslide/Thumb.js /ext-js/ext/ux/grid/menu/ListMenu.js /ext-js/ext/ux/grid/menu/RangeMenu.js /ext-js/ext/ux/grid/filter/DateFilter.js /ext-js/ext/ux/grid/filter/BooleanFilter.js /ext-js/ext/ux/grid/filter/DateTimeFilter.js /ext-js/ext/ux/grid/filter/ListFilter.js /ext-js/ext/ux/grid/filter/NumericFilter.js /ext-js/ext/ux/grid/filter/StringFilter.js /ext-js/ext/ux/grid/filter/Filter.js /ext-js/ext/src/zy2FAVerifyForm.js /cgi-bin/zysh-cgi \
+
+ScriptAlias /cgi-bin/ "/usr/local/apache/cgi-bin/"
+
+AddHandler cgi-script .cgi .py
+```
+
 # 参考资料
 
 Zyxel firmware extraction and password analysis
