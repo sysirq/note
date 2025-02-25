@@ -458,6 +458,10 @@ ScriptAlias /cgi-bin/ "/usr/local/apache/cgi-bin/"
 AddHandler cgi-script .cgi .py
 ```
 
+# 版本探测
+
+zld_product_spec
+
 # 参考资料
 
 Zyxel firmware extraction and password analysis
