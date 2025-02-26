@@ -519,3 +519,7 @@ if __name__ == "__main__":
 Zyxel firmware extraction and password analysis
 
 https://security.humanativaspa.it/zyxel-firmware-extraction-and-password-analysis/
+
+ZYXEL VPN SERIES PRE-AUTH REMOTE COMMAND EXECUTION
+ 
+https://ssd-disclosure.com/ssd-advisory-zyxel-vpn-series-pre-auth-remote-command-execution/
