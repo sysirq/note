@@ -460,7 +460,9 @@ AddHandler cgi-script .cgi .py
 
 # 版本探测
 
-zld_product_spec
+```
+"/ext-js/app/common/zld_product_spec.js"
+```
 
 # 参考资料
 
