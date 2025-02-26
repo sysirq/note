@@ -464,6 +464,56 @@ AddHandler cgi-script .cgi .py
 "/ext-js/app/common/zld_product_spec.js"
 ```
 
+```python
+import argparse
+import base64
+import random
+import requests
+
+# ignore ssl certification
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+
+def version_print(host,port,isHttps):
+    url = ""
+    if isHttps:
+        url = f"https://{host}:{port}/ext-js/app/common/zld_product_spec.js"
+    else:
+        url = f"http://{host}:{port}/ext-js/app/common/zld_product_spec.js"
+
+    try:
+        version = ""
+        title = ""
+
+        response = requests.get(url, timeout=10,verify=False)
+        if "ZLDSYSPARM_PRODUCT_NAME1=" in response.text:
+            title = response.text.split('ZLDSYSPARM_PRODUCT_NAME1="')[1].split('"')[0]
+        if "ZLDCONFIG_CLOUD_HELP_VERSION=" in response.text:
+            version = response.text.split("ZLDCONFIG_CLOUD_HELP_VERSION=")[1].split(";")[0]
+            
+        print(f"    title   = {title}")
+        print(f"    version = {version}")
+    except Exception as e:
+        print(e)
+        print("get version error")
+    return
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Zyxel version check")
+    parser.add_argument("host", type=str, help="target host")
+    parser.add_argument("--port", type=str, help="port", default="443")
+    parser.add_argument("--no-https", dest="no_https", action="store_true")
+    
+    args = parser.parse_args()
+    https = not args.no_https
+    host = args.host
+    port = args.port
+
+    version_print(host,port,https)
+```
+
 # 参考资料
 
 Zyxel firmware extraction and password analysis
