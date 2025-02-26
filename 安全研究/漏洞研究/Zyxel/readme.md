@@ -458,6 +458,57 @@ ScriptAlias /cgi-bin/ "/usr/local/apache/cgi-bin/"
 AddHandler cgi-script .cgi .py
 ```
 
+# CGI
+
+```
+./usr/sbin/tr069connreq.cgi
+./usr/local/cf_hdf_blockpage/htdocs/cf_hdf_blockpage.cgi
+./usr/local/cdr_blockpage/htdocs/libcdr_blockpage.cgi
+./usr/local/apache/cgi-bin/tgbconf.cgi
+./usr/local/apache/cgi-bin/ios.cgi
+./usr/local/zyxel-gui/cgi-twofa/2FA-access.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_MBKA.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_SANDBOX.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_EXU.cgi
+./usr/local/zyxel-gui/htdocs/chg_exp_pwd.cgi
+./usr/local/zyxel-gui/htdocs/webauth_relogin.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_IDP.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_registration.cgi
+./usr/local/zyxel-gui/htdocs/redirect.cgi
+./usr/local/zyxel-gui/htdocs/agree.cgi
+./usr/local/zyxel-gui/htdocs/setuser.cgi
+./usr/local/zyxel-gui/htdocs/webauth_example_preview.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_NWE.cgi
+./usr/local/zyxel-gui/htdocs/fetch_ap_info.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_CCF.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_SSLVPN.cgi
+./usr/local/zyxel-gui/htdocs/weblogin.cgi
+./usr/local/zyxel-gui/htdocs/access.cgi
+./usr/local/zyxel-gui/htdocs/walled_garden.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_NWPM.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_HOTS.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_AV.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_quickmode.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_GEOIP.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_TSP.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_RF.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_CDR.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_SECUR.cgi
+./usr/local/zyxel-gui/htdocs/check_need_wizard.cgi
+./usr/local/zyxel-gui/htdocs/webauth_ga.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_APC.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_HA.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_APPQM.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_HOTSQ.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_WEBSEC.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_extend.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_AS.cgi
+./usr/local/zyxel-gui/htdocs/webauth_error.cgi
+./usr/local/zyxel-gui/htdocs/securpt.cgi
+./usr/local/zyxel-gui/htdocs/myzyxel_ZYMESH.cgi
+./usr/local/zyxel-gui/htdocs/dynamic_script.cgi
+```
+
 # 版本探测
 
 ```
