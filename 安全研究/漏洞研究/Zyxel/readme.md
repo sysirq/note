@@ -574,3 +574,7 @@ https://security.humanativaspa.it/zyxel-firmware-extraction-and-password-analysi
 ZYXEL VPN SERIES PRE-AUTH REMOTE COMMAND EXECUTION
 
 https://ssd-disclosure.com/ssd-advisory-zyxel-vpn-series-pre-auth-remote-command-execution/
+
+Trending vulnerability digest November 2024
+
+https://global.ptsecurity.com/analytics/trending-vulnerability-digest-november-2024
