@@ -578,3 +578,7 @@ https://ssd-disclosure.com/ssd-advisory-zyxel-vpn-series-pre-auth-remote-command
 Trending vulnerability digest November 2024
 
 https://global.ptsecurity.com/analytics/trending-vulnerability-digest-november-2024
+
+Useless path traversals in Zyxel admin interface (CVE-2022-2030)
+
+https://security.humanativaspa.it/useless-path-traversals-in-zyxel-admin-interface-cve-2022-2030/
