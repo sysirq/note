@@ -582,3 +582,7 @@ https://global.ptsecurity.com/analytics/trending-vulnerability-digest-november-2
 Useless path traversals in Zyxel admin interface (CVE-2022-2030)
 
 https://security.humanativaspa.it/useless-path-traversals-in-zyxel-admin-interface-cve-2022-2030/
+
+Zyxel Firewall Directory Traversal Vulnerability Exploited in Ransomware Attack (CVE-2024-11667)
+
+https://threatprotect.qualys.com/2024/12/03/zyxel-firewall-directory-traversal-vulnerability-exploited-in-ransomware-attack-cve-2024-11667/
