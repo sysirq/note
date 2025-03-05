@@ -13,3 +13,7 @@ https://keenjin.github.io/2021/04/p2p/#4-p2p下载技术原理
 网络协议 15 - P2P 协议
 
 https://zhuanlan.zhihu.com/p/87327257
+
+Distributed Hash Tables with Kademlia
+
+https://codethechange.stanford.edu/guides/guide_kademlia.html
