@@ -586,3 +586,7 @@ https://security.humanativaspa.it/useless-path-traversals-in-zyxel-admin-interfa
 Zyxel Firewall Directory Traversal Vulnerability Exploited in Ransomware Attack (CVE-2024-11667)
 
 https://threatprotect.qualys.com/2024/12/03/zyxel-firewall-directory-traversal-vulnerability-exploited-in-ransomware-attack-cve-2024-11667/
+
+Zyxel Firewall Vulnerabilities Reveal the Complexity of the IT Infrastructure Supply Chain
+
+https://eclypsium.com/blog/zyxel-firewall-vulnerabilities-reveal-the-complexity-of-the-it-infrastructure-supply-chain/
