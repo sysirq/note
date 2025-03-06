@@ -17,3 +17,7 @@ https://zhuanlan.zhihu.com/p/87327257
 Distributed Hash Tables with Kademlia
 
 https://codethechange.stanford.edu/guides/guide_kademlia.html
+
+BitTorrent.org
+
+https://www.bittorrent.org/beps/bep_0000.html
