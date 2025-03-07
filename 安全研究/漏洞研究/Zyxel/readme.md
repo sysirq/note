@@ -590,3 +590,7 @@ https://threatprotect.qualys.com/2024/12/03/zyxel-firewall-directory-traversal-v
 Zyxel Firewall Vulnerabilities Reveal the Complexity of the IT Infrastructure Supply Chain
 
 https://eclypsium.com/blog/zyxel-firewall-vulnerabilities-reveal-the-complexity-of-the-it-infrastructure-supply-chain/
+
+Security Products - Firmware Overview and History Downloads for FLEX, ATP, USG, VPN, ZYWALL
+
+https://support.zyxel.eu/hc/en-us/articles/360013941859-Security-Products-Firmware-Overview-and-History-Downloads-for-FLEX-ATP-USG-VPN-ZYWALL#h_01HF42Q862DD5T0Y4E7JYG3756
