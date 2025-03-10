@@ -627,6 +627,17 @@ raw        0      0 0.0.0.0:1               0.0.0.0:*               7           
 raw        0      0 0.0.0.0:89              0.0.0.0:*               7           10343/ospfd
 ```
 
+Using a tool called ike-scan we can confirm the WAN interface on the device is both receiving IKE messages and transmitting a response, as shown by the Notify message received below.
+
+```
+$ sudo ike-scan -M 192.168.86.40
+Starting ike-scan 1.9.5 with 1 hosts (http://www.nta-monitor.com/tools/ike-scan/)
+192.168.86.40	Notify message 14 (NO-PROPOSAL-CHOSEN)
+	HDR=(CKY-R=08fa698fad4ea545, msgid=98cf95b1)
+
+Ending ike-scan 1.9.5: 1 hosts scanned in 0.012 seconds (82.37 hosts/sec).  0 returned handshake; 1 returned notify
+```
+
 # 参考资料
 
 Zyxel firmware extraction and password analysis
