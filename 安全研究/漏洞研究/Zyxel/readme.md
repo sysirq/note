@@ -565,6 +565,68 @@ if __name__ == "__main__":
     version_print(host,port,https)
 ```
 
+# 服务器默认开放端口
+
+If we run netstat on a vulnerable device we can see that UDP port 500 is listening by default on the WAN interface (Bound to IP address 192.168.86.40 in the example below), and the process sshipsecpm binds the socket.
+
+```
+bash-5.1# netstat -lnp
+netstat -lnp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:11080         0.0.0.0:*               LISTEN      13002/ttyd
+tcp        0      0 127.0.0.1:2601          0.0.0.0:*               LISTEN      10330/zebra
+tcp        0      0 127.0.0.1:2602          0.0.0.0:*               LISTEN      10334/ripd
+tcp        0      0 127.0.0.1:2604          0.0.0.0:*               LISTEN      10343/ospfd
+tcp        0      0 127.0.0.1:10444         0.0.0.0:*               LISTEN      3079/pro
+tcp        0      0 127.0.0.1:2605          0.0.0.0:*               LISTEN      10344/bgpd
+tcp        0      0 0.0.0.0:2158            0.0.0.0:*               LISTEN      2516/zyssod
+tcp        0      0 127.0.0.1:50001         0.0.0.0:*               LISTEN      10019/capwap_srv
+tcp        0      0 0.0.0.0:179             0.0.0.0:*               LISTEN      10344/bgpd
+tcp        0      0 192.168.3.1:53          0.0.0.0:*               LISTEN      13108/named
+tcp        0      0 192.168.2.1:53          0.0.0.0:*               LISTEN      13108/named
+tcp        0      0 192.168.1.1:53          0.0.0.0:*               LISTEN      13108/named
+tcp        0      0 192.168.86.40:53        0.0.0.0:*               LISTEN      13108/named
+tcp        0      0 127.0.0.1:53            0.0.0.0:*               LISTEN      13108/named
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      12918/sshd_config [
+tcp        0      0 127.0.0.1:953           0.0.0.0:*               LISTEN      13108/named
+tcp6       0      0 :::8008                 :::*                    LISTEN      10880/httpd
+tcp6       0      0 :::54088                :::*                    LISTEN      10880/httpd
+tcp6       0      0 :::59465                :::*                    LISTEN      10880/httpd
+tcp6       0      0 :::59466                :::*                    LISTEN      10880/httpd
+tcp6       0      0 :::2158                 :::*                    LISTEN      2516/zyssod
+tcp6       0      0 :::80                   :::*                    LISTEN      10880/httpd
+tcp6       0      0 :::179                  :::*                    LISTEN      10344/bgpd
+tcp6       0      0 :::53                   :::*                    LISTEN      13108/named
+tcp6       0      0 :::21                   :::*                    LISTEN      10743/proftpd: (acc
+tcp6       0      0 :::22                   :::*                    LISTEN      12918/sshd_config [
+tcp6       0      0 :::443                  :::*                    LISTEN      10880/httpd
+udp        0      0 192.168.3.1:53          0.0.0.0:*                           13108/named
+udp        0      0 192.168.2.1:53          0.0.0.0:*                           13108/named
+udp        0      0 192.168.1.1:53          0.0.0.0:*                           13108/named
+udp        0      0 192.168.86.40:53        0.0.0.0:*                           13108/named
+udp        0      0 127.0.0.1:53            0.0.0.0:*                           13108/named
+udp        0      0 0.0.0.0:67              0.0.0.0:*                           13221/dhcpd
+udp     4480      0 0.0.0.0:68              0.0.0.0:*                           12998/dhcpcd
+udp        0      0 0.0.0.0:5246            0.0.0.0:*                           10019/capwap_srv
+udp        0      0 0.0.0.0:47290           0.0.0.0:*                           13095/radiusd
+udp        0      0 0.0.0.0:13701           0.0.0.0:*                           12676/accountingd
+udp        0      0 192.168.1.1:4500        0.0.0.0:*                           5706/sshipsecpm
+udp        0      0 192.168.86.40:4500      0.0.0.0:*                           5706/sshipsecpm
+udp        0      0 192.168.1.1:500         0.0.0.0:*                           5706/sshipsecpm
+udp        0      0 192.168.86.40:500       0.0.0.0:*                           5706/sshipsecpm
+udp        0      0 0.0.0.0:520             0.0.0.0:*                           10334/ripd
+udp        0      0 192.168.1.1:1701        0.0.0.0:*                           5706/sshipsecpm
+udp        0      0 192.168.86.40:1701      0.0.0.0:*                           5706/sshipsecpm
+udp        0      0 127.0.0.1:18121         0.0.0.0:*                           13095/radiusd
+udp        0      0 0.0.0.0:3799            0.0.0.0:*                           13095/radiusd
+udp        0      0 0.0.0.0:1812            0.0.0.0:*                           13095/radiusd
+udp        0      0 0.0.0.0:1813            0.0.0.0:*                           13095/radiusd
+udp6       0      0 :::53                   :::*                                13108/named
+raw        0      0 0.0.0.0:1               0.0.0.0:*               7           13221/dhcpd
+raw        0      0 0.0.0.0:89              0.0.0.0:*               7           10343/ospfd
+```
+
 # 参考资料
 
 Zyxel firmware extraction and password analysis
