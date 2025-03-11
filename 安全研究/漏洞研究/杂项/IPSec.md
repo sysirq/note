@@ -1,3 +1,40 @@
+# Libreswan
+
+编译：
+
+```
+make clean
+make -j$(nproc) DEBUG=1 CFLAGS="-g -O0" LDFLAGS="-g"
+```
+
+调试：
+
+```
+file /usr/local/libexec/ipsec/pluto
+# 输出应包含 `with debug_info`
+
+sudo gdb /usr/local/libexec/ipsec/pluto
+```
+
+在 gdb 中运行：
+
+```
+set args --nofork --debug-all
+run
+```
+
+启用更详细的调试日志:
+
+```
+sudo ipsec pluto --stderrlog --debug-all
+```
+
+
+
+### 资料
+
+https://github.com/libreswan/libreswan
+
 # 历史漏洞
 
 Linux内存越界漏洞分析（CVE-2017-7184）
