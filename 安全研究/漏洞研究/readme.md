@@ -15,3 +15,9 @@ https://www.txone.com/blog/user-impersonation-attack-in-multiple-ssl-vpns-part-1
 VPN Gremlin: User Impersonation Attack in Multiple SSL VPNs – Part 2
 
 https://www.txone.com/blog/user-impersonation-attack-in-multiple-ssl-vpns-part-2/
+
+# iot 安全研究
+
+IoT设备中的认证绕过漏洞分析
+
+https://research.qianxin.com/archives/1383
