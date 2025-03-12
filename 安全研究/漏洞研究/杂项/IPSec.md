@@ -40,3 +40,7 @@ https://github.com/libreswan/libreswan
 Linux内存越界漏洞分析（CVE-2017-7184）
 
 https://zhuanlan.zhihu.com/p/32868292
+
+Nftables - Netfilter and VPN/IPsec packet flow
+
+https://thermalcircle.de/doku.php?id=blog:linux:nftables_ipsec_packet_flow
