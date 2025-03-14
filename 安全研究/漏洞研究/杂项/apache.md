@@ -41,24 +41,44 @@ which pcre-config
 make -j 4
 sudo make install
 ```
-
-
-
 配置文件位置为 ./configure 指定 prefix 时下的 conf/httpd.conf。eg:
-
 ```
 /usr/local/httpd/conf/httpd.conf
 ```
 
-
-
 启动服务：
-
 ```
 PREFIX/bin/apachectl -k start
 ```
 
+指定conf 文件:
 
+```
+apachectl -f 
+```
+
+一个简单的httpd.conf 配置文件
+
+```
+LoadModule mime_module modules/mod_mime.so
+LoadModule dir_module modules/mod_dir.so
+LoadModule log_config_module modules/mod_log_config.so
+LoadModule authz_core_module modules/mod_authz_core.so
+LoadModule unixd_module modules/mod_unixd.so
+
+Listen 80
+
+DocumentRoot "/home/sysirq/Work/apache2/www/htdocs"
+<Directory "/home/sysirq/Work/apache2/www/htdocs">
+    AllowOverride None
+    Require all granted
+</Directory>
+
+
+DirectoryIndex index.html
+```
+
+如果启动出错，可以到log文件中查看启动失败原因（PREFIX/logs）
 
 # 资料
 
