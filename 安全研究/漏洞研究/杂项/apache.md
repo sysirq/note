@@ -85,3 +85,11 @@ DirectoryIndex index.html
 CVE-2024-40725-CVE-2024-40898
 
 https://github.com/TAM-K592/CVE-2024-40725-CVE-2024-40898
+
+HTTP 请求走私详解
+
+https://www.freebuf.com/articles/web/321907.html
+
+HTTP Desync Attacks: Smashing into the Cell Next Door
+
+https://www.blackhat.com/us-19/briefings/schedule/#http-desync-attacks-smashing-into-the-cell-next-door-15153
