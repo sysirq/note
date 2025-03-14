@@ -44,11 +44,21 @@ sudo make install
 
 
 
-配置文件位置为 ./configure 指定 prefix 时下的 conf/httpd.conf。
+配置文件位置为 ./configure 指定 prefix 时下的 conf/httpd.conf。eg:
 
 ```
 /usr/local/httpd/conf/httpd.conf
 ```
+
+
+
+启动服务：
+
+```
+PREFIX/bin/apachectl -k start
+```
+
+
 
 # 资料
 
