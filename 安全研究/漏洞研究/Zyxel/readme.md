@@ -667,3 +667,7 @@ https://eclypsium.com/blog/zyxel-firewall-vulnerabilities-reveal-the-complexity-
 Security Products - Firmware Overview and History Downloads for FLEX, ATP, USG, VPN, ZYWALL
 
 https://support.zyxel.eu/hc/en-us/articles/360013941859-Security-Products-Firmware-Overview-and-History-Downloads-for-FLEX-ATP-USG-VPN-ZYWALL#h_01HF42Q862DD5T0Y4E7JYG3756
+
+ZYXEL USG Flex H 防火牆 SSL VPN 設定教學
+
+https://community.zyxel.com/tw/discussion/25598/zyxel-usg-flex-h-防火牆-ssl-vpn-設定教學
