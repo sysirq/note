@@ -671,3 +671,7 @@ https://support.zyxel.eu/hc/en-us/articles/360013941859-Security-Products-Firmwa
 ZYXEL USG Flex H 防火牆 SSL VPN 設定教學
 
 https://community.zyxel.com/tw/discussion/25598/zyxel-usg-flex-h-防火牆-ssl-vpn-設定教學
+
+CVE-2022-30525: Unauthenticated remote command injection
+
+https://www.rapid7.com/blog/post/2022/05/12/cve-2022-30525-fixed-zyxel-firewall-unauthenticated-remote-command-injection/
