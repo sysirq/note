@@ -675,3 +675,7 @@ https://community.zyxel.com/tw/discussion/25598/zyxel-usg-flex-h-防火牆-ssl-v
 CVE-2022-30526 (Fixed): Zyxel Firewall Local Privilege Escalation
 
 https://www.rapid7.com/blog/post/2022/07/19/cve-2022-30526-fixed-zyxel-firewall-local-privilege-escalation/
+
+How to setup SSL VPN (Full-Tunnel) for remote access
+
+https://www.youtube.com/watch?v=r01NWVEnE6E
