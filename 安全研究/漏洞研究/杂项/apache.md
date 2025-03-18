@@ -93,3 +93,7 @@ https://www.freebuf.com/articles/web/321907.html
 HTTP Desync Attacks: Smashing into the Cell Next Door
 
 https://www.blackhat.com/us-19/briefings/schedule/#http-desync-attacks-smashing-into-the-cell-next-door-15153
+
+CVE 2023 25690 - Proof of Concept
+
+https://github.com/dhmosfunk/CVE-2023-25690-POC
