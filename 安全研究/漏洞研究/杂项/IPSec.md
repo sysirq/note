@@ -44,3 +44,7 @@ https://zhuanlan.zhihu.com/p/32868292
 Nftables - Netfilter and VPN/IPsec packet flow
 
 https://thermalcircle.de/doku.php?id=blog:linux:nftables_ipsec_packet_flow
+
+Automated state machine learning of IPsec implementations
+
+https://www.cs.ru.nl/bachelors-theses/2017/Bart_Veldhuizen___4492765___Automated_state_machine_learning_of_IPsec_implementations.pdf
