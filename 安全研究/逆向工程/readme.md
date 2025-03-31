@@ -9,6 +9,15 @@
 
 地址：https://github.com/keystone-engine/keypatch
 
+### mips 反汇编插件 -- retdec
+
+- 复制plugin中的两个dll到DA所在目录的plugins下去
+- 为设置retdec_decompiler.py地址，IDA --》Options --〉RetDec Plugin Settings（需要下载地址1中的东西）
+
+地址：
+- https://github.com/avast/retdec
+- https://github.com/avast/retdec-idaplugin
+
 # 资料
 
 跟羽夏学 Ghidra
