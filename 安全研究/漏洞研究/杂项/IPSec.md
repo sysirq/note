@@ -52,3 +52,7 @@ https://www.cs.ru.nl/bachelors-theses/2017/Bart_Veldhuizen___4492765___Automated
 What is the difference between “Main” mode and “Quick” mode when using IPsec in Windows Server?
 
 https://serverfault.com/questions/550894/what-is-the-difference-between-main-mode-and-quick-mode-when-using-ipsec-in
+
+IPSec for Dummies: Getting Started with IPSec VPN
+
+https://jiwanbhattarai.com/blog/ipsec-for-dummies-getting-started-with-ipsec-vpn-a-quick-guide-for-beginners/
