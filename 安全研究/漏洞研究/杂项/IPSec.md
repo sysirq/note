@@ -48,3 +48,7 @@ https://thermalcircle.de/doku.php?id=blog:linux:nftables_ipsec_packet_flow
 Automated state machine learning of IPsec implementations
 
 https://www.cs.ru.nl/bachelors-theses/2017/Bart_Veldhuizen___4492765___Automated_state_machine_learning_of_IPsec_implementations.pdf
+
+What is the difference between “Main” mode and “Quick” mode when using IPsec in Windows Server?
+
+https://serverfault.com/questions/550894/what-is-the-difference-between-main-mode-and-quick-mode-when-using-ipsec-in
