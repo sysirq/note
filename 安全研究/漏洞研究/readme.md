@@ -21,3 +21,7 @@ https://www.txone.com/blog/user-impersonation-attack-in-multiple-ssl-vpns-part-2
 IoT设备中的认证绕过漏洞分析
 
 https://research.qianxin.com/archives/1383
+
+Four-Faith Industrial Router CVE-2024-12856 Exploited in the Wild
+
+https://vulncheck.com/blog/four-faith-cve-2024-12856?ref=blog.xlab.qianxin.com
