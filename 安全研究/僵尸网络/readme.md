@@ -21,3 +21,7 @@ https://codethechange.stanford.edu/guides/guide_kademlia.html
 BitTorrent.org
 
 https://www.bittorrent.org/beps/bep_0000.html
+
+风云再起：全球160万电视被Vo1d僵尸网络操控，潜在危害令人担忧
+
+https://blog.xlab.qianxin.com/long_live_the_botnet_vo1d_is_back_cn/
