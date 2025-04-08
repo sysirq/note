@@ -638,6 +638,72 @@ Starting ike-scan 1.9.5 with 1 hosts (http://www.nta-monitor.com/tools/ike-scan/
 Ending ike-scan 1.9.5: 1 hosts scanned in 0.012 seconds (82.37 hosts/sec).  0 returned handshake; 1 returned notify
 ```
 
+# 有用的命令
+
+### 查看自己所使用的接口
+
+```
+Router# show interface all 
+No. Name            Status              IP Address      Mask            IP Assignment
+===============================================================================
+1   wan             Down                0.0.0.0         0.0.0.0         DHCP client   
+2   sfp             Down                0.0.0.0         0.0.0.0         Static        
+3   lan1            Up                  192.168.1.1     255.255.255.0   Static        
+4   lan2            Down                192.168.2.1     255.255.255.0   Static        
+5   dmz             Down                192.168.3.1     255.255.255.0   Static        
+6   guest           Down                192.168.5.1     255.255.255.0   Static     
+```
+
+### 查看http web管理页面状态
+
+```
+Router# show ip http server status 
+active                   : yes
+content-compression      : no
+Cookie-HttpOnly-flag     : no
+Cookie-Secure-Flag       : no
+X-Content-Type-Options   : no
+X-Frame-Options          : no
+X-XSS-Protection         : no
+Strict-Transport-Security: no
+Content-Security         : no
+port                     : 80
+authentication method    : default
+admin service control:
+No. Zone                 Address                          Action
+===============================================================================
+user service control:
+No. Zone                 Address                          Action
+===============================================================================
+```
+
+### 查看当前zone配置
+
+```
+Router# show zone
+No. Name                             Member                             
+Ref    
+===============================================================================
+1   LAN1                             lan1
+4       
+2   LAN2                             lan2
+4       
+3   DMZ                              dmz
+4       
+4   WAN                              wan,wan_ppp
+6       
+5   OPT                              sfp,sfp_ppp
+0       
+6   SSL_VPN                          
+4       
+7   IPSec_VPN                        
+4       
+8   TUNNEL                           
+4       
+10  GUEST                            
+2       
+```
+
 # 参考资料
 
 Zyxel firmware extraction and password analysis
