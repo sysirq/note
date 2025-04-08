@@ -101,3 +101,7 @@ https://github.com/dhmosfunk/CVE-2023-25690-POC
 Confusion Attacks: Exploiting Hidden Semantic Ambiguity in Apache HTTP Server!
 
 https://blog.orange.tw/posts/2024-08-confusion-attacks-en/
+
+CVE-2024-38473 Nuclei Template
+
+https://github.com/juanschallibaum/CVE-2024-38473-Nuclei-Template
