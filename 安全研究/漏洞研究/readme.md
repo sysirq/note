@@ -25,3 +25,7 @@ https://research.qianxin.com/archives/1383
 Four-Faith Industrial Router CVE-2024-12856 Exploited in the Wild
 
 https://vulncheck.com/blog/four-faith-cve-2024-12856?ref=blog.xlab.qianxin.com
+
+小米路由器的未授权访问
+
+https://blog.csdn.net/pone2233/article/details/123943230
