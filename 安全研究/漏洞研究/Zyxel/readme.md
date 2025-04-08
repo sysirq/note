@@ -704,6 +704,14 @@ Ref
 2       
 ```
 
+### 通过ssh 开启web 管理页面访问
+
+```
+configure terminal 
+ip http server table admin rule insert 1 access-group ALL zone ALL action accept 
+ip http secure-server table admin rule insert 1 access-group ALL zone ALL action accept
+```
+
 # 参考资料
 
 Zyxel firmware extraction and password analysis
