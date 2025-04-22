@@ -33,3 +33,7 @@ https://cloud.google.com/blog/topics/threat-intelligence/investigating-ivanti-ze
 Cutting Edge, Part 3: Investigating Ivanti Connect Secure VPN Exploitation and Persistence Attempts
 
 https://cloud.google.com/blog/topics/threat-intelligence/investigating-ivanti-exploitation-persistence/?utm_source=chatgpt.com
+
+Connect Secure Administration Guide
+
+https://help.ivanti.com/ps/help/en_US/ICS/22.x/ag/revision_history.htm
