@@ -20,3 +20,16 @@ https://labs.watchtowr.com/welcome-to-2024-the-sslvpn-chaos-continues-ivanti-cve
 Product Documentation
 
 https://www.ivanti.com/support/product-documentation
+
+
+Cutting Edge: Suspected APT Targets Ivanti Connect Secure VPN in New Zero-Day Exploitation
+
+https://cloud.google.com/blog/topics/threat-intelligence/suspected-apt-targets-ivanti-zero-day
+
+Cutting Edge, Part 2: Investigating Ivanti Connect Secure VPN Zero-Day Exploitation
+
+https://cloud.google.com/blog/topics/threat-intelligence/investigating-ivanti-zero-day-exploitation
+
+Cutting Edge, Part 3: Investigating Ivanti Connect Secure VPN Exploitation and Persistence Attempts
+
+https://cloud.google.com/blog/topics/threat-intelligence/investigating-ivanti-exploitation-persistence/?utm_source=chatgpt.com
