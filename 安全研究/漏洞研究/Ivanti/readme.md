@@ -37,3 +37,7 @@ https://cloud.google.com/blog/topics/threat-intelligence/investigating-ivanti-ex
 Connect Secure Administration Guide
 
 https://help.ivanti.com/ps/help/en_US/ICS/22.x/ag/revision_history.htm
+
+rxwx/pulseversion.py
+
+https://gist.github.com/rxwx/d07495f790d62029b12065c38ac2a86a
