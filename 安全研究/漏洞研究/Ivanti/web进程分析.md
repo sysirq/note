@@ -1,4 +1,8 @@
-# web、web80
+# 版本
+
+ivanti connect security 22.7r2.3
+
+# web
 
 ./home/config/web.cfg
 
@@ -10,3 +14,9 @@ bash-4.2# ls -hl /home/bin/web
 ```
 
 web80分析，从./home/config/web.cfg读取端口，启动服务
+
+
+
+
+
+DSWSAcceptor --> 
