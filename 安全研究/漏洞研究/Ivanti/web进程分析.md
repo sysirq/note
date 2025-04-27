@@ -13,7 +13,7 @@ bash-4.2# ls -hl /home/bin/web
 -rwxr-xr-x. 1 root root 1.5M Oct  6  2024 /home/bin/web
 ```
 
-web80分析，从./home/config/web.cfg读取端口，启动服务
+web分析，从./home/config/web.cfg读取端口，启动服务
 
 
 
