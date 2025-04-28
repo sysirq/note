@@ -165,4 +165,16 @@ sub_30CC0 --> DSWSAcceptor: 添加accept的fd到事件循环中，对应的类�
 .rodata:0013D64F	00000012	C	TncsConnection.cc
 ```
 
+# 请求处理流程分析
+
+```c
+virtual void DSWSAcceptor::ioReady(int);//accept 客户端请求
+virtual DSWSSsl::Status DSWSSsl::readBytes(char*, int*);//read 接受客户端的数据
+virtual DSWSSsl::Status DSWSSsl::writeBytes(const char*, int*)//write 发送到客户端的数据
+```
+
+# 状态转换
+
+DSWSClientSslNegotiator
+
 # 如何调试
