@@ -175,7 +175,9 @@ virtual DSWSSsl::Status DSWSSsl::writeBytes(const char*, int*)//write 发送到�
 
 # 状态转换
 
-DSWSClientSslNegotiator
+DSWSClientSslNegotiator中完成SSL_accept的操作，然后创建DSWSConnection，
+
+DSWSConnection::doIO 函数调用SSL_read 获取http请求数据
 
 # 如何调试
 
