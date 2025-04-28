@@ -122,6 +122,47 @@ int main() {
 
 ```
 
-sub_30CC0 --> DSWSAcceptor: 添加listen_fd到事件循环中。
+sub_30CC0 --> DSWSAcceptor: 添加accept的fd到事件循环中，对应的类为（）
+
+# 有哪些文件
+
+```c
+.rodata:00122950	0000000D	C	logopt.pb.cc
+.rodata:00122A0E	0000000A	C	accept.cc
+.rodata:00122C86	0000000A	C	agentd.cc
+.rodata:00126812	0000000A	C	buffer.cc
+.rodata:00126886	00000007	C	cgi.cc
+.rodata:00127494	0000000A	C	client.cc
+.rodata:001283CA	0000000E	C	connection.cc
+.rodata:00128EA6	0000000C	C	connwait.cc
+.rodata:00129013	00000007	C	eap.cc
+.rodata:00129373	00000009	C	files.cc
+.rodata:00129855	00000009	C	java2.cc
+.rodata:0012AA28	0000000D	C	jsamproxy.cc
+.rodata:0012AA50	00000014	C	jsamproxyhandler.cc
+.rodata:0012EF42	0000000A	C	linger.cc
+.rodata:0012EFAF	00000008	C	main.cc
+.rodata:0012F654	0000000B	C	request.cc
+.rodata:00134D35	0000000B	C	rewrite.cc
+.rodata:00135551	00000008	C	util.cc
+.rodata:00135AA7	0000000C	C	compress.cc
+.rodata:00135B3F	0000000A	C	radius.cc
+.rodata:001362E3	00000008	C	saml.cc
+.rodata:0013647D	00000007	C	ivs.cc
+.rodata:00136537	00000008	C	soap.cc
+.rodata:00136B49	0000000D	C	nameduser.cc
+.rodata:00137782	00000010	C	tnctransport.cc
+.rodata:00138B04	00000009	C	proxy.cc
+.rodata:0013952A	0000000A	C	config.cc
+.rodata:001398C1	0000000C	C	html5acc.cc
+.rodata:00139BD9	00000007	C	ssl.cc
+.rodata:0013A2B9	00000012	C	html5bsslProxy.cc
+.rodata:0013AC87	00000011	C	pyresthandler.cc
+.rodata:0013B3D1	00000015	C	metricresthandler.cc
+.rodata:0013BBA5	00000016	C	hawkAuthentication.cc
+.rodata:0013BBF0	00000013	C	TncsClientState.cc
+.rodata:0013CEC7	00000011	C	TncsAsyncImpl.cc
+.rodata:0013D64F	00000012	C	TncsConnection.cc
+```
 
 # 如何调试
