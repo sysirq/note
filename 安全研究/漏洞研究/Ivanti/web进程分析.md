@@ -122,6 +122,6 @@ int main() {
 
 ```
 
+sub_30CC0 --> DSWSAcceptor: 添加listen_fd到事件循环中。
 
-
-DSWSAcceptor --> 
+# 如何调适
