@@ -237,7 +237,9 @@ DSWSConnection::doIO 会调用 DSWSSsl::readBytes 进行实际的数据读取，
 
 添加完成后调用DSWSConnection::deliverReadCallbacks，该函数判断用户输入的数据是否存在'\n',如果存在则进一步调用virtual int DSWSRequest::inputReady(char*, int)函数
 
-DSWSRequest::inputReady 进一步调用parseRequestLine，对请求行进行处理（GET / HTTP/1.1），以及调用addToHeaders对（Connection: keep-alive\r）等进行处理，最后调用dispatchRequest函数进行http请求处理
+DSWSRequest::inputReady 进一步调用parseRequestLine，对请求行进行处理（GET / HTTP/1.1），以及调用addToHeaders对（Connection: keep-alive\r）等进行处理，
+
+当addToHeaders读取到\r\n后，最后调用dispatchRequest函数进行http请求处理
 
 # 如何调试
 
