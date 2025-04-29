@@ -181,8 +181,6 @@ DSWSClient 类中包含：DSWSSsl类用于处理SSL读写，DSWSClientSslNegotia
 
 DSWSClientSslNegotiator调用SSL_accept完成SSL 协商之后，会创建初始化DSWSClient类变量DSWSConnection类（DSEvntFdsCallback的子类）、DSWSRequest类。然后将DSWSConnection设置为事件循环的回调函数。
 
-然后virtual void DSWSConnection::ioReady 回调函数进行用户输入的数据处理
-
 ```c++
 class DSWSClient{
     typeinfo *;
@@ -227,6 +225,8 @@ class DSWSRequest{
     ........
 }
 ```
+
+然后virtual void DSWSConnection::ioReady 回调函数进行用户输入的数据处理，该函数会调用In DSWSConnection::doIO
 
 # 如何调试
 
