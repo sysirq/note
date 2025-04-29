@@ -194,7 +194,7 @@ class DSWSClient{
     DSWSClientSslNegotiator *ssl_negotiator;
 }
 
-class DSWSClientSslNegotiator{
+class DSWSClientSslNegotiator : public DSEvntFdsCallback{
     typeinfo *;
     unsigned long ;
     unsigned long ;
@@ -207,7 +207,7 @@ class DSWSSsl{
     typeinfo *;
 }
 
-class DSWSConnection{
+class DSWSConnection : public DSEvntFdsCallback{
     typeinfo *;
     unsigned long ;
     unsigned long ;
@@ -227,8 +227,6 @@ class DSWSRequest{
     ........
 }
 ```
-
-
 
 # 如何调试
 
