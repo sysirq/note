@@ -183,6 +183,53 @@ DSWSClientSslNegotiator调用SSL_accept完成SSL 协商之后，会创建初始�
 
 然后virtual void DSWSConnection::ioReady 回调函数进行用户输入的数据处理
 
+```c++
+class DSWSClient{
+    typeinfo *;
+    unsigned long client_fd;
+    unsigned long ;
+    DSWSSsl *ssl;
+    DSWSRequest *request;
+    DSWSConnection *connection;
+    DSWSClientSslNegotiator *ssl_negotiator;
+}
+
+class DSWSClientSslNegotiator{
+    typeinfo *;
+    unsigned long ;
+    unsigned long ;
+    unsigned long ;
+    DSWSSsl *ssl;
+    DSWSClient *client;
+}
+
+class DSWSSsl{
+    typeinfo *;
+}
+
+class DSWSConnection{
+    typeinfo *;
+    unsigned long ;
+    unsigned long ;
+    unsigned long ;
+    unsigned long ;
+    unsigned long client_fd;
+    unsigned long ;
+    unsigned long ;
+    DSWSClient *client;
+    DSWSSsl *ssl;
+}
+
+class DSWSRequest{
+    typeinfo *;
+    DSWSClient *client;
+    DSWSConnection *connection;
+    ........
+}
+```
+
+
+
 # 如何调试
 
 ```python
