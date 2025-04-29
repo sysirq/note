@@ -173,13 +173,13 @@ virtual DSWSSsl::Status DSWSSsl::readBytes(char*, int*);//read 接受客户端�
 virtual DSWSSsl::Status DSWSSsl::writeBytes(const char*, int*)//write 发送到客户端的数据
 ```
 
-# 状态转换
+# 类
 
-DSWSClientSslNegotiator中完成SSL_accept的操作，然后创建DSWSConnection，
+DSWSAcceptor类用于接受客户端的连接请求，然后创建DSWSClient类。
 
-DSWSConnection::ioReady --> DSWSConnection::doIO 函数调用SSL_read 获取http请求数据
+DSWSClient 类中包含：DSWSSsl类用于处理SSL读写，DSWSClientSslNegotiator类（DSEvntFdsCallback的子类）用于调用SSL_accept函数建立SSL连接。
 
-DSWSConnection::ioReady --> DSWSConnection::doIO --> DSWSConnection::deliverReadCallbacks 处理读请求
+DSWSClientSslNegotiator调用SSL_accept完成SSL 协商之后，会创建初始化DSWSClient 类变量，DSWSConnection类（DSEvntFdsCallback的子类）、DSWSRequest类。然后将DSWSConnection加入到事件循环中
 
 # 如何调试
 
