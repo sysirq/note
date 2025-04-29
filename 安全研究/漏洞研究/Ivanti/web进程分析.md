@@ -2,6 +2,25 @@
 
 ivanti connect security 22.7r2.3
 
+# request
+
+```
+POST /dana-admin/log/logviewer.cgi?op=Set HTTP/1.1
+Host: redacted
+Cookie: DSSignInURL=/admin; DSSIGNIN=url_admin;
+id=state_22c62de23255933b2bf459572cf2c056; DSID=e74400946175c2ad817fd78ef5cc4a61;
+DSDID=142638fd3a1ab6c8; DSFirstAccess=1674484636; DSLastAccess=1674485483;
+DSLaunchURL=2F64616E612D61646D696E2F68656C702F6C61756E636847756964652E636769
+[...]
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 153
+Origin: https://redacted
+Referer: https://redacted/dana-admin/log/logviewer.cgi?op=Set
+[...]
+xsauth=69e1d516a8d1e8b349fe875a4c75ac2b&op=SaveLog&type=events&filterSelect=4&query=&da
+te=&key=&value=&keytype=&filterSelected=4&numofmsgs=200&txtFilter=
+```
+
 # web
 
 ./home/config/web.cfg
