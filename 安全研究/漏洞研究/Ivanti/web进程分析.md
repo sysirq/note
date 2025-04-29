@@ -222,11 +222,22 @@ class DSWSRequest{
     typeinfo *;
     DSWSClient *client;
     DSWSConnection *connection;
+    unsigned long m_handler;
     ........
 }
 ```
 
 然后virtual void DSWSConnection::ioReady 回调函数进行用户输入的数据处理，该函数会调用In DSWSConnection::doIO
+
+DSWSConnection::doIO 会调用 DSWSSsl::readBytes 进行实际的数据读取，DSWSConnection::doIO 会将读取的数据添加到m_readBuffer中
+
+```
+.rodata:566D2904	00000033	C	In DSWSConnection::Finished adding to m_readBuffer
+```
+
+添加完成后调用DSWSConnection::deliverReadCallbacks，该函数判断用户输入的数据是否存在'\n',如果存在则进一步调用virtual int DSWSRequest::inputReady(char*, int)函数
+
+DSWSRequest::inputReady 进一步调用parseRequestLine，对请求行进行处理
 
 # 如何调试
 
