@@ -179,7 +179,9 @@ DSWSAcceptor类用于接受客户端的连接请求，然后创建DSWSClient类�
 
 DSWSClient 类中包含：DSWSSsl类用于处理SSL读写，DSWSClientSslNegotiator类（DSEvntFdsCallback的子类）用于调用SSL_accept函数建立SSL连接。
 
-DSWSClientSslNegotiator调用SSL_accept完成SSL 协商之后，会创建初始化DSWSClient 类变量，DSWSConnection类（DSEvntFdsCallback的子类）、DSWSRequest类。然后将DSWSConnection加入到事件循环中
+DSWSClientSslNegotiator调用SSL_accept完成SSL 协商之后，会创建初始化DSWSClient类变量DSWSConnection类（DSEvntFdsCallback的子类）、DSWSRequest类。然后将DSWSConnection设置为事件循环的回调函数。
+
+然后virtual void DSWSConnection::ioReady 回调函数进行用户输入的数据处理
 
 # 如何调试
 
