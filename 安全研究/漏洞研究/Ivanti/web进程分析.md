@@ -260,6 +260,25 @@ DSWSRequest::inputReady 进一步调用parseRequestLine，对请求行进行处�
 
 当addToHeaders读取到\r\n后，最后调用dispatchRequest函数进行http请求处理
 
+```
+(gdb) bt
+#0  0xf5a0053e in SSL_write () from /lib/libssl.so.3
+#1  0x565ee64e in ?? ()
+#2  0x56607dd0 in ?? ()
+#3  0x5660a01f in ?? ()
+#4  0x5660a114 in ?? ()
+#5  0x565ff041 in ?? ()
+#6  0x56602e17 in ?? ()
+#7  0x5666c28e in ?? ()
+#8  0x56670c04 in ?? ()
+#9  0x5667141d in ?? ()
+#10 0x566081e1 in ?? ()
+#11 0x56609446 in ?? ()
+#12 0x56609d40 in ?? ()
+#13 0xf6c3e42e in ?? ()
+   from /home/ecbuilds/int
+```
+
 # 如何调试
 
 ```python
