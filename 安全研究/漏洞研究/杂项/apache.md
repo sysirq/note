@@ -105,3 +105,7 @@ https://blog.orange.tw/posts/2024-08-confusion-attacks-en/
 CVE-2024-38473 Nuclei Template
 
 https://github.com/juanschallibaum/CVE-2024-38473-Nuclei-Template
+
+SonicBoom, From Stolen Tokens to Remote Shells - SonicWall SMA (CVE-2023-44221, CVE-2024-38475)
+
+https://labs.watchtowr.com/sonicboom-from-stolen-tokens-to-remote-shells-sonicwall-sma100-cve-2023-44221-cve-2024-38475/
