@@ -113,7 +113,29 @@ As a result, the appended /profile.yml is dropped, allowing us to retrieve the /
 $ curl http://server/user/orange%2Fsecret.yml%3F
  # the output of file `/var/user/orange/secret.yml`
 ```
-.......
+
+This is fairly insane.
+
+Now, let’s discuss another Apache feature that Orange Tsai has (ab)used: "DocumentRoot Confusion.”
+
+In the previous example, we were bound to a specific directory — specifically, we were restricted to /var/user/ as that path was prefixed in the rule.
+
+But what happens if our controlled input is placed at the beginning of a substitution?
+
+Consider the following example provided by Orange Tsai:
+
+```conf
+DocumentRoot /var/www/html
+RewriteRule  ^/html/(.*)$   /$1.html
+```
+
+Once again, this is best explained by Orange Tsai himself, but to recap:
+
+When you visit http://server/html/about , it would be logical to expect that mod_rewrite rewrites this to the /about.html file from within the /var/www/html directory - because of the DocumentRoot directive.
+
+However, Orange Tsai explains to us that this is not what happens.
+
+**Terrifyingly, the reality is that both paths are accessed by Apache — and, surprisingly, the one at the root of the filesystem is accessed first.**
 
 # 资料
 
