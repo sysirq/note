@@ -1,3 +1,5 @@
+# 0x00
+
 ```sh
 curl -k https://192.168.31.182/dana-cached/hc/hc_launcher.22.7.2.3431.jar -o out
 ```
@@ -16,4 +18,20 @@ OPSWAT.conf			 personalfirewall.zip
 RemoteIMVServerInstall.exe	 tncHCLauncherApplet.ini
 StandAloneHttpNarInstall.exe	 tncc.jar
 avupdate.xsd			 tncc_service.jar
+```
+
+# 0x01
+
+```ruby
+def get_productversion(ip,port)
+  res = HTTParty.get("https://#{ip}:#{port}/dana-na/auth/url_admin/welcome.cgi?type=inter")
+
+  return nil unless res&.code == 200
+
+  m = res.body.match(/name="productversion"\s+value="(\d+.\d+.\d+.\d+)"/i)
+
+  return nil unless m&.length == 2
+
+  m[1]
+end
 ```
