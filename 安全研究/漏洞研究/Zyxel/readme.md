@@ -1,3 +1,9 @@
+# fofa搜索
+
+```
+title="USG FLEX" || title=="USG20-VPN" || title=="USG20W-VPN" || title=="VPN50" || title=="VPN100" || title=="VPN300" || title=="VPN1000" || title=="ATP100" || title=="ATP100W" || title=="ATP200" || title=="ATP500" || title=="ATP700" || title=="ATP800" 
+```
+
 # 固件提取
 
 提取镜像恢复文件。
