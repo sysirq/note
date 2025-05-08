@@ -258,7 +258,7 @@ DSWSConnection::doIO 会调用 DSWSSsl::readBytes 进行实际的数据读取，
 
 DSWSRequest::inputReady 进一步调用parseRequestLine，对请求行进行处理（GET / HTTP/1.1），以及调用addToHeaders对（Connection: keep-alive\r）等进行处理，
 
-当addToHeaders读取到\r\n后，最后调用dispatchRequest函数进行http请求处理
+当addToHeaders读取到\r\n后，最后调用DSWSRequest::dispatchRequest函数进行http请求处理
 
 ```
 (gdb) bt
@@ -279,7 +279,7 @@ DSWSRequest::inputReady 进一步调用parseRequestLine，对请求行进行处�
    from /home/ecbuilds/int
 ```
 
-dispatchRequest 调用 doDispatchRequest
+DSWSRequest::dispatchRequest 调用 DSWSRequest::doDispatchRequest
 
 # 一些有用的帮助
 
@@ -287,6 +287,10 @@ dispatchRequest 调用 doDispatchRequest
 
 ```
 DSEvntFds::addFdInternal(a2, (int)v10, (DSEvntFdsCallback *)"client.cc", (const char *)0xAC, v14);//添加文件描述符到事件循环中，其中v10为DSEvntFdsCallback的子类
+
+56719D0C		DSEvntFds::removeFdInternal(int,char const*,int)	.dynsym
+
+5671A4C4		DSEvntFds::runDispatcher(void)	.dynsym
 ```
 
 
