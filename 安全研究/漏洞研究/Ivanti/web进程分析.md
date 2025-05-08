@@ -283,6 +283,13 @@ dispatchRequest 调用 doDispatchRequest
 
 # 一些有用的帮助
 
+### 事件循环
+
+```
+DSEvntFds::addFdInternal(a2, (int)v10, (DSEvntFdsCallback *)"client.cc", (const char *)0xAC, v14);//添加文件描述符到事件循环中，其中v10为DSEvntFdsCallback的子类
+```
+
+
 # 如何调试
 
 ```python
