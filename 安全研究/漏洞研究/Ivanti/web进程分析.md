@@ -281,6 +281,52 @@ DSWSRequest::inputReady 进一步调用parseRequestLine，对请求行进行处�
 
 DSWSRequest::dispatchRequest 调用 DSWSRequest::doDispatchRequest
 
+# 协议切换后的处理流程
+
+eg:
+
+```python
+    request = (f"GET / HTTP/1.1\r\n"
+               f"Host: {HOST}\r\n"
+               f"Connection: Upgrade\r\n"
+               f"Upgrade: IF-T/TLS 1.0\r\n"
+               f"\r\n")
+    sk.sendall(request.encode())
+```
+
+DSWSConnection::deliverReadCallbacks 会调用
+
+```c
+    ++*(_QWORD *)dword_56714E4C;
+    if ( DSLog::Debug::isOn((DSLog::Debug *)v21) )
+      DSLog::Debug::Write(
+        (DSLog::Debug *)"WebRequest",
+        (const char *)5,
+        (int)"connection.cc",
+        (const char *)0x301,
+        (int)"In DSWSConnection::deliverReadCallbacks. Calling DSWSRequest::inputReady",
+        v24);
+    v22 = *(__guard **)(a1 + 28);
+    v12 = (*(int (**)(void))(*v22 + 8))();//进行具体的协议处理
+    v13 = v12;
+    if ( v12 == -1 )
+      goto LABEL_64;
+```
+
+eg:
+
+```
+DSWSTncTransportHandler::inputReady
+```
+
+如果对于http请求就是
+
+```
+DSWSRequest::inputReady
+```
+
+
+
 # 一些有用的帮助
 
 ### 事件循环
