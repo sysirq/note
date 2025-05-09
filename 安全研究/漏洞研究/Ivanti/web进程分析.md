@@ -281,6 +281,31 @@ DSWSRequest::inputReady 进一步调用parseRequestLine，对请求行进行处�
 
 DSWSRequest::dispatchRequest 调用 DSWSRequest::doDispatchRequest
 
+```c
+int __cdecl sub_565FE720(int *a1)
+{
+  int v1; // eax
+  DSEvntNotification *v2; // edi
+  int *v3; // edi
+  bool v5; // [esp+Ch] [ebp-20h]
+
+  v1 = a1[6];
+  if ( v1 )
+    (*(void (__cdecl **)(int))(*(_DWORD *)v1 + 4))(a1[6]);
+  a1[6] = 0;
+  v2 = (DSEvntNotification *)operator new(0x150u);//初始化DSWSConnection
+  sub_5660AD90(v2, a1[1], a1[3], (int)a1, 0);
+  a1[5] = (int)v2;
+  v3 = (int *)operator new(0x10Cu);
+  sub_566364A0(v3, a1, a1[5], 0);//初始化DSWSRequest
+  a1[4] = (int)v3;
+  sub_56606D10(a1[5], v3);//设置 DSWSConnection::deliverReadCallbacks. Calling DSWSRequest::inputReady
+  (*(void (__cdecl **)(int, int))(*(_DWORD *)a1[5] + 56))(a1[5], 20);
+  DSEvntFds::setCallback((DSEvntFds *)a1[1], a1[5], 0);
+  return DSEvntFds::wantEvents((DSEvntFds *)a1[1], 1, 0, v5);
+}
+```
+
 # 协议切换后的处理流程
 
 eg:
