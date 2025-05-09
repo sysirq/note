@@ -281,6 +281,8 @@ DSWSRequest::inputReady 进一步调用parseRequestLine，对请求行进行处�
 
 DSWSRequest::dispatchRequest 调用 DSWSRequest::doDispatchRequest
 
+# 设置 DSWSConnection的deliverReadCallbacks
+
 ```c
 int __cdecl sub_565FE720(int *a1)
 {
