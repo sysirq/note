@@ -232,7 +232,7 @@ class DSWSConnection : public DSEvntFdsCallback{
     unsigned long ;
     unsigned long client_fd;
     unsigned long ;
-    unsigned long ;
+    unsigned long ; //对于收到的信息，决定下一步应该调用的inputReady是什么（eg:DSWSRequest::doDispatchRequest or DSWSTncTransportHandler::inputReady）
     DSWSClient *client;
     DSWSSsl *ssl;
 }
