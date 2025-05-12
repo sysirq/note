@@ -25,3 +25,11 @@ https://www.bittorrent.org/beps/bep_0000.html
 风云再起：全球160万电视被Vo1d僵尸网络操控，潜在危害令人担忧
 
 https://blog.xlab.qianxin.com/long_live_the_botnet_vo1d_is_back_cn/
+
+2019 BOTNET 趋势报告
+
+https://blog.nsfocus.net/wp-content/uploads/2019/12/2019-Botnet-Trend-Report.pdf
+
+2020 BOTNET 趋势报告
+
+https://blog.nsfocus.net/wp-content/uploads/2021/01/2020-BOTNET.pdf
