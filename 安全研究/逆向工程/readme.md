@@ -1,4 +1,4 @@
-# 插件
+# IDA 插件
 
 ### keypatch
 
@@ -17,6 +17,18 @@
 地址：
 - https://github.com/avast/retdec
 - https://github.com/avast/retdec-idaplugin
+
+# strace 静态编译
+
+```
+git clone https://github.com/strace/strace
+cd strace
+./bootstrap
+export LDFLAGS='-static -pthread'
+./configure
+make
+file src/strace
+```
 
 # 资料
 
