@@ -1,3 +1,39 @@
+# 传播手段
+
+### 弱口令爆破
+
+爆破活动逐渐从 Botnet 的爆破功能中独立出来，由专项爆破家族实施。eg：GoBrut
+
+### 远程代码执行漏洞
+
+鱼叉钓鱼（邮件）
+
+### 钓鱼
+
+### 免费软件留后门
+
+- Android：电视盒子，二次打包
+
+# 技术思路
+
+代理服务器与 C&C 通信
+
+# botnet
+
+- Gafgyt
+- Mirai
+
+# 挖矿
+
+- WatchBog
+
+# 挖矿
+
+- Kerberods
+
+# 参考资料
+
+
 Gayfemboy：一个利用四信工业路由0DAY传播的僵尸网络
 
 https://blog.xlab.qianxin.com/gayfemboy/
