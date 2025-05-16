@@ -31,6 +31,11 @@
 
 - Kerberods
 
+
+# 木马
+
+开源木马 DcRAT：集成了勒索、DDoS 和远程控制等多种功能
+
 # 参考资料
 
 
@@ -69,3 +74,7 @@ https://blog.nsfocus.net/wp-content/uploads/2019/12/2019-Botnet-Trend-Report.pdf
 2020 BOTNET 趋势报告
 
 https://blog.nsfocus.net/wp-content/uploads/2021/01/2020-BOTNET.pdf
+
+Botnet趋势报告（2025版）
+
+https://www.nsfocus.com.cn/html/2025/92_0409/228.html
