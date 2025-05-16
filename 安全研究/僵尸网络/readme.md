@@ -22,6 +22,8 @@
 
 - Gafgyt
 - Mirai
+- IoT Reaper 
+- mozi
 
 # 挖矿
 
