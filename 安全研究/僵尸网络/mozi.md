@@ -7,3 +7,9 @@
 ![image-20250516180341772](images/image-20250516180341772.png)
 
 ![image-20250516180303667](images/image-20250516180303667.png)
+
+# 资料
+
+A detailed look into the Mozi P2P IoT botnet
+
+https://www.youtube.com/watch?v=HGYpymyXvio&t=763s
