@@ -78,3 +78,7 @@ https://blog.nsfocus.net/wp-content/uploads/2021/01/2020-BOTNET.pdf
 Botnet趋势报告（2025版）
 
 https://www.nsfocus.com.cn/html/2025/92_0409/228.html
+
+GoBrut: A new GoLang Botnet
+
+https://yoroi.company/research/gobrut-a-new-golang-botnet/
