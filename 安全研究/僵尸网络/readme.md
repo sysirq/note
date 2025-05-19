@@ -84,3 +84,7 @@ https://www.nsfocus.com.cn/html/2025/92_0409/228.html
 GoBrut: A new GoLang Botnet
 
 https://yoroi.company/research/gobrut-a-new-golang-botnet/
+
+[原创] 猫鼠游戏：在不引起安全社区注意的情况下快速制造大规模僵尸网络
+
+https://bbs.kanxue.com/thread-281983.htm
