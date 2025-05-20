@@ -88,11 +88,3 @@ https://yoroi.company/research/gobrut-a-new-golang-botnet/
 [原创] 猫鼠游戏：在不引起安全社区注意的情况下快速制造大规模僵尸网络
 
 https://bbs.kanxue.com/thread-281983.htm
-
-GoBrut破解型僵尸网络再度来袭
-
-https://www.secrss.com/articles/13750
-
-New Stealth Worker Campaign Creates a Multi-platform Army of Brute Forcers
-
-https://www.fortinet.com/blog/threat-research/new-stealth-worker-campaign-creates-a-multi-platform-army-of-bru
