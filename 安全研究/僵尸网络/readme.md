@@ -92,3 +92,7 @@ https://bbs.kanxue.com/thread-281983.htm
 GoBrut破解型僵尸网络再度来袭
 
 https://www.secrss.com/articles/13750
+
+New Stealth Worker Campaign Creates a Multi-platform Army of Brute Forcers
+
+https://www.fortinet.com/blog/threat-research/new-stealth-worker-campaign-creates-a-multi-platform-army-of-bru
