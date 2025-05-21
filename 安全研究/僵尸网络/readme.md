@@ -88,3 +88,7 @@ https://yoroi.company/research/gobrut-a-new-golang-botnet/
 [原创] 猫鼠游戏：在不引起安全社区注意的情况下快速制造大规模僵尸网络
 
 https://bbs.kanxue.com/thread-281983.htm
+
+一个藏在我们身边的巨型僵尸网络 Pink
+
+https://blog.netlab.360.com/pinkbot/
