@@ -64,3 +64,8 @@ export GOPATH=$HOME/Documents/go
  
 ```
 
+# use musl
+
+musl-cross-make
+
+https://github.com/richfelker/musl-cross-make
