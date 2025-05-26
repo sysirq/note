@@ -10,3 +10,7 @@ https://www.secrss.com/articles/13750
 New Stealth Worker Campaign Creates a Multi-platform Army of Brute Forcers
 
 https://www.fortinet.com/blog/threat-research/new-stealth-worker-campaign-creates-a-multi-platform-army-of-bru
+
+thc-hydra
+
+https://github.com/vanhauser-thc/thc-hydra
