@@ -73,7 +73,8 @@ cJSON_IsRaw(item); //是否为 raw（基本不常用）
 - 对象字段提取
 
 ```c
-cJSON *cJSON_GetObjectItem(const cJSON *object, const char *string);
+cJSON *cJSON_GetObjectItem(const cJSON *object, const char *string);//不区分大小写
+cJSON *cJSON_GetObjectItemCaseSensitive(const cJSON *object, const char *string);//区分大小写
 ```
 
 Eg:
@@ -95,3 +96,35 @@ printf("Admin: %s\n", cJSON_IsBool(admin) && admin->valueint ? "true" : "false")
 cJSON_GetArrayItem(arr, index);//获取数组元素
 ```
 
+- 数组遍历
+
+```c
+if (!cJSON_IsArray(tasks_json))
+{
+    DLX(0, printf("\tJSON tasks is not an array\n"));
+    retcode = -1;
+    goto end;
+}
+cJSON_ArrayForEach(task_json, tasks_json)
+{
+    cmd = cJSON_GetObjectItemCaseSensitive(task_json, "cmd");
+    seq = cJSON_GetObjectItemCaseSensitive(task_json, "seq");
+
+    if (!cJSON_IsString(cmd) || !cJSON_IsNumber(seq))
+    {
+        DLX(0, printf("\tGet task type error\n"));
+        retcode = -1;
+        goto end;
+    }
+
+    DLX(0, printf("\tcmd: %s , seq: %d\n", cmd->valuestring, seq->valueint));
+
+    handle_func = handler_function_lookup(cmd->valuestring);
+    if (handle_func == NULL)
+    {
+        DLX(0, printf("\tnot found %s handler\n", cmd->valuestring));
+        continue;
+    }
+    retcode = handle_func(beacon, task_json);
+}
+```
