@@ -56,3 +56,42 @@ if (!root) {
 }
 ```
 
+- 类型判断
+
+```c
+cJSON_IsNull(item); //是否为 null
+cJSON_IsBool(item); //是否为布尔（true 或 false）
+cJSON_IsTrue(item); //是否为 true
+cJSON_IsFalse(item); //是否为 false
+cJSON_IsNumber(item); //是否为数字
+cJSON_IsString(item); //是否为字符串
+cJSON_IsArray(item); //是否为数组
+cJSON_IsObject(item); //是否为对象
+cJSON_IsRaw(item); //是否为 raw（基本不常用）
+```
+
+- 对象字段提取
+
+```c
+cJSON *cJSON_GetObjectItem(const cJSON *object, const char *string);
+```
+
+Eg:
+
+```c
+// 提取字段
+cJSON *name = cJSON_GetObjectItem(root, "name");
+cJSON *age = cJSON_GetObjectItem(root, "age");
+cJSON *admin = cJSON_GetObjectItem(root, "admin");
+
+printf("Name: %s\n", cJSON_IsString(name) ? name->valuestring : "NULL");
+printf("Age: %d\n", cJSON_IsNumber(age) ? age->valueint : -1);
+printf("Admin: %s\n", cJSON_IsBool(admin) && admin->valueint ? "true" : "false");
+```
+
+- 数组提取
+
+```c
+cJSON_GetArrayItem(arr, index);//获取数组元素
+```
+
