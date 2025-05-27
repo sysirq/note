@@ -148,3 +148,9 @@ cJSON *cJSON_Duplicate(const cJSON *item, const cJSON_bool recurse);
 item：需要复制的 cJSON 对象。
 recurse：是否递归复制子项，通常传入 true 来复制所有子项，或者传入 false 仅复制顶层数据。
 ```
+
+# 资料
+
+cJSON
+
+https://github.com/DaveGamble/cJSON
