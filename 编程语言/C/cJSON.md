@@ -128,3 +128,15 @@ cJSON_ArrayForEach(task_json, tasks_json)
     retcode = handle_func(beacon, task_json);
 }
 ```
+
+- json对象创建
+
+```c
+task_response = cJSON_CreateObject();
+cJSON_AddStringToObject(task_response, "cmd", "ls");
+cJSON_AddStringToObject(task_response, "result", result);
+cJSON_AddStringToObject(task_response, "data", data);
+cJSON_AddNumberToObject(task_response, "seq", seq->valueint);
+cJSON_AddItemToArray(beaconInfo->tasks_response, task_response);
+```
+
