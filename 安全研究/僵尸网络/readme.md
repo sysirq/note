@@ -92,3 +92,8 @@ https://bbs.kanxue.com/thread-281983.htm
 一个藏在我们身边的巨型僵尸网络 Pink
 
 https://blog.netlab.360.com/pinkbot/
+
+Understanding Everything About GoBrut
+
+https://thecentexitguy.com/understanding-everything-about-gobrut/
+
