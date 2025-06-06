@@ -14,3 +14,7 @@ https://www.fortinet.com/blog/threat-research/new-stealth-worker-campaign-create
 thc-hydra
 
 https://github.com/vanhauser-thc/thc-hydra
+
+GoTrim: Go-based Botnet Actively Brute Forces WordPress Websites
+
+https://www.fortinet.com/blog/threat-research/gotrim-go-based-botnet-actively-brute-forces-wordpress-websites
