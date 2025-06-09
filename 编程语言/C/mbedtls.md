@@ -93,6 +93,8 @@ exit:
 
 # 库的裁剪
 
+We provide some non-standard configurations focused on specific use cases in the configs/ directory. You can read more about those in configs/README.txt
+
 # 资料
 
 error in mbedtls_rsa_rsaes_pkcs1_v15_encrypt #2529
