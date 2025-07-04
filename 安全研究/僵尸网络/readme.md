@@ -97,3 +97,6 @@ Understanding Everything About GoBrut
 
 https://thecentexitguy.com/understanding-everything-about-gobrut/
 
+使用动态种子的 DGA 家族：DNS 流量中的意外行为
+
+https://www.akamai.com/zh/blog/security-research/dga-dynamic-unexpected-behavior-in-dns
