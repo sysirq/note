@@ -7,3 +7,7 @@ https://www.secrss.com/articles/14369
 What Are Domain Generation Algorithms?
 
 https://www.akamai.com/glossary/what-are-dgas
+
+domain_generation_algorithms
+
+https://github.com/baderj/domain_generation_algorithms
