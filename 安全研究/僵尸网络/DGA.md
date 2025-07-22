@@ -44,7 +44,7 @@ int mersenne_range(unsigned int MT[], int min, int max)
 }
 
 int main()
-{
+{//MT19937 mersenne twister
 	unsigned int MT[0x271];
 	int rand;
 	
