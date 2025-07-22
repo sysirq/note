@@ -16,6 +16,39 @@
 - 免费或廉价的满足用户的视听需求，即诱使用户安装免费的视频APP，或固件刷机安装廉价的影像娱乐平台，这些APP/平台都带有后门组件，一旦安装设备就成了黑产团伙私建流媒体平台中的一个业务流量节点
 - 在各种STB，DVB，IPTV论坛传播后门化的固件感染基于Android或eCos系统的机顶盒设备
 
+```
+1. Sat Universe
+
+🔗 地址: https://www.sat-universe.com/
+📌 简介: 老牌卫星电视和机顶盒论坛，讨论 Enigma2、Dreambox、Vu+、OpenATV、IPTV 线路、EMU 等。
+📚 内容: 图像固件、插件、卡共享（Cardsharing）、EMU、IPTV、破解讨论等。
+2. TechKings
+
+🔗 地址: https://www.techkings.org/
+📌 简介: IPTV、DVB 和 Kodi 插件为主的社区，也有关于 STB 和 IPTV box 的资源分享。
+📚 内容: IPTV 列表、配置指南、Mag Box / Zgemma 等 STB 设置、Cardsharing、测试线路。
+3. Linux Sat Support Community
+
+🔗 地址: https://www.linuxsat-support.com/
+📌 简介: 涉及 Enigma2 盒子、OpenPLi / OpenATV 系统以及 IPTV 支持。
+📚 内容: 固件刷机、插件安装、EPG 电子节目指南、软卡（softcam）设置等。
+4. Satpimps
+
+🔗 地址: http://www.satpimps.co.uk/
+📌 简介: 英国老牌 STB 社区，集中讨论 DVB 接收卡、IPTV、CS、E2、固件等。
+📚 内容: 最新固件、IPTV 行业新闻、STB 使用教程、破解资讯。
+5. Digital Kaos
+
+🔗 地址: https://www.digital-kaos.co.uk/
+📌 简介: 广泛涵盖汽车诊断、游戏机破解和 STB / IPTV。
+📚 内容: Dreambox/Vu+、Enigma2、CCcam、KODI、IPTV 列表等。
+6. Forum Team-CZ
+
+🔗 地址: https://www.ab-forum.info/ (捷克站，内容较为硬核)
+📌 简介: 欧洲 DVB 协议和 STB 用户交流，支持多语种，技术性强。
+📚 内容: Broadcom 芯片机型、软卡技术、固件更新。
+```
+
 # 技术思路
 
 代理服务器与 C&C 通信
