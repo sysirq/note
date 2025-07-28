@@ -162,3 +162,7 @@ https://blog.xlab.qianxin.com/unveiling-the-mystery-of-bigpanzi/
 Android BadBox 2.0 Malware
 
 https://www.ncsc.gov.ie/pdfs/AndroidBadbox2-0.pdf
+
+Satori Threat Intelligence Disruption: BADBOX 2.0 Targets Consumer Devices with Multiple Fraud Schemes
+
+https://www.humansecurity.com/learn/blog/satori-threat-intelligence-disruption-badbox-2-0/
