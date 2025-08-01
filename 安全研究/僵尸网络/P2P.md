@@ -23,3 +23,7 @@ https://www.iosrjournals.org/iosr-jce/papers/Vol16-issue4/Version-4/F016443542.p
 BitTorrent协议规范之Bencode
 
 https://blog.csdn.net/gxllang83/article/details/2838093
+
+DHT Protocol
+
+https://www.bittorrent.org/beps/bep_0005.html
