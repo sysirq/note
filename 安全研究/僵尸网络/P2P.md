@@ -2,7 +2,12 @@
 
 https://github.com/jech/dht
 
+### 消息类型（dht_periodic）
 
+- PING：探测目标节点是否在线
+- FIND_NODE：查找接近某个节点ID的其他节点
+- GET_PEERS：请求一个info_hash对应的peer列表或邻近节点
+- ANNOUNCE_PEER：告诉目标节点：“我拥有这个 info_hash 的资源”；
 
 # 资料
 
