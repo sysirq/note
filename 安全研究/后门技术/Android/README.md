@@ -1,3 +1,17 @@
+# android版本查看
+
+```
+cat /system/build.prop | grep "ro.build.version"
+```
+
+```
+getprop ro.build.version.release             # Android 版本
+getprop ro.build.version.sdk                 # SDK 版本
+getprop ro.build.display.id                  # 构建标识
+getprop ro.product.model                     # 设备型号
+getprop ro.product.manufacturer              # 厂商
+```
+
 # 资料
 
 4 Installation of the JDK on macOS
