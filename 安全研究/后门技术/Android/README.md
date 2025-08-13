@@ -12,6 +12,29 @@ getprop ro.product.model                     # 设备型号
 getprop ro.product.manufacturer              # 厂商
 ```
 
+# Android如何隐藏APK在桌面中的显示
+
+```xml
+<activity android:name=".MainActivity">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+</activity>
+```
+
+删除
+
+```
+<category android:name="android.intent.category.LAUNCHER" />
+```
+
+无图标启动：
+
+```
+am start -n com.example/.MainActivity
+```
+
 # 资料
 
 4 Installation of the JDK on macOS
