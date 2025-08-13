@@ -72,3 +72,7 @@ https://github.com/baderj/domain_generation_algorithms
 Android.Vo1d.1
 
 https://vms.drweb.co.jp/virus/?i=28921655
+
+Android.Vo1d.3
+
+https://vms.drweb.co.jp/virus/?i=28921664
