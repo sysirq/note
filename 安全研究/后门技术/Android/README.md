@@ -54,7 +54,27 @@ on property:sys.boot_completed=1
 
 ### 0x01 apk文件
 
-```
+监听 BOOT_COMPLETED
+
+```xml
+<receiver
+    android:enabled="true"
+    android:exported="false"
+    android:name="com.google.android.gms.stable.BootReceiver">
+    <intent-filter android:priority="1000">
+    <action android:name="android.intent.action.BOOT_COMPLETED"/>
+    <action android:name="android.intent.action.PACKAGE_INSTALL"/>
+    <action android:name="android.intent.action.TIME_TICK"/>
+    <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+    <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+</receiver>
+<service android:name="com.google.android.gms.stable.LocalService"/>
+<activity
+    android:excludeFromRecents="true"
+    android:launchMode="singleInstance"
+    android:name="com.google.android.gms.stable.MainActivity"
+    android:theme="@style/onePixelActivity"/>
 ```
 
 # 资料
