@@ -35,6 +35,28 @@ getprop ro.product.manufacturer              # 厂商
 am start -n com.example/.MainActivity
 ```
 
+# Android 持久化研究
+
+### 0x00 elf文件
+
+写 /etc/init/xxx.rc
+
+```
+service xxxxx-bbbbb /system/bin/xxxxxxx
+    user root
+    group root
+    seclabel u:r:shell:s0
+    restart_period 5
+
+on property:sys.boot_completed=1
+    start xxxxx-bbbbb
+```
+
+### 0x01 apk文件
+
+```
+```
+
 # 资料
 
 4 Installation of the JDK on macOS
