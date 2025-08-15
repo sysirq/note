@@ -77,6 +77,14 @@ on property:sys.boot_completed=1
     android:theme="@style/onePixelActivity"/>
 ```
 
+# 权限授予
+
+```
+pm grant <package_name> <permission_name>
+
+pm grant com.example.app android.permission.INTERNET
+```
+
 # 资料
 
 4 Installation of the JDK on macOS
