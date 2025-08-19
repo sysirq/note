@@ -91,3 +91,6 @@ pm grant com.example.app android.permission.INTERNET
 
 https://docs.oracle.com/en/java/javase/22/install/installation-jdk-macos.html#GUID-E8A251B6-D9A9-4276-ABC8-CC0DAD62EA33
 
+进程保活
+
+https://blog.yorek.xyz/android/paid/zsxq/week16-keep-app-alive/
