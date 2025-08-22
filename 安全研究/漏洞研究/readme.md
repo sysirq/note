@@ -41,3 +41,7 @@ https://vulncheck.com/blog/four-faith-cve-2024-12856?ref=blog.xlab.qianxin.com
 小米路由器的未授权访问
 
 https://blog.csdn.net/pone2233/article/details/123943230
+
+NVRAM介绍
+
+https://blog.csdn.net/weixin_38019025/article/details/104975205
