@@ -45,3 +45,9 @@ https://blog.csdn.net/pone2233/article/details/123943230
 NVRAM介绍
 
 https://blog.csdn.net/weixin_38019025/article/details/104975205
+
+# readme
+
+Two-year Recap: A Story of 42-b3yond-6ug and AIxCC
+
+https://lkmidas.github.io/posts/20250808-aixcc-recap/
