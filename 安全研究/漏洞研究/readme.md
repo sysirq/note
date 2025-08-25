@@ -51,3 +51,7 @@ https://blog.csdn.net/weixin_38019025/article/details/104975205
 Two-year Recap: A Story of 42-b3yond-6ug and AIxCC
 
 https://lkmidas.github.io/posts/20250808-aixcc-recap/
+
+自动化漏洞利用研究进展
+
+https://smllxzbz.github.io/AEGPaper/paper/2019自动化漏洞利用研究进展_靳宪龙.pdf
