@@ -55,3 +55,7 @@ https://lkmidas.github.io/posts/20250808-aixcc-recap/
 自动化漏洞利用研究进展
 
 https://smllxzbz.github.io/AEGPaper/paper/2019自动化漏洞利用研究进展_靳宪龙.pdf
+
+CGC: Cyber Grand Challenge
+
+https://www.darpa.mil/research/programs/cyber-grand-challenge
