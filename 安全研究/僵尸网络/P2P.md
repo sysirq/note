@@ -42,3 +42,7 @@ https://www.bittorrent.org/beps/bep_0005.html
 dht
 
 https://github.com/jech/dht
+
+Kademlia、DHT、KRPC、BitTorrent 协议、DHT Sniffer
+
+https://www.cnblogs.com/LittleHann/p/6180296.html
