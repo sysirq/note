@@ -72,3 +72,11 @@ https://www.cnblogs.com/1314xf/p/14019453.html
 P2P 网络核心技术：Kademlia 协议
 
 https://zhuanlan.zhihu.com/p/40286711
+
+分布式哈希表DHT和Kademlia算法详解
+
+https://blog.csdn.net/happyblreay/article/details/140993392
+
+分布式散列表协议 —— Kademlia 详解
+
+https://www.addesp.com/archives/5338
