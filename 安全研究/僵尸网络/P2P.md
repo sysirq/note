@@ -50,3 +50,7 @@ https://www.cnblogs.com/LittleHann/p/6180296.html
 死磕以太坊源码分析之Kademlia算法
 
 https://www.cnblogs.com/1314xf/p/14019453.html
+
+P2P 网络核心技术：Kademlia 协议
+
+https://zhuanlan.zhihu.com/p/40286711
