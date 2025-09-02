@@ -75,6 +75,15 @@ Kademlia 协议依靠路由表和其它节点通信，下面介绍一下路由�
 此时我们从左到右一共有了三颗子树，其中第三颗子树只有我们自己。此时**三颗子树就对应了三个 K-桶（K-Bucket）**。
 
 
+### 0x03
+
+Kademlia网络提供四种Potocol(RPC)
+
+- PING 测试是否节点存在
+- STORE存储通知的资料
+- FIND_NODE 通知其他节点帮助寻找node
+- FIND_VALUE 通知其他节点帮助寻找Value
+
 
 
 
@@ -131,3 +140,7 @@ https://blog.csdn.net/happyblreay/article/details/140993392
 分布式散列表协议 —— Kademlia 详解
 
 https://www.addesp.com/archives/5338
+
+Kademlia详解&&细说 Kademlia 【FreeXploiT整理文】
+
+http://www.cppblog.com/tommyyan/articles/82057.html
