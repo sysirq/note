@@ -144,3 +144,7 @@ https://www.addesp.com/archives/5338
 Kademlia详解&&细说 Kademlia 【FreeXploiT整理文】
 
 http://www.cppblog.com/tommyyan/articles/82057.html
+
+P2P僵尸网络深度追踪——Mozi（二）二叉树吃瓜记
+
+https://www.anquanke.com/post/id/245500
