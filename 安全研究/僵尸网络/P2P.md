@@ -150,5 +150,9 @@ P2P僵尸网络深度追踪——Mozi（二）二叉树吃瓜记
 https://www.anquanke.com/post/id/245500
 
 Mozi恶意样本分析报告
- 
+
 https://mp.weixin.qq.com/s?__biz=MzUzNDYxOTA1NA==&mid=2247491557&idx=1&sn=ea07addfc5babd260198767dccedc2bf&scene=21&poc_token=HOC0tmijfcOoFqgqWuQ-gCZXd1O573LIEh4tB9BX
+
+A new botnet attack just mozied into town
+
+https://www.ibm.com/think/x-force/botnet-attack-mozi-mozied-into-town
