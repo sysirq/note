@@ -156,3 +156,7 @@ https://mp.weixin.qq.com/s?__biz=MzUzNDYxOTA1NA==&mid=2247491557&idx=1&sn=ea07ad
 A new botnet attack just mozied into town
 
 https://www.ibm.com/think/x-force/botnet-attack-mozi-mozied-into-town
+
+Uncleanable and Unkillable: The Evolution of IoT Botnets Through P2P Networking
+
+https://documents.trendmicro.com/assets/pdf/Technical_Brief_Uncleanable_and_Unkillable_The_Evolution_of_IoT_Botnets_Through_P2P_Networking.pdf
