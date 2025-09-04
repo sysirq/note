@@ -84,8 +84,29 @@ Kademlia网络提供四种Potocol(RPC)
 - FIND_NODE 通知其他节点帮助寻找node
 - FIND_VALUE 通知其他节点帮助寻找Value
 
+# mozi
+
+通过引导节点：
+
+```
+dht.transmissionbt.com:6881
+router.bittorrent.com:6881
+router.utorrent.com:6881
+bttracker.debian.org:6881
+212.129.33.59:6881
+82.221.103.244:6881
+130.239.18.159:6881
+87.98.162.88:6881
+```
+
+加入到Mainline DHT（主线DHT）
 
 
+# Pink
+
+### P2P over UDP 123
+
+向四个B段地址（"114.25.0.0/16"，"36.227.0.0/16"，"59.115.0.0/16"，"1.224.0.0/16"）发起 Peer 探测请求
 
 # 资料
 
