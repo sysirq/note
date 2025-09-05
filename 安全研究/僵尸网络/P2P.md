@@ -181,3 +181,7 @@ https://www.ibm.com/think/x-force/botnet-attack-mozi-mozied-into-town
 Uncleanable and Unkillable: The Evolution of IoT Botnets Through P2P Networking
 
 https://documents.trendmicro.com/assets/pdf/Technical_Brief_Uncleanable_and_Unkillable_The_Evolution_of_IoT_Botnets_Through_P2P_Networking.pdf
+
+FritzFrog: A New Generation of Peer-to-Peer Botnets
+
+https://www.akamai.com/blog/security/fritzfrog-a-new-generation-of-peer-to-peer-botnets
