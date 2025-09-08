@@ -185,3 +185,7 @@ https://documents.trendmicro.com/assets/pdf/Technical_Brief_Uncleanable_and_Unki
 FritzFrog: A New Generation of Peer-to-Peer Botnets
 
 https://www.akamai.com/blog/security/fritzfrog-a-new-generation-of-peer-to-peer-botnets
+
+bootstrap-dht
+
+https://github.com/bittorrent/bootstrap-dht
