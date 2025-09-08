@@ -189,3 +189,7 @@ https://www.akamai.com/blog/security/fritzfrog-a-new-generation-of-peer-to-peer-
 bootstrap-dht
 
 https://github.com/bittorrent/bootstrap-dht
+
+DHT bootstrap node
+
+https://blog.libtorrent.org/2016/09/dht-bootstrap-node/
