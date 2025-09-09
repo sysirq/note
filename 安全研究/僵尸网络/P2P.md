@@ -138,6 +138,12 @@ bencoded = d1:eli201e23:A Generic Error Ocurrede1:t2:aa1:y1:ee
 
 ### ping
 
+```
+arguments:  {"id" : "<querying nodes id>"}
+
+response: {"id" : "<queried nodes id>"}
+```
+
 ```python
 ping Query = {"t":"aa", "y":"q", "q":"ping", "a":{"id":"abcdefghij0123456789"}}
 bencoded = d1:ad2:id20:abcdefghij0123456789e1:q4:ping1:t2:aa1:y1:qe
@@ -147,6 +153,12 @@ bencoded = d1:rd2:id20:mnopqrstuvwxyz123456e1:t2:aa1:y1:re
 ```
 
 ### find_node
+
+```
+arguments:  {"id" : "<querying nodes id>", "target" : "<id of target node>"}
+
+response: {"id" : "<queried nodes id>", "nodes" : "<compact node info>"}
+```
 
 ```python
 find_node Query = {"t":"aa", "y":"q", "q":"find_node", "a": {"id":"abcdefghij0123456789", "target":"mnopqrstuvwxyz123456"}}
@@ -158,6 +170,14 @@ bencoded = d1:rd2:id20:0123456789abcdefghij5:nodes9:def456...e1:t2:aa1:y1:re
 ```
 
 ### get_peers
+
+```
+arguments:  {"id" : "<querying nodes id>", "info_hash" : "<20-byte infohash of target torrent>"}
+
+response: {"id" : "<queried nodes id>", "token" :"<opaque write token>", "values" : ["<peer 1 info string>", "<peer 2 info string>"]}
+
+or: {"id" : "<queried nodes id>", "token" :"<opaque write token>", "nodes" : "<compact node info>"}
+```
 
 ```python
 get_peers Query = {"t":"aa", "y":"q", "q":"get_peers", "a": {"id":"abcdefghij0123456789", "info_hash":"mnopqrstuvwxyz123456"}}
@@ -171,6 +191,16 @@ bencoded = d1:rd2:id20:abcdefghij01234567895:nodes9:def456...5:token8:aoeusnthe1
 ```
 
 ### announce_peer
+
+```
+arguments:  {"id" : "<querying nodes id>",
+  "implied_port": <0 or 1>,
+  "info_hash" : "<20-byte infohash of target torrent>",
+  "port" : <port number>,
+  "token" : "<opaque token>"}
+
+response: {"id" : "<queried nodes id>"}
+```
 
 ```python
 announce_peers Query = {"t":"aa", "y":"q", "q":"announce_peer", "a": {"id":"abcdefghij0123456789", "implied_port": 1, "info_hash":"mnopqrstuvwxyz123456", "port": 6881, "token": "aoeusnth"}}
