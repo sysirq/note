@@ -112,16 +112,66 @@ bttracker.debian.org:6881
 
 组成部分：
 
-- t: 事务 ID，用于标识请求和响应的匹配。
+- t:  事务 ID，用于标识请求和响应的匹配。
 - y: 消息类型（q 表示请求，r 表示响应，e 表示错误）。
 - q: 请求方法名（如 ping、find_node、get_peers 等）。
-- a:请求的参数
-- r: 相应的数据
+- r: 响应的数据。
 - e: 错误代码和错误信息。
+- a: 请求的参数。
+- v: 版本信息（should be included in every message with a client version string，The string should be a two character client identifier registered in BEP 20 [3] followed by a two character version identifier. Not all implementations include a "v" key so clients should not assume its presence.）
+
+所有查询都有一个“id”键和包含查询节点 node ID的值。所有响应都有一个“id”键，其值包含响应节点的node ID。
+
+### error
+
+```python
+generic error = {"t":"aa", "y":"e", "e":[201, "A Generic Error Ocurred"]}
+bencoded = d1:eli201e23:A Generic Error Ocurrede1:t2:aa1:y1:ee
+```
 
 ### ping
 
+```python
+ping Query = {"t":"aa", "y":"q", "q":"ping", "a":{"id":"abcdefghij0123456789"}}
+bencoded = d1:ad2:id20:abcdefghij0123456789e1:q4:ping1:t2:aa1:y1:qe
+
+Response = {"t":"aa", "y":"r", "r": {"id":"mnopqrstuvwxyz123456"}}
+bencoded = d1:rd2:id20:mnopqrstuvwxyz123456e1:t2:aa1:y1:re
 ```
+
+### find_node
+
+```python
+find_node Query = {"t":"aa", "y":"q", "q":"find_node", "a": {"id":"abcdefghij0123456789", "target":"mnopqrstuvwxyz123456"}}
+# "id" containing the node ID of the querying node, and "target" containing the ID of the node sought by the queryer. 
+bencoded = d1:ad2:id20:abcdefghij01234567896:target20:mnopqrstuvwxyz123456e1:q9:find_node1:t2:aa1:y1:qe
+
+Response = {"t":"aa", "y":"r", "r": {"id":"0123456789abcdefghij", "nodes": "def456..."}}
+bencoded = d1:rd2:id20:0123456789abcdefghij5:nodes9:def456...e1:t2:aa1:y1:re
+```
+
+### get_peers
+
+```python
+get_peers Query = {"t":"aa", "y":"q", "q":"get_peers", "a": {"id":"abcdefghij0123456789", "info_hash":"mnopqrstuvwxyz123456"}}
+bencoded = d1:ad2:id20:abcdefghij01234567899:info_hash20:mnopqrstuvwxyz123456e1:q9:get_peers1:t2:aa1:y1:qe
+
+Response with peers = {"t":"aa", "y":"r", "r": {"id":"abcdefghij0123456789", "token":"aoeusnth", "values": ["axje.u", "idhtnm"]}}
+bencoded = d1:rd2:id20:abcdefghij01234567895:token8:aoeusnth6:valuesl6:axje.u6:idhtnmee1:t2:aa1:y1:re
+
+Response with closest nodes = {"t":"aa", "y":"r", "r": {"id":"abcdefghij0123456789", "token":"aoeusnth", "nodes": "def456..."}}
+bencoded = d1:rd2:id20:abcdefghij01234567895:nodes9:def456...5:token8:aoeusnthe1:t2:aa1:y1:re
+```
+
+### announce_peer
+
+```python
+announce_peers Query = {"t":"aa", "y":"q", "q":"announce_peer", "a": {"id":"abcdefghij0123456789", "implied_port": 1, "info_hash":"mnopqrstuvwxyz123456", "port": 6881, "token": "aoeusnth"}}
+bencoded = d1:ad2:id20:abcdefghij01234567899:info_hash20:<br />
+mnopqrstuvwxyz1234564:porti6881e5:token8:aoeusnthe1:q13:announce_peer1:t2:aa1:y1:qe
+
+Response = {"t":"aa", "y":"r", "r": {"id":"mnopqrstuvwxyz123456"}}
+bencoded = d1:rd2:id20:mnopqrstuvwxyz123456e1:t2:aa1:y1:re
 ```
 
 # 资料
