@@ -166,3 +166,7 @@ https://www.ncsc.gov.ie/pdfs/AndroidBadbox2-0.pdf
 Satori Threat Intelligence Disruption: BADBOX 2.0 Targets Consumer Devices with Multiple Fraud Schemes
 
 https://www.humansecurity.com/learn/blog/satori-threat-intelligence-disruption-badbox-2-0/
+
+URLhaus(URLhaus is a platform from abuse.ch and Spamhaus dedicated to sharing malicious URLs that are being used for malware distribution.)
+
+https://urlhaus.abuse.ch
