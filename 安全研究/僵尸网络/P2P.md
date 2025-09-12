@@ -129,6 +129,11 @@ bttracker.debian.org:6881
 
 - 错误：具有“y”值为“e”的KRPC消息字典包含一个额外的键“e”。键“e”的值是一个列表。列表的第一个元素是一个表示错误代码的整数。第二个元素是一个包含错误信息的字符串。
 
+tips:
+
+- Compact IP-address/port info :  the 4-byte IP address is in network byte order with the 2 byte port in network byte order concatenated onto the end.
+- Compact node info : 20-byte Node ID in network byte order has the compact IP-address/port info concatenated to the end.
+
 ### error
 
 ```python
