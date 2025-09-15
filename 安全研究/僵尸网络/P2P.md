@@ -312,6 +312,3 @@ Peer ID Conventions
 
 https://www.bittorrent.org/beps/bep_0020.html
 
-DEF CON 21 - Tillmann Werner - Prowling Peer to Peer Botnets After Dark
-
-https://www.youtube.com/watch?v=vxErDiSM_1Q
