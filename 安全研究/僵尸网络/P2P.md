@@ -101,6 +101,8 @@ bttracker.debian.org:6881
 
 加入到Mainline DHT（主线DHT）
 
+20字节的ID，前缀为888888，eg:   888888XXXXXXXXXXXXXX 
+
 
 # Pink
 
