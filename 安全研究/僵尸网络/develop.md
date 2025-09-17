@@ -69,3 +69,11 @@ export GOPATH=$HOME/Documents/go
 musl-cross-make
 
 https://github.com/richfelker/musl-cross-make
+
+# 端口转发
+
+```
+socat TCP-LISTEN:8080,fork TCP:127.0.0.1:80
+```
+
+这样访问 localhost:8080 就会被转发到 localhost:80。
