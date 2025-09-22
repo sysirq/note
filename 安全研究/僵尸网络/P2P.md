@@ -317,3 +317,7 @@ https://www.bittorrent.org/beps/bep_0020.html
 BitTorrent DHT security extension
 
 https://www.libtorrent.org/dht_sec.html
+
+golang - dht 库
+
+https://pkg.go.dev/github.com/anacrolix/dht/v2#section-readme
