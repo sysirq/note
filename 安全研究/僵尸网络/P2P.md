@@ -314,3 +314,6 @@ Peer ID Conventions
 
 https://www.bittorrent.org/beps/bep_0020.html
 
+BitTorrent DHT security extension
+
+https://www.libtorrent.org/dht_sec.html
