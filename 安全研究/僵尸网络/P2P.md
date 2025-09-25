@@ -103,6 +103,25 @@ bttracker.debian.org:6881
 
 20字节的ID，前缀为888888，eg:   888888XXXXXXXXXXXXXX 
 
+```c
+    if(dht_memmem(buf, buflen, "1:y1:r", 6))
+        return REPLY;
+    if(dht_memmem(buf, buflen, "1:y1:e", 6))
+        return ERROR;
+    if(!dht_memmem(buf, buflen, "1:y1:q", 6) && buflen > 99 ){
+        return -1;//Mozi 自定义的配置更新和命令控制请求
+    }
+    if(dht_memmem(buf, buflen, "1:q4:ping", 9))
+        return PING;
+    if(dht_memmem(buf, buflen, "1:q9:find_node", 14))
+       return FIND_NODE;
+    if(dht_memmem(buf, buflen, "1:q9:get_peers", 14))
+        return GET_PEERS;
+    if(dht_memmem(buf, buflen, "1:q13:announce_peer", 19))
+       return ANNOUNCE_PEER;
+    return -1;
+```
+
 
 # Pink
 
