@@ -224,6 +224,10 @@ bencoded = d1:rd2:id20:mnopqrstuvwxyz123456e1:t2:aa1:y1:re
 
 - 通过get_peers返回的values，实现恶意实体通过诱导它们向目标发送TCP连接，将BitTorrent客户端用作DDoS放大器。
 
+# golang anacrolix/dht 
+
+
+
 # 资料
 
 Gossip是什么
