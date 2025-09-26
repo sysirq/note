@@ -103,6 +103,8 @@ bttracker.debian.org:6881
 
 20字节的ID，前缀为888888，eg:   888888XXXXXXXXXXXXXX 
 
+### 控制机制分析
+
 ```c
     if(dht_memmem(buf, buflen, "1:y1:r", 6))
         return REPLY;
@@ -122,6 +124,14 @@ bttracker.debian.org:6881
     return -1;
 ```
 
+crawl the network
+
+1. "send me peers close to 888888<random>..."
+
+对于mozi 节点返回为:
+
+- 33% chance:return other mozi nodes
+- 66% chance:return a config,masqueraded as peerlist response
 
 # Pink
 
