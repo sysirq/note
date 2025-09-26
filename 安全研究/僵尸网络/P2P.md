@@ -103,6 +103,11 @@ bttracker.debian.org:6881
 
 20字节的ID，前缀为888888，eg:   888888XXXXXXXXXXXXXX 
 
+### bootstrap
+
+- A new Mozi node sends a DHT find_node query to eight hardcoded DHT public nodes and connects these nodes to join the network
+- Find node is used to find the contact information for a node given its ID. 
+
 ### 控制机制分析
 
 ```c
