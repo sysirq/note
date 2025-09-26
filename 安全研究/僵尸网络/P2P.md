@@ -344,3 +344,7 @@ https://www.libtorrent.org/dht_sec.html
 golang - dht 库
 
 https://pkg.go.dev/github.com/anacrolix/dht/v2#section-readme
+
+Mozi已死，余毒犹存
+
+https://blog.netlab.360.com/the_death_of_mozi_cn/
