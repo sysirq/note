@@ -30,3 +30,7 @@ https://getting-started-with-llvm-core-libraries-zh-cn.readthedocs.io/zh-cn/late
 udp sendto MSG_CONFIRM
 
 https://forums.justlinux.com/showthread.php?129695-udp-sendto-MSG_CONFIRM
+
+Why should I use, or not use, MSG_CONFIRM?
+
+https://stackoverflow.com/questions/16594387/why-should-i-use-or-not-use-msg-confirm
