@@ -26,3 +26,7 @@ int main() {
 交叉平台编译
 
 https://getting-started-with-llvm-core-libraries-zh-cn.readthedocs.io/zh-cn/latest/ch08.html
+
+udp sendto MSG_CONFIRM
+
+https://forums.justlinux.com/showthread.php?129695-udp-sendto-MSG_CONFIRM
