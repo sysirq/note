@@ -363,3 +363,7 @@ https://pkg.go.dev/github.com/anacrolix/dht/v2#section-readme
 Mozi已死，余毒犹存
 
 https://blog.netlab.360.com/the_death_of_mozi_cn/
+
+How NAT traversal works
+
+https://tailscale.com/blog/how-nat-traversal-works
