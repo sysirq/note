@@ -367,3 +367,7 @@ https://blog.netlab.360.com/the_death_of_mozi_cn/
 How NAT traversal works
 
 https://tailscale.com/blog/how-nat-traversal-works
+
+[译] NAT 穿透是如何工作的：技术原理及企业级实践（Tailscale, 2020）
+
+https://arthurchiao.art/blog/how-nat-traversal-works-zh/
