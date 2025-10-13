@@ -304,7 +304,7 @@ bencoded = d1:rd2:id20:mnopqrstuvwxyz123456e1:t2:aa1:y1:re
 
 如此一来，整个 DHT 网络逐渐形成一条连通链路，从任何节点都能通过“距离递减”的路径到达任意目标 ID。
 
-这就是：全局收敛（Global Convergence） = 局部收敛的叠加与扩散。
+这就是：全局收敛（Global Convergence） = 局部收敛的叠加与扩散。(每个节点只关注自己的“小世界”（local world），但因为这些小世界之间存在交叠和交互，DHT 网络最终形成一个全球可路由的大世界。)
 
 # 有趣的知识
 
