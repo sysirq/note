@@ -67,3 +67,38 @@
 #endif //_DEBUG_H
 ```
 
+
+
+```c
+#ifdef DEBUG
+FILE *dht_debug = NULL;
+
+#ifdef __GNUC__
+    __attribute__ ((format (printf, 1, 2)))
+#endif
+
+static void
+debugf(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    if(dht_debug)
+        vfprintf(dht_debug, format, args);
+    va_end(args);
+    if(dht_debug)
+        fflush(dht_debug);
+}
+
+#endif
+```
+
+
+
+usage:
+
+
+
+```c
+DLX(0,debugf("Sending ping to cached node.\n"));
+```
+
