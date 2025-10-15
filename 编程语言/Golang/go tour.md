@@ -480,7 +480,7 @@ Goroutines run the same address space,so access to shared memory must be synchro
  ch:=make(chan int)
  ```
  - By default,sends and receives block until the other side is ready.This allows goroutines to synchronize without explicit locks or condition variables.
- 
+
 
 ### Buffered Channels
 
