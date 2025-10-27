@@ -170,3 +170,7 @@ https://www.humansecurity.com/learn/blog/satori-threat-intelligence-disruption-b
 URLhaus(URLhaus is a platform from abuse.ch and Spamhaus dedicated to sharing malicious URLs that are being used for malware distribution.)
 
 https://urlhaus.abuse.ch
+
+Mirai, BrickerBot, Hajime Attack a Common IoT Weakness
+
+https://www.mcafee.com/blogs/other-blogs/mcafee-labs/mirai-brickerbot-hajime-attack-common-iot-weakness/
