@@ -85,6 +85,13 @@ pm grant <package_name> <permission_name>
 pm grant com.example.app android.permission.INTERNET
 ```
 
+# root权限下wifi密码获取
+
+```
+ls /data/misc/wifi/
+cat /data/misc/wifi/wpa_supplicant.conf
+```
+
 # 资料
 
 4 Installation of the JDK on macOS
