@@ -55,6 +55,13 @@ eg:
 
 这将禁用类似 __fprintf_chk 的强化检查函数，回退到标准的 fprintf 函数。
 
+# iot 常见httpd
+
+### Boa
+
+源代码：https://github.com/gpg/boa
+常见配置文件名：boa.conf
+
 # 资料
 
 物联网终端安全入门与实践之玩转物联网固件（中）(其中的nvma 通过LD_PRELOAD 模拟值得学习)
