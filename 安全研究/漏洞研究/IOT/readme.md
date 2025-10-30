@@ -59,8 +59,10 @@ eg:
 
 ### Boa
 
-源代码：https://github.com/gpg/boa
-常见配置文件名：boa.conf
+- 源代码：https://github.com/gpg/boa
+- 常见配置文件名：boa.conf
+- Server: Boa/0.94.14rc21
+
 
 # 资料
 
