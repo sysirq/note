@@ -84,3 +84,6 @@ libnvram.so编译教程
 
 https://ioo0s.art/2023/02/20/libnvram-so编译教程/
 
+Pwning CCTV cameras
+
+https://www.pentestpartners.com/security-blog/pwning-cctv-cameras/
