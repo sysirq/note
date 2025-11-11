@@ -19,3 +19,5 @@ https://github.com/mrexodia/ida-pro-mcp
 gemini-cli
 
 https://github.com/google-gemini/gemini-cli
+
+https://geminicli.com/docs/
