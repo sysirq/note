@@ -11,3 +11,7 @@ https://datawhalechina.github.io/llm-cookbook/#/
 AI逆向50页长文掌握 IDA Pro MCP 逆向分析利器
 
 https://bbs.kanxue.com/thread-286813.htm
+
+ida-pro-mcp
+
+https://github.com/mrexodia/ida-pro-mcp
