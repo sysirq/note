@@ -27,3 +27,7 @@ ida-pro-mcp --transport http://0.0.0.0:8744
 MCP servers with the Gemini CLI
 
 https://geminicli.com/docs/tools/mcp-server/
+
+Context Files (Hierarchical Instructional Context)
+
+https://geminicli.com/docs/get-started/configuration/#context-files-hierarchical-instructional-context
