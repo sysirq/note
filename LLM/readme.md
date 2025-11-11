@@ -15,3 +15,7 @@ https://bbs.kanxue.com/thread-286813.htm
 ida-pro-mcp
 
 https://github.com/mrexodia/ida-pro-mcp
+
+gemini-cli
+
+https://github.com/google-gemini/gemini-cli
