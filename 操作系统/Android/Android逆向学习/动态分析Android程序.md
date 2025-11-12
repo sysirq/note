@@ -1,3 +1,16 @@
+# 启动调试
+
+```xml
+<application
+    android:debuggable="true"  <!-- 强制启用调试模式 -->
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:theme="@style/AppTheme">
+    ...
+</application>
+```
+
 # 快速定位程序关键点
 
 ### 代码注入法
