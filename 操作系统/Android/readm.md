@@ -14,3 +14,8 @@ cat /sdcard/adbkey.pub >> /data/misc/adb/adb_keys
 ~/.android/adbkey.pub    # 公钥文件
 ```
 
+# 资料
+
+APK加固原理详解
+
+https://www.jianshu.com/p/89dee4891f70
