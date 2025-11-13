@@ -19,3 +19,7 @@ cat /sdcard/adbkey.pub >> /data/misc/adb/adb_keys
 APK加固原理详解
 
 https://www.jianshu.com/p/89dee4891f70
+
+AndroidStudio生成aar包和如何使用aar包
+
+https://blog.csdn.net/feikudai8460/article/details/120727645
