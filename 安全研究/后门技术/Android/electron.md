@@ -498,3 +498,9 @@ That means window.electronMessagePort is globally available and you can call`pos
 window.electronMessagePort.postMessage('ping')
 ```
 
+
+# 资料
+
+告别卡顿！Electron内存管理终极指南：从泄漏排查到性能飞升
+
+https://blog.csdn.net/gitblog_00828/article/details/151421503
