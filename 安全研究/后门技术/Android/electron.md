@@ -508,3 +508,7 @@ https://blog.csdn.net/gitblog_00828/article/details/151421503
 给我5分钟！教你定位内存泄露
 
 https://juejin.cn/post/7024752695659462693
+
+Electron内存占用优化：从架构到实践的深度解析
+
+https://comate.baidu.com/zh/page/87yoj692bec
