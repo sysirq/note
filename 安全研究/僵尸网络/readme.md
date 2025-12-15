@@ -174,3 +174,7 @@ https://urlhaus.abuse.ch
 Mirai, BrickerBot, Hajime Attack a Common IoT Weakness
 
 https://www.mcafee.com/blogs/other-blogs/mcafee-labs/mirai-brickerbot-hajime-attack-common-iot-weakness/
+
+PeerBlight Linux Backdoor Exploits React2Shell CVE-2025-55182
+
+https://www.huntress.com/blog/peerblight-linux-backdoor-exploits-react2shell
