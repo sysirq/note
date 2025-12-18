@@ -178,3 +178,7 @@ https://www.mcafee.com/blogs/other-blogs/mcafee-labs/mirai-brickerbot-hajime-att
 PeerBlight Linux Backdoor Exploits React2Shell CVE-2025-55182
 
 https://www.huntress.com/blog/peerblight-linux-backdoor-exploits-react2shell
+
+史上最疯：独家揭秘感染全球180万Android设备的巨型僵尸网络Kimwolf
+
+https://blog.xlab.qianxin.com/kimwolf-botnet/
