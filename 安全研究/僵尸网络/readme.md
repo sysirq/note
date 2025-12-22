@@ -182,3 +182,7 @@ https://www.huntress.com/blog/peerblight-linux-backdoor-exploits-react2shell
 史上最疯：独家揭秘感染全球180万Android设备的巨型僵尸网络Kimwolf
 
 https://blog.xlab.qianxin.com/kimwolf-botnet/
+
+PsiXBot Now Using Google DNS over HTTPS and Possible New Sexploitation Module
+
+https://www.proofpoint.com/us/threat-insight/post/psixbot-now-using-google-dns-over-https-and-possible-new-sexploitation-module
