@@ -186,3 +186,7 @@ https://blog.xlab.qianxin.com/kimwolf-botnet/
 PsiXBot Now Using Google DNS over HTTPS and Possible New Sexploitation Module
 
 https://www.proofpoint.com/us/threat-insight/post/psixbot-now-using-google-dns-over-https-and-possible-new-sexploitation-module
+
+Divide and conquer: how the new Keenadu backdoor exposed links between major Android botnets
+
+https://securelist.com/keenadu-android-backdoor/118913/
