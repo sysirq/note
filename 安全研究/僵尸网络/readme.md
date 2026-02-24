@@ -194,3 +194,7 @@ https://securelist.com/keenadu-android-backdoor/118913/
 Triada strikes back
 
 https://securelist.com/triada-trojan-modules-analysis/116380/
+
+Attack on Zygote: a new twist in the evolution of mobile threats
+
+https://securelist.com/attack-on-zygote-a-new-twist-in-the-evolution-of-mobile-threats/74032/
