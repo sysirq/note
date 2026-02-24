@@ -190,3 +190,7 @@ https://www.proofpoint.com/us/threat-insight/post/psixbot-now-using-google-dns-o
 Divide and conquer: how the new Keenadu backdoor exposed links between major Android botnets
 
 https://securelist.com/keenadu-android-backdoor/118913/
+
+Triada strikes back
+
+https://securelist.com/triada-trojan-modules-analysis/116380/
