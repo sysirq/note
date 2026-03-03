@@ -17,3 +17,7 @@ https://www.netscout.com/blog/asert/dhcpdiscover-reflectionamplification-ddos-at
 DDOS-RootSec
 
 https://github.com/R00tS3c/DDOS-RootSec
+
+qbot
+
+https://github.com/geniosa/qbot/blob/master/client.c#L1295
