@@ -75,6 +75,19 @@ Host header
 
 也会额外消耗 CPU：split host、解析
 
+# 一些有用的知识
+
+
+### 反缓存 HTTP 洪水攻击
+
+反缓存 HTTP 洪水攻击 (Anti-cache HTTP Flood Attack)，也常被称为缓存穿透攻击 (Cache-Busting Attack) 或缓存绕过攻击 (Cache Bypass
+  Attack)，是一种专门设计用来击穿目标网站的缓存防御体系（如 CDN、反向代理缓存等），直接打击后端真实服务器（源站）的 DDoS 攻击手法
+  
+反缓存攻击的核心原理：让每一次请求都“独一无二”
+
+- 随机查询字符串
+- 随机子域名(Host字段)
+
 # 参考资料
 
 DHCPDiscover Reflection/Amplification DDoS Attack Mitigation Recommendations
