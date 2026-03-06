@@ -43,6 +43,38 @@ Slowloris DDoS 攻击解析
 
 https://www.akamai.com/zh/glossary/what-is-a-slowloris-ddos-attack
 
+### HTTP Flood 异常字符 URI 、 Host 
+
+但如果 URI 包含异常字符，例如：
+
+```
+GET /%FF%FE%AA%00%81 HTTP/1.1
+```
+
+很多 Web 服务器必须执行额外步骤：
+
+```
+URL decode
+↓
+UTF-8 校验
+↓
+路径规范化 (normalize)
+↓
+安全过滤
+↓
+路由匹配
+```
+
+这些步骤都会增加 CPU 开销。
+
+很多服务器在处理：
+
+```
+Host header
+```
+
+会额外消耗 CPU
+
 # 参考资料
 
 DHCPDiscover Reflection/Amplification DDoS Attack Mitigation Recommendations
