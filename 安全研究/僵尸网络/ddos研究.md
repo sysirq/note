@@ -2,6 +2,16 @@
 
 # tcp
 
+### syn flood
+
+攻击者不断发送syn 包，导致SYN backlog 队列被占满
+
+### ack flood
+
+攻击者不断发送ack包，触发协议栈 查找连接，从而消耗目标资源
+
+### tcp stomp
+
 # ssl
 
 # http(s)
@@ -82,7 +92,7 @@ Host header
 
 反缓存 HTTP 洪水攻击 (Anti-cache HTTP Flood Attack)，也常被称为缓存穿透攻击 (Cache-Busting Attack) 或缓存绕过攻击 (Cache Bypass
   Attack)，是一种专门设计用来击穿目标网站的缓存防御体系（如 CDN、反向代理缓存等），直接打击后端真实服务器（源站）的 DDoS 攻击手法
-  
+
 反缓存攻击的核心原理：让每一次请求都“独一无二”
 
 - 随机查询字符串
