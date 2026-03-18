@@ -98,6 +98,35 @@ Host header
 - 随机查询字符串
 - 随机子域名(Host字段)
 
+
+# ddos 分析
+
+### 流量监控
+
+```sh
+tcpdump -i eth0 udp -n -w - | pv -br > /dev/null 
+```
+
+```
+1. tcpdump -i eth0 udp -n -w -:
+    * -i eth0: 指定监听名为 eth0 的网卡。
+    * udp: 仅过滤并抓取 UDP 协议的数据包。
+    * -n: 不进行域名解析（直接显示 IP 地址和端口），提高效率。
+    * -w -: 将抓到的原始报文写入到标准输出（stdout）而非保存到文件。
+
+
+2. | pv -br:
+    * |: 管道，将前一个命令抓取的原始数据流传给 pv。
+    * pv: (Pipe Viewer) 用于监控数据通过管道的进度。
+    * -b: (bytes) 显示累计传输的数据量。
+    * -r: (rate) 显示当前的传输速率（带宽）。
+
+
+3. > /dev/null:
+    * 将 pv 处理后的数据丢弃到“黑洞” /dev/null，因为你只想看速率统计，并不需要保存报文内容。
+```
+
+
 # 参考资料
 
 DHCPDiscover Reflection/Amplification DDoS Attack Mitigation Recommendations
