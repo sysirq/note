@@ -198,3 +198,7 @@ https://securelist.com/triada-trojan-modules-analysis/116380/
 Attack on Zygote: a new twist in the evolution of mobile threats
 
 https://securelist.com/attack-on-zygote-a-new-twist-in-the-evolution-of-mobile-threats/74032/
+
+Silence Of The Hops: The KadNap Botnet
+
+https://blog.lumen.com/silence-of-the-hops-the-kadnap-botnet/
