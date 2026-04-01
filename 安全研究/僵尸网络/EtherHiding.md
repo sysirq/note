@@ -15,6 +15,17 @@ $curl https://api.ensideas.com/ens/resolve/pawsatyou.eth
 - re6ce.eth
 - byniggasforniggas.eth
 
+```
+from web3 import Web3
+from ens import ENS
+
+w3 = Web3(Web3.HTTPProvider("https://eth.llamarpc.com"))
+
+ns = ENS.from_web3(w3)
+
+print(ns.get_text("byniggasforniggas.eth", "n2"))
+```
+
 
 
 # 可用公共RPC节点
