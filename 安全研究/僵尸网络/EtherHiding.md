@@ -26,7 +26,11 @@ ns = ENS.from_web3(w3)
 print(ns.get_text("byniggasforniggas.eth", "n2"))
 ```
 
+output:
 
+```
+[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c086:cec1]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:f662:ad4b]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:fb9d:d7de]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:fb03:c621]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c080:c307]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:f929:536a]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:fcf7:14dd]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:d65c:a521]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c39b:936d]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:d65c:a341]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c834:d8a5]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c834:d8f7]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c834:cf9f]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c834:d85a]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c834:d938]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c834:d007]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c834:d85b]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c834:cfcb]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c834:cf46]:25001,[1a3f:7c9b:de42:e8d0:7b2f:4c8d:c834:d8de]:25001
+```
 
 # 可用公共RPC节点
 
