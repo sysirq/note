@@ -17,6 +17,20 @@ $curl https://api.ensideas.com/ens/resolve/pawsatyou.eth
 
 
 
+# 可用公共RPC节点
+
+```
+https://eth.llamarpc.com
+https://rpc.mevblocker.io
+https://rpc.payload.de
+https://eth.drpc.org
+https://ethereum.publicnode.com
+```
+
+
+
+
+
 # 参考资料
 
 DPRK Adopts EtherHiding: Nation-State Malware Hiding on Blockchains
