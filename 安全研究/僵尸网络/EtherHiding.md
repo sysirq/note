@@ -9,6 +9,14 @@ $curl https://api.ensideas.com/ens/resolve/pawsatyou.eth
 
 
 
+### kimwolf
+
+- pawsatyou.eth
+- re6ce.eth
+- byniggasforniggas.eth
+
+
+
 # 参考资料
 
 DPRK Adopts EtherHiding: Nation-State Malware Hiding on Blockchains
