@@ -206,3 +206,7 @@ https://blog.lumen.com/silence-of-the-hops-the-kadnap-botnet/
 APT28 exploit routers to enable DNS hijacking operations
 
 https://www.ncsc.gov.uk/news/apt28-exploit-routers-to-enable-dns-hijacking-operations
+
+Russia Hacked Routers to Steal Microsoft Office Tokens
+
+https://krebsonsecurity.com/2026/04/russia-hacked-routers-to-steal-microsoft-office-tokens/
