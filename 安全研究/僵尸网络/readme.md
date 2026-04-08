@@ -202,3 +202,7 @@ https://securelist.com/attack-on-zygote-a-new-twist-in-the-evolution-of-mobile-t
 Silence Of The Hops: The KadNap Botnet
 
 https://blog.lumen.com/silence-of-the-hops-the-kadnap-botnet/
+
+APT28 exploit routers to enable DNS hijacking operations
+
+https://www.ncsc.gov.uk/news/apt28-exploit-routers-to-enable-dns-hijacking-operations
