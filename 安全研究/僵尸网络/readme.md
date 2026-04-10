@@ -210,7 +210,3 @@ https://www.ncsc.gov.uk/news/apt28-exploit-routers-to-enable-dns-hijacking-opera
 Russia Hacked Routers to Steal Microsoft Office Tokens
 
 https://krebsonsecurity.com/2026/04/russia-hacked-routers-to-steal-microsoft-office-tokens/
-
-stun & turn 打洞原理（nat类型检测原理 + pystun3检测nat类型）
-
-https://boke.wsfnk.com/archives/1394.html
