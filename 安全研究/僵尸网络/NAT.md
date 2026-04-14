@@ -11,3 +11,7 @@ https://raw.githubusercontent.com/0voice/audio_video_streaming/refs/heads/main/a
 P2P学习（三）网络传输基本知识---ICE
 
 https://www.cnblogs.com/ssyfj/p/14799326.html
+
+p2p通信原理——STUN 协议详解
+
+https://zhuanlan.zhihu.com/p/1890724663333736762
