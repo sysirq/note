@@ -7,3 +7,7 @@ https://boke.wsfnk.com/archives/1394.html
 STUN 原理理解
 
 https://raw.githubusercontent.com/0voice/audio_video_streaming/refs/heads/main/article/050-STUN%20原理理解.md
+
+P2P学习（三）网络传输基本知识---ICE
+
+https://www.cnblogs.com/ssyfj/p/14799326.html
