@@ -42,7 +42,7 @@ w.flags.window-aconfig" "libandroid_net_frameworktests_util_jni"]?
 #### failed to build some targets (01:26 (mm:ss)) ####
 ```
 
-释掉platform_testing/libraries/sts-common-util/host-side/rootcanal/Android.bp 中的sh_test块
+注释掉platform_testing/libraries/sts-common-util/host-side/rootcanal/Android.bp 中的sh_test块
 
 ### 0x01
 
@@ -85,6 +85,42 @@ $ repo manifest | grep xmp_toolkit
 修改external/dng_sdk/Android.bp把："xmp_toolkit_sdk",改成："xmp_toolkit",
 
 
+### 0x02
+
+```shell
+m
+============================================
+PLATFORM_VERSION_CODENAME=Baklava
+PLATFORM_VERSION=Baklava
+TARGET_PRODUCT=aosp_cf_x86_64_tv
+TARGET_BUILD_VARIANT=userdebug
+TARGET_ARCH=x86_64
+TARGET_ARCH_VARIANT=silvermont
+TARGET_2ND_ARCH=x86
+TARGET_2ND_ARCH_VARIANT=silvermont
+HOST_OS=linux
+HOST_OS_EXTRA=Linux-6.12.74+deb13+1-amd64-x86_64-Debian-GNU/Linux-13-(trixie)
+HOST_CROSS_OS=windows
+BUILD_ID=BP4A.251205.006
+OUT_DIR=out
+SOONG_ONLY=true
+============================================
+[100% 2/2] analyzing Android.bp files and generating ninja file at out/soong/build.aosp_cf_x86_64_tv.ninja
+FAILED: out/soong/build.aosp_cf_x86_64_tv.ninja
+cd "$(dirname "out/host/linux-x86/bin/soong_build")" && BUILDER="$PWD/$(basename "out/host/linux-x86/bin/soong_build")" && cd / && env -i  "$BUILDER"     --top "$TO
+P"     --soong_out "out/soong"     --out "out"     --soong_variables out/soong/soong.aosp_cf_x86_64_tv.variables -o out/soong/build.aosp_cf_x86_64_tv.ninja --kati_s
+uffix -aosp_cf_x86_64_tv -l out/.module_paths/Android.bp.list --available_env out/soong/soong.environment.available --used_env out/soong/soong.environment.used.aosp
+_cf_x86_64_tv.build Android.bp
+error: tools/netsim/Android.bp:176:1: "lib-netsim" depends on undefined module "libbt-rootcanal".
+Or did you mean ["clipboard_flags" "cts-root-readme" "libart-runtime" "libartd-runtime" "libboot_control" "libbootanimation" "librooted_path"]?
+error: tools/netsim/Android.bp:176:1: "lib-netsim" depends on undefined module "libscriptedbeaconpayload-protos-lite".
+Or did you mean ["//libcore/luni/src/test/androidsdk34" "//libcore/luni/src/test/annotations" "//libcore/luni/src/test/filesystems" "//libcore/luni/src/test/java9la
+nguage" "_libberberis_guest_loader_tests_srcs" "lint_strict_updatability_checks_test"]?
+02:00:11 soong bootstrap failed with: exit status 1
+
+#### failed to build some targets (45 seconds) ####
+
+```
 
 # Mac 系统上编译
 
