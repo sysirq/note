@@ -11,7 +11,7 @@ Superproject revision: None
 
 ### 0x00
 
-```
+```shell
 [100% 280/280] analyzing Android.bp files and generating ninja file at out/soong/build.aosp_cf_x86_64_tv.ninja
 FAILED: out/soong/build.aosp_cf_x86_64_tv.ninja
 cd "$(dirname "out/host/linux-x86/bin/soong_build")" && BUILDER="$PWD/$(basename "out/host/linux-x86/bin/soong_build")" && cd / && env -i  "$BUILDER"     --top "$TO
@@ -43,6 +43,46 @@ w.flags.window-aconfig" "libandroid_net_frameworktests_util_jni"]?
 ```
 
 释掉platform_testing/libraries/sts-common-util/host-side/rootcanal/Android.bp 中的sh_test块
+
+### 0x01
+
+```shell
+m
+============================================
+PLATFORM_VERSION_CODENAME=Baklava
+PLATFORM_VERSION=Baklava
+TARGET_PRODUCT=aosp_cf_x86_64_tv
+TARGET_BUILD_VARIANT=userdebug
+TARGET_ARCH=x86_64
+TARGET_ARCH_VARIANT=silvermont
+TARGET_2ND_ARCH=x86
+TARGET_2ND_ARCH_VARIANT=silvermont
+HOST_OS=linux
+HOST_OS_EXTRA=Linux-6.12.74+deb13+1-amd64-x86_64-Debian-GNU/Linux-13-(trixie)
+HOST_CROSS_OS=windows
+BUILD_ID=BP4A.251205.006
+OUT_DIR=out
+SOONG_ONLY=true
+============================================
+[100% 2/2] analyzing Android.bp files and generating ninja file at out/soong/build.aosp_cf_x86_64_tv.ninja
+FAILED: out/soong/build.aosp_cf_x86_64_tv.ninja
+cd "$(dirname "out/host/linux-x86/bin/soong_build")" && BUILDER="$PWD/$(basename "out/host/linux-x86/bin/soong_build")" && cd / && env -i  "$BUILDER"     --top "$TO
+P"     --soong_out "out/soong"     --out "out"     --soong_variables out/soong/soong.aosp_cf_x86_64_tv.variables -o out/soong/build.aosp_cf_x86_64_tv.ninja --kati_s
+uffix -aosp_cf_x86_64_tv -l out/.module_paths/Android.bp.list --available_env out/soong/soong.environment.available --used_env out/soong/soong.environment.used.aosp
+_cf_x86_64_tv.build Android.bp
+error: external/dng_sdk/Android.bp:101:1: "libdng_sdk" depends on undefined module "xmp_toolkit_sdk".
+Or did you mean ["xmp_toolkit"]?
+01:55:20 soong bootstrap failed with: exit status 1
+
+#### failed to build some targets (38 seconds) ####
+```
+
+```sh
+$ repo manifest | grep xmp_toolkit
+<project name="platform/external/xmp_toolkit" path="external/xmp_toolkit" groups="pdk"/>
+```
+
+修改external/dng_sdk/Android.bp把："xmp_toolkit_sdk",改成："xmp_toolkit",
 
 
 
