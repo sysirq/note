@@ -142,6 +142,297 @@ Superproject revision: None
 
 https://ftp.debian.org/debian/pool/main/n/ncurses/
 
+### 0x00
+
+```sh
+============================================
+PLATFORM_VERSION_CODENAME=REL
+PLATFORM_VERSION=11
+TARGET_PRODUCT=aosp_cf_x86_tv
+TARGET_BUILD_VARIANT=userdebug
+TARGET_BUILD_TYPE=release
+TARGET_ARCH=x86
+TARGET_ARCH_VARIANT=x86
+HOST_ARCH=x86_64
+HOST_2ND_ARCH=x86
+HOST_OS=linux
+HOST_OS_EXTRA=Linux-6.12.74+deb13+1-amd64-x86_64-Debian-GNU/Linux-13-(trixie)
+HOST_CROSS_OS=windows
+HOST_CROSS_ARCH=x86
+HOST_CROSS_2ND_ARCH=x86_64
+HOST_BUILD_TYPE=release
+BUILD_ID=RD2A.211001.002
+OUT_DIR=out
+PRODUCT_SOONG_NAMESPACES=device/generic/goldfish-opengl hardware/google/camera hardware/google/camera/devices/EmulatedCamera external/mesa3d
+============================================
+[  0% 39/7266] //frameworks/ml/nn/apex:com.android.neuralnetworks apex (image) [common]
+FAILED: out/soong/.intermediates/frameworks/ml/nn/apex/com.android.neuralnetworks/android_common_com.android.neuralnetworks_image/com.android.neuralnetworks.apex.un
+signed
+rm -rf out/soong/.intermediates/frameworks/ml/nn/apex/com.android.neuralnetworks/android_common_com.android.neuralnetworks_image/image.apex && mkdir -p out/soong/.i
+ntermediates/frameworks/ml/nn/apex/com.android.neuralnetworks/android_common_com.android.neuralnetworks_image/image.apex && (. out/soong/.intermediates/frameworks/m
+l/nn/apex/com.android.neuralnetworks/android_common_com.android.neuralnetworks_image/com.android.neuralnetworks.apex.unsigned.copy_commands) && APEXER_TOOL_PATH=out
+/soong/host/linux-x86/bin:prebuilts/sdk/tools/linux/bin out/soong/host/linux-x86/bin/apexer --force --manifest out/soong/.intermediates/frameworks/ml/nn/apex/com.an
+droid.neuralnetworks/android_common_com.android.neuralnetworks_image/apex_manifest.pb --file_contexts system/sepolicy/apex/com.android.neuralnetworks-file_contexts 
+--canned_fs_config out/soong/.intermediates/frameworks/ml/nn/apex/com.android.neuralnetworks/android_common_com.android.neuralnetworks_image/canned_fs_config --incl
+ude_build_info --payload_type image --key frameworks/ml/nn/apex/com.android.neuralnetworks.pem --pubkey frameworks/ml/nn/apex/com.android.neuralnetworks.avbpubkey -
+-android_manifest frameworks/ml/nn/apex/AndroidManifest.xml --target_sdk_version 30 --min_sdk_version 30 --assets_dir out/soong/.intermediates/frameworks/ml/nn/apex
+/com.android.neuralnetworks/android_common_com.android.neuralnetworks_image/NOTICE --no_hashtree out/soong/.intermediates/frameworks/ml/nn/apex/com.android.neuralne
+tworks/android_common_com.android.neuralnetworks_image/image.apex out/soong/.intermediates/frameworks/ml/nn/apex/com.android.neuralnetworks/android_common_com.andro
+id.neuralnetworks_image/com.android.neuralnetworks.apex.unsigned 
+mke2fs 1.45.4 (23-Sep-2019)
+Creating regular file /home/sysirq/aosp/out/soong/.temp/tmpkmkfGA/content/apex_payload.img
+Invalid filesystem option set: has_journal,extent,huge_file,flex_bg,metadata_csum,metadata_csum_seed,64bit,dir_nlink,extra_isize,orphan_file
+Traceback (most recent call last):
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/__main__.py", line 12, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 708, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 701, in main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 502, in CreateApex
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 200, in RunCommand
+AssertionError: Failed to execute: out/soong/host/linux-x86/bin/mke2fs -O ^has_journal -b 4096 -m 0 -t ext4 -I 256 -N 14 -U 7d1522e1-9dfa-5edb-a43e-98e3a4d20250 -E 
+hash_seed=7d1522e1-9dfa-5edb-a43e-98e3a4d20250 /home/sysirq/aosp/out/soong/.temp/tmpkmkfGA/content/apex_payload.img 20M
+[  0% 40/7266] //packages/modules/DnsResolver/apex:com.android.resolv apex (image) [common]
+FAILED: out/soong/.intermediates/packages/modules/DnsResolver/apex/com.android.resolv/android_common_cfi_com.android.resolv_image/com.android.resolv.apex.unsigned
+rm -rf out/soong/.intermediates/packages/modules/DnsResolver/apex/com.android.resolv/android_common_cfi_com.android.resolv_image/image.apex && mkdir -p out/soong/.i
+ntermediates/packages/modules/DnsResolver/apex/com.android.resolv/android_common_cfi_com.android.resolv_image/image.apex && (. out/soong/.intermediates/packages/mod
+ules/DnsResolver/apex/com.android.resolv/android_common_cfi_com.android.resolv_image/com.android.resolv.apex.unsigned.copy_commands) && APEXER_TOOL_PATH=out/soong/h
+ost/linux-x86/bin:prebuilts/sdk/tools/linux/bin out/soong/host/linux-x86/bin/apexer --force --manifest out/soong/.intermediates/packages/modules/DnsResolver/apex/co
+m.android.resolv/android_common_cfi_com.android.resolv_image/apex_manifest.pb --file_contexts system/sepolicy/apex/com.android.resolv-file_contexts --canned_fs_conf
+ig out/soong/.intermediates/packages/modules/DnsResolver/apex/com.android.resolv/android_common_cfi_com.android.resolv_image/canned_fs_config --include_build_info -
+-payload_type image --key packages/modules/DnsResolver/apex/com.android.resolv.pem --pubkey packages/modules/DnsResolver/apex/com.android.resolv.avbpubkey --android
+_manifest packages/modules/DnsResolver/apex/AndroidManifest.xml --target_sdk_version 30 --min_sdk_version 29 --assets_dir out/soong/.intermediates/packages/modules/
+DnsResolver/apex/com.android.resolv/android_common_cfi_com.android.resolv_image/NOTICE --manifest_json out/soong/.intermediates/packages/modules/DnsResolver/apex/co
+m.android.resolv/android_common_cfi_com.android.resolv_image/apex_manifest.json out/soong/.intermediates/packages/modules/DnsResolver/apex/com.android.resolv/androi
+d_common_cfi_com.android.resolv_image/image.apex out/soong/.intermediates/packages/modules/DnsResolver/apex/com.android.resolv/android_common_cfi_com.android.resolv
+_image/com.android.resolv.apex.unsigned 
+mke2fs 1.45.4 (23-Sep-2019)
+Creating regular file /home/sysirq/aosp/out/soong/.temp/tmpP250Wc/content/apex_payload.img
+Invalid filesystem option set: has_journal,extent,huge_file,flex_bg,metadata_csum,metadata_csum_seed,64bit,dir_nlink,extra_isize,orphan_file
+Traceback (most recent call last):
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/__main__.py", line 12, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 708, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 701, in main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 502, in CreateApex
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 200, in RunCommand
+AssertionError: Failed to execute: out/soong/host/linux-x86/bin/mke2fs -O ^has_journal -b 4096 -m 0 -t ext4 -I 256 -N 17 -U 7d1522e1-9dfa-5edb-a43e-98e3a4d20250 -E 
+hash_seed=7d1522e1-9dfa-5edb-a43e-98e3a4d20250 /home/sysirq/aosp/out/soong/.temp/tmpP250Wc/content/apex_payload.img 18M
+[  0% 43/7266] //system/timezone/apex:com.android.tzdata apex (image) [common]
+FAILED: out/soong/.intermediates/system/timezone/apex/com.android.tzdata/android_common_com.android.tzdata_image/com.android.tzdata.apex.unsigned
+rm -rf out/soong/.intermediates/system/timezone/apex/com.android.tzdata/android_common_com.android.tzdata_image/image.apex && mkdir -p out/soong/.intermediates/syst
+em/timezone/apex/com.android.tzdata/android_common_com.android.tzdata_image/image.apex && (. out/soong/.intermediates/system/timezone/apex/com.android.tzdata/androi
+d_common_com.android.tzdata_image/com.android.tzdata.apex.unsigned.copy_commands) && APEXER_TOOL_PATH=out/soong/host/linux-x86/bin:prebuilts/sdk/tools/linux/bin out
+/soong/host/linux-x86/bin/apexer --force --manifest out/soong/.intermediates/system/timezone/apex/com.android.tzdata/android_common_com.android.tzdata_image/apex_ma
+nifest.pb --file_contexts system/sepolicy/apex/com.android.tzdata-file_contexts --canned_fs_config out/soong/.intermediates/system/timezone/apex/com.android.tzdata/
+android_common_com.android.tzdata_image/canned_fs_config --include_build_info --payload_type image --key system/timezone/apex/com.android.tzdata.pem --pubkey system
+/timezone/apex/com.android.tzdata.avbpubkey --android_manifest system/timezone/apex/AndroidManifest.xml --target_sdk_version 30 --min_sdk_version 30 --no_hashtree o
+ut/soong/.intermediates/system/timezone/apex/com.android.tzdata/android_common_com.android.tzdata_image/image.apex out/soong/.intermediates/system/timezone/apex/com
+.android.tzdata/android_common_com.android.tzdata_image/com.android.tzdata.apex.unsigned 
+mke2fs 1.45.4 (23-Sep-2019)
+Creating regular file /home/sysirq/aosp/out/soong/.temp/tmpdjtEWA/content/apex_payload.img
+Invalid filesystem option set: has_journal,extent,huge_file,flex_bg,metadata_csum,metadata_csum_seed,64bit,dir_nlink,extra_isize,orphan_file
+Traceback (most recent call last):
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/__main__.py", line 12, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 708, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 701, in main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 502, in CreateApex
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 200, in RunCommand
+AssertionError: Failed to execute: out/soong/host/linux-x86/bin/mke2fs -O ^has_journal -b 4096 -m 0 -t ext4 -I 256 -N 20 -U 7d1522e1-9dfa-5edb-a43e-98e3a4d20250 -E 
+hash_seed=7d1522e1-9dfa-5edb-a43e-98e3a4d20250 /home/sysirq/aosp/out/soong/.temp/tmpdjtEWA/content/apex_payload.img 16M
+[  0% 44/7266] //libcore/apex:com.android.i18n apex (image) [common]
+FAILED: out/soong/.intermediates/libcore/apex/com.android.i18n/android_common_com.android.i18n_image/com.android.i18n.apex.unsigned
+rm -rf out/soong/.intermediates/libcore/apex/com.android.i18n/android_common_com.android.i18n_image/image.apex && mkdir -p out/soong/.intermediates/libcore/apex/com
+.android.i18n/android_common_com.android.i18n_image/image.apex && (. out/soong/.intermediates/libcore/apex/com.android.i18n/android_common_com.android.i18n_image/co
+m.android.i18n.apex.unsigned.copy_commands) && APEXER_TOOL_PATH=out/soong/host/linux-x86/bin:prebuilts/sdk/tools/linux/bin out/soong/host/linux-x86/bin/apexer --for
+ce --manifest out/soong/.intermediates/libcore/apex/com.android.i18n/android_common_com.android.i18n_image/apex_manifest.pb --file_contexts system/sepolicy/apex/com
+.android.i18n-file_contexts --canned_fs_config out/soong/.intermediates/libcore/apex/com.android.i18n/android_common_com.android.i18n_image/canned_fs_config --inclu
+de_build_info --payload_type image --key libcore/apex/com.android.i18n.pem --pubkey libcore/apex/com.android.i18n.avbpubkey --target_sdk_version 30 --min_sdk_versio
+n 30 --no_hashtree out/soong/.intermediates/libcore/apex/com.android.i18n/android_common_com.android.i18n_image/image.apex out/soong/.intermediates/libcore/apex/com
+.android.i18n/android_common_com.android.i18n_image/com.android.i18n.apex.unsigned 
+mke2fs 1.45.4 (23-Sep-2019)
+Creating regular file /home/sysirq/aosp/out/soong/.temp/tmpDQw0WF/content/apex_payload.img
+Invalid filesystem option set: has_journal,extent,huge_file,flex_bg,metadata_csum,metadata_csum_seed,64bit,dir_nlink,extra_isize,orphan_file
+Traceback (most recent call last):
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/__main__.py", line 12, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 708, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 701, in main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 502, in CreateApex
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 200, in RunCommand
+AssertionError: Failed to execute: out/soong/host/linux-x86/bin/mke2fs -O ^has_journal -b 4096 -m 0 -t ext4 -I 256 -N 15 -U 7d1522e1-9dfa-5edb-a43e-98e3a4d20250 -E 
+hash_seed=7d1522e1-9dfa-5edb-a43e-98e3a4d20250 /home/sysirq/aosp/out/soong/.temp/tmpDQw0WF/content/apex_payload.img 40M
+[  0% 48/7266] //bionic/apex:com.android.runtime apex (image) [common]
+FAILED: out/soong/.intermediates/bionic/apex/com.android.runtime/android_common_com.android.runtime_image/com.android.runtime.apex.unsigned
+rm -rf out/soong/.intermediates/bionic/apex/com.android.runtime/android_common_com.android.runtime_image/image.apex && mkdir -p out/soong/.intermediates/bionic/apex
+/com.android.runtime/android_common_com.android.runtime_image/image.apex && (. out/soong/.intermediates/bionic/apex/com.android.runtime/android_common_com.android.r
+untime_image/com.android.runtime.apex.unsigned.copy_commands) && APEXER_TOOL_PATH=out/soong/host/linux-x86/bin:prebuilts/sdk/tools/linux/bin out/soong/host/linux-x8
+6/bin/apexer --force --manifest out/soong/.intermediates/bionic/apex/com.android.runtime/android_common_com.android.runtime_image/apex_manifest.pb --file_contexts s
+ystem/sepolicy/apex/com.android.runtime-file_contexts --canned_fs_config out/soong/.intermediates/bionic/apex/com.android.runtime/android_common_com.android.runtime
+_image/canned_fs_config --include_build_info --payload_type image --key bionic/apex/com.android.runtime.pem --pubkey bionic/apex/com.android.runtime.avbpubkey --tar
+get_sdk_version 30 --min_sdk_version 30 --assets_dir out/soong/.intermediates/bionic/apex/com.android.runtime/android_common_com.android.runtime_image/NOTICE --no_h
+ashtree out/soong/.intermediates/bionic/apex/com.android.runtime/android_common_com.android.runtime_image/image.apex out/soong/.intermediates/bionic/apex/com.androi
+d.runtime/android_common_com.android.runtime_image/com.android.runtime.apex.unsigned 
+mke2fs 1.45.4 (23-Sep-2019)
+Creating regular file /home/sysirq/aosp/out/soong/.temp/tmpr9inSx/content/apex_payload.img
+Invalid filesystem option set: has_journal,extent,huge_file,flex_bg,metadata_csum,metadata_csum_seed,64bit,dir_nlink,extra_isize,orphan_file
+Traceback (most recent call last):
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/__main__.py", line 12, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 708, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 701, in main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 502, in CreateApex
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 200, in RunCommand
+AssertionError: Failed to execute: out/soong/host/linux-x86/bin/mke2fs -O ^has_journal -b 4096 -m 0 -t ext4 -I 256 -N 29 -U 7d1522e1-9dfa-5edb-a43e-98e3a4d20250 -E 
+hash_seed=7d1522e1-9dfa-5edb-a43e-98e3a4d20250 /home/sysirq/aosp/out/soong/.temp/tmpr9inSx/content/apex_payload.img 20M
+[  0% 49/7266] //system/core/adb/apex:com.android.adbd apex (image) [common]
+FAILED: out/soong/.intermediates/system/core/adb/apex/com.android.adbd/android_common_com.android.adbd_image/com.android.adbd.apex.unsigned
+rm -rf out/soong/.intermediates/system/core/adb/apex/com.android.adbd/android_common_com.android.adbd_image/image.apex && mkdir -p out/soong/.intermediates/system/c
+ore/adb/apex/com.android.adbd/android_common_com.android.adbd_image/image.apex && (. out/soong/.intermediates/system/core/adb/apex/com.android.adbd/android_common_c
+om.android.adbd_image/com.android.adbd.apex.unsigned.copy_commands) && APEXER_TOOL_PATH=out/soong/host/linux-x86/bin:prebuilts/sdk/tools/linux/bin out/soong/host/li
+nux-x86/bin/apexer --force --manifest out/soong/.intermediates/system/core/adb/apex/com.android.adbd/android_common_com.android.adbd_image/apex_manifest.pb --file_c
+ontexts system/sepolicy/apex/com.android.adbd-file_contexts --canned_fs_config out/soong/.intermediates/system/core/adb/apex/com.android.adbd/android_common_com.and
+roid.adbd_image/canned_fs_config --include_build_info --payload_type image --key system/core/adb/apex/com.android.adbd.pem --pubkey system/core/adb/apex/com.android
+.adbd.avbpubkey --target_sdk_version 30 --min_sdk_version 30 --assets_dir out/soong/.intermediates/system/core/adb/apex/com.android.adbd/android_common_com.android.
+adbd_image/NOTICE --no_hashtree out/soong/.intermediates/system/core/adb/apex/com.android.adbd/android_common_com.android.adbd_image/image.apex out/soong/.intermedi
+ates/system/core/adb/apex/com.android.adbd/android_common_com.android.adbd_image/com.android.adbd.apex.unsigned 
+mke2fs 1.45.4 (23-Sep-2019)
+Creating regular file /home/sysirq/aosp/out/soong/.temp/tmpAo9z9R/content/apex_payload.img
+Invalid filesystem option set: has_journal,extent,huge_file,flex_bg,metadata_csum,metadata_csum_seed,64bit,dir_nlink,extra_isize,orphan_file
+Traceback (most recent call last):
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/__main__.py", line 12, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 708, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 701, in main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 502, in CreateApex
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 200, in RunCommand
+AssertionError: Failed to execute: out/soong/host/linux-x86/bin/mke2fs -O ^has_journal -b 4096 -m 0 -t ext4 -I 256 -N 28 -U 7d1522e1-9dfa-5edb-a43e-98e3a4d20250 -E 
+hash_seed=7d1522e1-9dfa-5edb-a43e-98e3a4d20250 /home/sysirq/aosp/out/soong/.temp/tmpAo9z9R/content/apex_payload.img 21M
+[  0% 65/7266] target Dex: Browser2
+Warning: An API level of 1000 is not supported by this compiler. Please use an API level of 30 or earlier
+[  0% 68/7266] //packages/modules/vndk/apex:com.android.vndk.v28 apex (image) [common]
+FAILED: out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v28/android_common_image/com.android.vndk.v28.apex.unsigned
+rm -rf out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v28/android_common_image/image.apex && mkdir -p out/soong/.intermediates/packages/module
+s/vndk/apex/com.android.vndk.v28/android_common_image/image.apex && (. out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v28/android_common_image
+/com.android.vndk.v28.apex.unsigned.copy_commands) && APEXER_TOOL_PATH=out/soong/host/linux-x86/bin:prebuilts/sdk/tools/linux/bin out/soong/host/linux-x86/bin/apexe
+r --force --manifest out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v28/android_common_image/apex_manifest.pb --file_contexts system/sepolicy/
+apex/com.android.vndk-file_contexts --canned_fs_config out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v28/android_common_image/canned_fs_confi
+g --include_build_info --payload_type image --key packages/modules/vndk/apex/com.android.vndk.v28.pem --pubkey packages/modules/vndk/apex/com.android.vndk.v28.pubke
+y --target_sdk_version 30 --min_sdk_version 30 --assets_dir out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v28/android_common_image/NOTICE --n
+o_hashtree --do_not_check_keyname out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v28/android_common_image/image.apex out/soong/.intermediates/
+packages/modules/vndk/apex/com.android.vndk.v28/android_common_image/com.android.vndk.v28.apex.unsigned 
+mke2fs 1.45.4 (23-Sep-2019)
+Creating regular file /home/sysirq/aosp/out/soong/.temp/tmpSbYbBn/content/apex_payload.img
+Invalid filesystem option set: has_journal,extent,huge_file,flex_bg,metadata_csum,metadata_csum_seed,64bit,dir_nlink,extra_isize,orphan_file
+Traceback (most recent call last):
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/__main__.py", line 12, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 708, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 701, in main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 502, in CreateApex
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 200, in RunCommand
+AssertionError: Failed to execute: out/soong/host/linux-x86/bin/mke2fs -O ^has_journal -b 4096 -m 0 -t ext4 -I 256 -N 249 -U 7d1522e1-9dfa-5edb-a43e-98e3a4d20250 -E
+ hash_seed=7d1522e1-9dfa-5edb-a43e-98e3a4d20250 /home/sysirq/aosp/out/soong/.temp/tmpSbYbBn/content/apex_payload.img 73M
+[  0% 69/7266] //packages/modules/vndk/apex:com.android.vndk.v29 apex (image) [common]
+FAILED: out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v29/android_common_image/com.android.vndk.v29.apex.unsigned
+rm -rf out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v29/android_common_image/image.apex && mkdir -p out/soong/.intermediates/packages/module
+s/vndk/apex/com.android.vndk.v29/android_common_image/image.apex && (. out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v29/android_common_image
+/com.android.vndk.v29.apex.unsigned.copy_commands) && APEXER_TOOL_PATH=out/soong/host/linux-x86/bin:prebuilts/sdk/tools/linux/bin out/soong/host/linux-x86/bin/apexe
+r --force --manifest out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v29/android_common_image/apex_manifest.pb --file_contexts system/sepolicy/
+apex/com.android.vndk-file_contexts --canned_fs_config out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v29/android_common_image/canned_fs_confi
+g --include_build_info --payload_type image --key packages/modules/vndk/apex/com.android.vndk.v29.pem --pubkey packages/modules/vndk/apex/com.android.vndk.v29.pubke
+y --target_sdk_version 30 --min_sdk_version 30 --assets_dir out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v29/android_common_image/NOTICE --n
+o_hashtree --do_not_check_keyname out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.v29/android_common_image/image.apex out/soong/.intermediates/
+packages/modules/vndk/apex/com.android.vndk.v29/android_common_image/com.android.vndk.v29.apex.unsigned 
+mke2fs 1.45.4 (23-Sep-2019)
+Creating regular file /home/sysirq/aosp/out/soong/.temp/tmpRnAI6J/content/apex_payload.img
+Invalid filesystem option set: has_journal,extent,huge_file,flex_bg,metadata_csum,metadata_csum_seed,64bit,dir_nlink,extra_isize,orphan_file
+Traceback (most recent call last):
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/__main__.py", line 12, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 708, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 701, in main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 502, in CreateApex
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 200, in RunCommand
+AssertionError: Failed to execute: out/soong/host/linux-x86/bin/mke2fs -O ^has_journal -b 4096 -m 0 -t ext4 -I 256 -N 271 -U 7d1522e1-9dfa-5edb-a43e-98e3a4d20250 -E
+ hash_seed=7d1522e1-9dfa-5edb-a43e-98e3a4d20250 /home/sysirq/aosp/out/soong/.temp/tmpRnAI6J/content/apex_payload.img 77M
+[  0% 70/7266] //packages/modules/vndk/apex:com.android.vndk.current apex (image) [common]
+FAILED: out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.current/android_common_image/com.android.vndk.current.apex.unsigned
+rm -rf out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.current/android_common_image/image.apex && mkdir -p out/soong/.intermediates/packages/mo
+dules/vndk/apex/com.android.vndk.current/android_common_image/image.apex && (. out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.current/android_
+common_image/com.android.vndk.current.apex.unsigned.copy_commands) && APEXER_TOOL_PATH=out/soong/host/linux-x86/bin:prebuilts/sdk/tools/linux/bin out/soong/host/lin
+ux-x86/bin/apexer --force --manifest out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.current/android_common_image/apex_manifest.pb --file_conte
+xts system/sepolicy/apex/com.android.vndk-file_contexts --canned_fs_config out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.current/android_comm
+on_image/canned_fs_config --include_build_info --payload_type image --key packages/modules/vndk/apex/com.android.vndk.current.pem --pubkey packages/modules/vndk/ape
+x/com.android.vndk.current.pubkey --target_sdk_version 30 --min_sdk_version 30 --assets_dir out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.cur
+rent/android_common_image/NOTICE --no_hashtree --do_not_check_keyname out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.current/android_common_im
+age/image.apex out/soong/.intermediates/packages/modules/vndk/apex/com.android.vndk.current/android_common_image/com.android.vndk.current.apex.unsigned 
+mke2fs 1.45.4 (23-Sep-2019)
+Creating regular file /home/sysirq/aosp/out/soong/.temp/tmpAykWIz/content/apex_payload.img
+Invalid filesystem option set: has_journal,extent,huge_file,flex_bg,metadata_csum,metadata_csum_seed,64bit,dir_nlink,extra_isize,orphan_file
+Traceback (most recent call last):
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/__main__.py", line 12, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 174, in _run_module_as_main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/internal/stdlib/runpy.py", line 72, in _run_code
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 708, in <module>
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 701, in main
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 502, in CreateApex
+  File "/home/sysirq/aosp/out/soong/host/linux-x86/bin/apexer/apexer.py", line 200, in RunCommand
+AssertionError: Failed to execute: out/soong/host/linux-x86/bin/mke2fs -O ^has_journal -b 4096 -m 0 -t ext4 -I 256 -N 306 -U 7d1522e1-9dfa-5edb-a43e-98e3a4d20250 -E
+ hash_seed=7d1522e1-9dfa-5edb-a43e-98e3a4d20250 /home/sysirq/aosp/out/soong/.temp/tmpAykWIz/content/apex_payload.img 96M
+22:59:33 ninja failed with: exit status 1
+
+#### failed to build some targets (12 seconds) ####
+```
+
+debian13的mke2fs -V
+
+```
+mke2fs 1.47.2 (1-Jan-2025)
+	Using EXT2FS Library version 1.47.2
+```
+
+aosp自带的mke2fs -V
+
+```
+mke2fs 1.45.4 (23-Sep-2019)
+	Using EXT2FS Library version v1.45.4-867-g4bc58792
+```
+
+导致读取/etc/mke2fs.conf时，发现不能识别的选项，如：orphan_file、metadata_csum_seed。
+
+
+
+备份一份/etc/mke2fs.conf，然后去掉orphan_file、metadata_csum_seed，重新编译即可。
+
+
+
 # Mac 系统上编译
 
 ### 资料
