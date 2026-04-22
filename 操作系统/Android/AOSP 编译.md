@@ -122,6 +122,26 @@ nguage" "_libberberis_guest_loader_tests_srcs" "lint_strict_updatability_checks_
 
 ```
 
+
+# debian13 编译aosp_cf_x86_64_tv 
+
+```
+repo info
+Manifest branch: refs/tags/android-11.0.0_r48
+Manifest merge branch: refs/heads/android-11.0.0_r48
+Manifest groups: default,platform-linux
+Superproject revision: None
+```
+
+库下载：
+
+- libncurses5_6.4-4_amd64.deb  
+- libtinfo5_6.4-4_amd64.deb
+
+地址：
+
+https://ftp.debian.org/debian/pool/main/n/ncurses/
+
 # Mac 系统上编译
 
 ### 资料
