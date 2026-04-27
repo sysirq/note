@@ -455,6 +455,12 @@ libc++ 使用内联命名空间 __1 来防止 ABI 冲突。
 特征符号：你会看到符号中包含 __1。
 例如：std::__1::basic_string 或 _ZNSt3__1...。
 
+# 指定NDK使用特定的STL
+
+```sh    
+python3 make_standalone_toolchain.py --arch arm --api 19 --stl gnustl --install-dir /home/sysirq/tools/ndk-r14b-arm-api19-gnustlstl
+```
+
 
 # Mac 系统上编译
 
