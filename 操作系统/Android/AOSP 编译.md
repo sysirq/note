@@ -433,6 +433,29 @@ mke2fs 1.45.4 (23-Sep-2019)
 
 
 
+# 判断编译c++程序使用的是那个stl
+
+### 检查符号特征
+
+使用 nm 工具查看二进制文件中的未定义符号:
+
+```
+arm-linux-androideabi-nm -u /path/to/xxxx | grep "std::"
+```
+
+- 如果是 GNU STL (gnustl):
+
+你会看到类似 std::string 的原始修饰名，或者包含 __gnu_cxx 命名空间。
+特征符号：_ZNSs (std::string), _ZNSt (std::), std::_Rb_tree（红黑树实现）。
+正如你之前的报错，出现了 std::_Rb_tree_increment，这几乎 100% 确定是 gnustl。
+
+- 如果是 LLVM libc++:
+
+libc++ 使用内联命名空间 __1 来防止 ABI 冲突。
+特征符号：你会看到符号中包含 __1。
+例如：std::__1::basic_string 或 _ZNSt3__1...。
+
+
 # Mac 系统上编译
 
 ### 资料
