@@ -473,3 +473,7 @@ Building AOSP on macOS
 Unknown directive .altmacro error happens when using android-ndk standalone toolchain
 
 <https://stackoverflow.com/questions/47938599/unknown-directive-altmacro-error-happens-when-using-android-ndk-standalone-tool>
+
+添加新设备
+
+https://source.android.com/docs/setup/create/new-device?hl=zh-cn
