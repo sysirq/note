@@ -1,3 +1,7 @@
+# aosp版本
+
+android-6.0.1_r81
+
 # 源代码修改追踪
 
 对某些项目建立本地分支:
@@ -31,6 +35,33 @@ repo diff
 ```
 
 # 添加新设备
+
+### 创建目录结构
+
+```
+cd aosp-6.0.1/
+mkdir -p device/mycorp/mydevice
+cd device/mycorp/mydevice
+```
+
+### 核心配置文件
+
+- AndroidProducts.mk
+
+
+- device.mk
+
+
+- BoardConfig.mk
+
+
+- vendorsetup.sh
+
+仅适用于 Android 9 及更低版本,创建一个 vendorsetup.sh 文件，以将您的产品（“lunch combo”）以及用破折号分隔的构建变体添加到构建中。例如
+
+```
+add_lunch_combo <product-name>-userdebug
+```
 
 # 资料
 
