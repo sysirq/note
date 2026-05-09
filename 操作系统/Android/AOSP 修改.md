@@ -46,22 +46,34 @@ cd device/mycorp/mydevice
 
 ### 核心配置文件
 
-###### AndroidProducts.mk
+##### AndroidProducts.mk
 
+起着入口索引的作用。它告诉构建系统：“在这个厂商目录下，存在哪些可以被编译的产品，以及它们的具体配置文件在哪里
 
-###### device.mk
+它的主要任务是定义两个变量：
 
+- PRODUCT_MAKEFILES: 指向具体产品定义文件（通常是 full_xxx.mk）的路径。这个变量是**必选**的。它列出了该厂商目录下所有可用的产品配置文件（`.mk`）。
+- COMMON_LUNCH_CHOICES: 定义在 lunch 菜单中直接显示的选项。这个变量用于将常用的编译组合（产品名-编译类型）预设到 `lunch` 列表中。
 
-###### BoardConfig.mk
+eg:
 
-
-###### vendorsetup.sh
+##### vendorsetup.sh
 
 仅适用于 Android 9 及更低版本,创建一个 vendorsetup.sh 文件，以将您的产品（“lunch combo”）以及用破折号分隔的构建变体添加到构建中。例如
 
 ```
 add_lunch_combo <product-name>-userdebug
 ```
+
+但在现代 AOSP 中，Google 推荐并强制使用 AndroidProducts.mk 中的 COMMON_LUNCH_CHOICES。
+
+##### device.mk
+
+
+##### BoardConfig.mk
+
+
+
 
 # 资料
 
