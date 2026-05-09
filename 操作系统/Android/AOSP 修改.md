@@ -1,17 +1,28 @@
 # 源代码修改追踪
 
-对某些项目建立本地分支
+对某些项目建立本地分支:
 
 ```
 repo start <newbranchname> <project>
 ```
 
-对所有项目创建分支
+对所有项目创建分支:
 
 ```
 repo start <newbranchname> --all
 ```
 
+查看现有分支的列表:
+
+```
+repo branches
+```
+
+删除repo分支
+
+```
+ repo abandon [--all | <branchname>] [<project>...]
+```
 
 # 资料
 
