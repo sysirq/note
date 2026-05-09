@@ -464,32 +464,12 @@ python3 make_standalone_toolchain.py --arch arm --api 19 --stl gnustl --install-
 
 # Mac 系统上编译
 
-### 资料
+# 资料
 
 Building AOSP on macOS
 
-<https://dev.to/sriteja777/building-aosp-on-macos-2473>
+https://dev.to/sriteja777/building-aosp-on-macos-2473
 
 Unknown directive .altmacro error happens when using android-ndk standalone toolchain
 
-<https://stackoverflow.com/questions/47938599/unknown-directive-altmacro-error-happens-when-using-android-ndk-standalone-tool>
-
-添加新设备
-
-https://source.android.com/docs/setup/create/new-device?hl=zh-cn
-
-使用 Android 模拟器虚拟设备
-
-https://source.android.com/docs/setup/test/avd?hl=zh-cn
-
-从命令行启动模拟器
-
-https://developer.android.com/studio/run/emulator-commandline?hl=zh-cn#startup-options
-
-Soong
-
-https://android.googlesource.com/platform/build/soong/+/refs/heads/main/README.md
-
-Android.mk
-
-https://developer.android.com/ndk/guides/android_mk?hl=zh-cn
+https://stackoverflow.com/questions/47938599/unknown-directive-altmacro-error-happens-when-using-android-ndk-standalone-tool
