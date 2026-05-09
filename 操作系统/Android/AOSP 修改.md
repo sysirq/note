@@ -86,7 +86,7 @@ COMMON_LUNCH_CHOICES := \
 
 仅适用于 Android 9 及更低版本,创建一个 vendorsetup.sh 文件，以将您的产品（“lunch combo”）以及用破折号分隔的构建变体添加到构建中。例如
 
-```
+```sh
 add_lunch_combo <product-name>-userdebug
 ```
 
@@ -100,21 +100,21 @@ add_lunch_combo <product-name>-userdebug
 
 
 
-- 继承基础配置 (Inherit)
+- 1、继承基础配置 (Inherit)
 
 你不需要从零开始写一个 Android 系统。通过 inherit-product 函数，你可以复用 Google 已经写好的通用配置。
 
-```
+```makefile
 $(call inherit-product, device/generic/x86_64/mini_x86_64.mk)
 
 $(call inherit-product, device/generic/mini-emulator-armv7-a-neon/mini_emulator_common.mk)
 ```
 
-- 定义设备参数
+- 2、定义设备参数
 
 这些信息会写入到系统的 /system/build.prop 文件中，应用通过 android.os.Build 类读取。
 
-```
+```makefile
 PRODUCT_NAME := my_device_model      # 关键：必须与 lunch 选项一致
 PRODUCT_DEVICE := my_codename       # 对应 device/vendor/codename 目录名
 PRODUCT_BRAND := MyBrand            # 品牌名
@@ -122,11 +122,11 @@ PRODUCT_MODEL := Awesome Pad Pro    # 最终在“关于手机”里显示的名
 PRODUCT_MANUFACTURER := MyFactory   # 制造商
 ```
 
-- 定义包含的软件包 (PRODUCT_PACKAGES)
+- 3、定义包含的软件包 (PRODUCT_PACKAGES)
 
 这是最常用的变量，用于指定哪些模块（APK、动态库、可执行文件）要打包进镜像。
 
-```
+```makefile
 PRODUCT_PACKAGES += \
     MyCustomLauncher \
     libcustom_hardware_jni \
@@ -136,6 +136,31 @@ PRODUCT_PACKAGES += \
 
 ##### BoardConfig.mk
 
+主要负责配置与特定硬件架构、内核、编译器参数以及分区结构相关的变量。
+
+- 1、定义硬件架构
+
+```makefile
+TARGET_ARCH := arm64							# 基础架构（如 arm64, x86_64）。
+TARGET_ARCH_VARIANT := armv8-a    # 架构变体（如 armv8-a, armv8-2a）。
+```
+
+- 2、内核与引导配置
+
+TARGET_NO_BOOTLOADER: 是否在 AOSP 中编译 Bootloader（通常为 true，因为 Bootloader 多由厂商单独提供）。
+
+BOARD_KERNEL_CMDLINE: 传递给内核的启动参数（如串口打印、根分区位置）
+
+BOARD_KERNEL_BASE: 内核加载的基地址。
+
+BOARD_KERNEL_PAGESIZE: 内核页大小（通常是 2048 或 4096）。
+
+- 3、存储与分区定义 (Storage & Partitions)
+
+
+BOARD_XXXXXIMAGE_PARTITION_SIZE： 定义各分区的字节大小。
+
+BOARD_XXXXXIMAGE_FILE_SYSTEM_TYPE：定义文件系统格式（如 `ext4`, `f2fs`, `erofs`）
 
 
 
