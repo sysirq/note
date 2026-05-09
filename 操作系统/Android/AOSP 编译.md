@@ -489,3 +489,7 @@ https://developer.android.com/studio/run/emulator-commandline?hl=zh-cn#startup-o
 Soong
 
 https://android.googlesource.com/platform/build/soong/+/refs/heads/main/README.md
+
+Android.mk
+
+https://developer.android.com/ndk/guides/android_mk?hl=zh-cn
