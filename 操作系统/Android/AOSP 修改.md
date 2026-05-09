@@ -214,13 +214,18 @@ int main(void)
 }
 ```
 
-编译产物类型:
+### 模块最终被安装到镜像的哪个路径
 
-- BUILD_EXECUTABLE: 编译二进制（存放在 /system/bin/）。
-- BUILD_SHARED_LIBRARY: 编译动态库 .so（存放在 /system/lib/）。
-- BUILD_STATIC_LIBRARY: 编译静态库 .a。
-- BUILD_PACKAGE: 编译 APK。
-- BUILD_PREBUILT: 拷贝现成的文件。
+- include $(BUILD_EXECUTABLE): 默认安装到 /system/bin/
+- include $(BUILD_PACKAGE): 默认安装到 /system/app/ 或 /system/priv-app/
+- include $(BUILD_SHARED_LIBRARY): 默认安装到 /system/lib/ (或 lib64)
+
+自定义路径变量：
+
+LOCAL_MODULE_PATH: 最高优先级。如果你手动设置了这个变量，模块会无视默认规则，强行去往该路径。
+
+e g: LOCAL_MODULE_PATH := $(TARGET_OUT_ETC)/my_config  → 安装到 /system/etc/my_config/
+
 
 # 资料
 
