@@ -176,6 +176,43 @@ BOARD_XXXXXIMAGE_PARTITION_SIZE： 定义各分区的字节大小。
 
 BOARD_XXXXXIMAGE_FILE_SYSTEM_TYPE：定义文件系统格式（如 `ext4`, `f2fs`, `erofs`）
 
+# 自定义模块
+
+### 目录结构
+
+```
+/home/sysirq/aosp-6.0.1/device/tvbox
+
+└── test_module
+    ├── Android.mk
+    └── hello_aosp.c
+```
+
+Android.mk:
+
+```makefile
+LOCAL_PATH := $(call my-dir)  # 获取当前目录路径
+
+include $(CLEAR_VARS)         # 清空之前的变量环境（必须）
+
+LOCAL_MODULE := hello_aosp    # 模块名，这就是你加到 PRODUCT_PACKAGES 的名字
+LOCAL_SRC_FILES := hello_aosp.c # 源码文件路径
+LOCAL_CFLAGS := -Werror       # 编译选项
+
+include $(BUILD_EXECUTABLE)   # 告诉系统：编译成一个可执行文件
+```
+
+hello_aosp.c
+
+```c
+#include <stdio.h>
+
+int main(void)
+{
+	printf("Hello,world\n");
+	return 0;
+}
+```
 
 
 # 资料
