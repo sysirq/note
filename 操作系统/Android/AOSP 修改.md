@@ -18,11 +18,19 @@ repo start <newbranchname> --all
 repo branches
 ```
 
-删除repo分支
+查看修改:
+
+```
+repo diff
+```
+
+删除repo分支:
 
 ```
  repo abandon [--all | <branchname>] [<project>...]
 ```
+
+# 添加新设备
 
 # 资料
 
