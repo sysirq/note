@@ -133,6 +133,20 @@ PRODUCT_PACKAGES += \
     ScreenRecorder
 ```
 
+**常用高级变量说明**：
+
+- PRODUCT_COPY_FILES
+
+将源码树中的文件拷贝到镜像指定路径。常用于配置文件。eg: path/to/init.rc:vendor/etc/init/init.rc
+
+- PRODUCT_PROPERTY_OVERRIDES
+
+设置默认的系统属性（build.prop）。eg: ro.config.low_ram=false
+
+- PRODUCT_CHARACTERISTICS
+
+定义设备形态（手机、平板、手表、电视）,tablet 或 nosdcard,watch
+
 
 ##### BoardConfig.mk
 
