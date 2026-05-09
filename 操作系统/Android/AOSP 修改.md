@@ -94,6 +94,45 @@ add_lunch_combo <product-name>-userdebug
 
 ##### device.mk
 
+产品配置文件是整个构建系统的“指挥棒”。它决定了 Android 系统镜像中包含哪些功能、哪些应用、以及针对什么硬件进行优化。通常这个文件会被 AndroidProducts.mk 引用，它的核心任务是填充以 PRODUCT_ 开头的系统变量。
+
+一个完整的产品配置文件通常分为三个部分：继承基础配置、定义设备参数、声明包含组件。
+
+
+
+- 继承基础配置 (Inherit)
+
+你不需要从零开始写一个 Android 系统。通过 inherit-product 函数，你可以复用 Google 已经写好的通用配置。
+
+```
+$(call inherit-product, device/generic/x86_64/mini_x86_64.mk)
+
+$(call inherit-product, device/generic/mini-emulator-armv7-a-neon/mini_emulator_common.mk)
+```
+
+- 定义设备参数
+
+这些信息会写入到系统的 /system/build.prop 文件中，应用通过 android.os.Build 类读取。
+
+```
+PRODUCT_NAME := my_device_model      # 关键：必须与 lunch 选项一致
+PRODUCT_DEVICE := my_codename       # 对应 device/vendor/codename 目录名
+PRODUCT_BRAND := MyBrand            # 品牌名
+PRODUCT_MODEL := Awesome Pad Pro    # 最终在“关于手机”里显示的名字
+PRODUCT_MANUFACTURER := MyFactory   # 制造商
+```
+
+- 定义包含的软件包 (PRODUCT_PACKAGES)
+
+这是最常用的变量，用于指定哪些模块（APK、动态库、可执行文件）要打包进镜像。
+
+```
+PRODUCT_PACKAGES += \
+    MyCustomLauncher \
+    libcustom_hardware_jni \
+    ScreenRecorder
+```
+
 
 ##### BoardConfig.mk
 
