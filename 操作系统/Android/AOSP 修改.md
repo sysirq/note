@@ -214,6 +214,13 @@ int main(void)
 }
 ```
 
+编译产物类型:
+
+- BUILD_EXECUTABLE: 编译二进制（存放在 /system/bin/）。
+- BUILD_SHARED_LIBRARY: 编译动态库 .so（存放在 /system/lib/）。
+- BUILD_STATIC_LIBRARY: 编译静态库 .a。
+- BUILD_PACKAGE: 编译 APK。
+- BUILD_PREBUILT: 拷贝现成的文件。
 
 # 资料
 
