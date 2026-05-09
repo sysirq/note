@@ -46,16 +46,16 @@ cd device/mycorp/mydevice
 
 ### 核心配置文件
 
-- AndroidProducts.mk
+###### AndroidProducts.mk
 
 
-- device.mk
+###### device.mk
 
 
-- BoardConfig.mk
+###### BoardConfig.mk
 
 
-- vendorsetup.sh
+###### vendorsetup.sh
 
 仅适用于 Android 9 及更低版本,创建一个 vendorsetup.sh 文件，以将您的产品（“lunch combo”）以及用破折号分隔的构建变体添加到构建中。例如
 
