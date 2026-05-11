@@ -248,3 +248,8 @@ https://android.googlesource.com/platform/build/soong/+/refs/heads/main/README.m
 Android.mk
 
 https://developer.android.com/ndk/guides/android_mk?hl=zh-cn
+
+针对 AOSP 进行开发 (5.0 - 8.0)的Dockerfile
+
+https://android.googlesource.com/platform/build/+/main/tools/docker
+
