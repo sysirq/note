@@ -237,10 +237,6 @@ https://source.android.com/docs/setup/create/new-device?hl=zh-cn
 
 https://source.android.com/docs/setup/test/avd?hl=zh-cn
 
-从命令行启动模拟器
-
-https://developer.android.com/studio/run/emulator-commandline?hl=zh-cn#startup-options
-
 Soong
 
 https://android.googlesource.com/platform/build/soong/+/refs/heads/main/README.md
