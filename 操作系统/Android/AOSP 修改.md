@@ -191,15 +191,21 @@ BOARD_XXXXXIMAGE_FILE_SYSTEM_TYPE：定义文件系统格式（如 `ext4`, `f2fs
 Android.mk:
 
 ```makefile
-LOCAL_PATH := $(call my-dir)  # 获取当前目录路径
+# 获取当前目录路径
+LOCAL_PATH := $(call my-dir)
 
-include $(CLEAR_VARS)         # 清空之前的变量环境（必须）
+# 清空之前的变量环境（必须）
+include $(CLEAR_VARS)         
 
-LOCAL_MODULE := hello_aosp    # 模块名，这就是你加到 PRODUCT_PACKAGES 的名字
-LOCAL_SRC_FILES := hello_aosp.c # 源码文件路径
-LOCAL_CFLAGS := -Werror       # 编译选项
+# 模块名，这就是你加到 PRODUCT_PACKAGES 的名字
+LOCAL_MODULE := hello_aosp
+# 源码文件路径
+LOCAL_SRC_FILES := hello_aosp.c 
+# 编译选项
+LOCAL_CFLAGS := -Werror       
 
-include $(BUILD_EXECUTABLE)   # 告诉系统：编译成一个可执行文件
+# 告诉系统：编译成一个可执行文件
+include $(BUILD_EXECUTABLE)   
 ```
 
 hello_aosp.c
