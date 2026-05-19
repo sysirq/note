@@ -15,3 +15,7 @@ https://docs.u-boot.org/en/latest/
 U-Boot移植与调试指南
 
 https://openvela.csdn.net/69c4b45054b52172bc648ca5.html
+
+u-boot启动流程
+
+https://github.com/zhaojh329/U-boot-1/blob/master/第1章-U-boot启动流程.md
