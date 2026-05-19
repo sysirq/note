@@ -1,3 +1,40 @@
+# uboot borad kconfig分析
+
+eg：
+board/amlogic/txl_p321_v1/Kconfig: 
+```kconfig
+if TARGET_MESON_GXTV
+
+config SYS_CPU
+	string
+	default "armv8"
+
+config SYS_BOARD
+	string
+	default "txl_p321_v1"
+
+config SYS_VENDOR
+	string
+	default "amlogic"
+
+config SYS_SOC
+	string
+	default "txl"
+
+config SYS_CONFIG_NAME
+	default "txl_p321_v1"
+
+endif
+```
+
+从SYS_CPU与SYS_SOC，可以知道特定的soc目录为：arch/arm/cpu/armv8/txl/
+
+SYS_BOARD 指定 board_init 等函数的源码名称为: txl_p321_v1.c
+
+SYS_CONFIG_NAME 指定配置文件为 txl_p321_v1.h
+
+
+
 # 参考资料
 
 **U-Boot** 源代码分析 源代码分析 源代码分析 源代码分析
