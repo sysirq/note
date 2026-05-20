@@ -56,3 +56,7 @@ https://openvela.csdn.net/69c4b45054b52172bc648ca5.html
 u-boot启动流程
 
 https://github.com/zhaojh329/U-boot-1/blob/master/第1章-U-boot启动流程.md
+
+U-Boot 深度解析：从原理到实践
+
+https://www.cnblogs.com/clnchanpin/p/19393470
