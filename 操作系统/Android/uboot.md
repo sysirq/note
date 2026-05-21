@@ -60,3 +60,7 @@ https://github.com/zhaojh329/U-boot-1/blob/master/第1章-U-boot启动流程.md
 U-Boot 深度解析：从原理到实践
 
 https://www.cnblogs.com/clnchanpin/p/19393470
+
+amlogic-u-boot-scripts
+
+https://github.com/FauthD/amlogic-u-boot-scripts
