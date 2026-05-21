@@ -68,3 +68,7 @@ https://github.com/FauthD/amlogic-u-boot-scripts
 Board-specific doc / Amlogic
 
 https://docs.u-boot.org/en/latest/board/amlogic/index.html
+
+ARM的安全启动—ATF/TF-A以及它与UEFI的互动
+
+https://zhuanlan.zhihu.com/p/391101179
