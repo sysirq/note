@@ -72,3 +72,7 @@ https://docs.u-boot.org/en/latest/board/amlogic/index.html
 ARM的安全启动—ATF/TF-A以及它与UEFI的互动
 
 https://zhuanlan.zhihu.com/p/391101179
+
+ARM Trusted Firmware-A && RISC-V OpenSBI
+
+https://www.cnblogs.com/Avalon-Nausica/p/18574664
