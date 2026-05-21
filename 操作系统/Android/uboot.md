@@ -64,3 +64,7 @@ https://www.cnblogs.com/clnchanpin/p/19393470
 amlogic-u-boot-scripts
 
 https://github.com/FauthD/amlogic-u-boot-scripts
+
+Board-specific doc / Amlogic
+
+https://docs.u-boot.org/en/latest/board/amlogic/index.html
