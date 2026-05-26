@@ -74,10 +74,149 @@ file="super.PARTITION"		main_type="PARTITION"		sub_type="super"
 file="vbmeta.PARTITION"		main_type="PARTITION"		sub_type="vbmeta"
 ```
 
-dts /partitions 节点:
+dts /partitions 节点（_aml_dtb.PARTITION 需要先gunzip，才能使用dtc）:
 
 ```dts
+	partitions {
+		parts = <0x11>;
+		part-0 = <0x02>;
+		part-1 = <0x03>;
+		part-2 = <0x04>;
+		part-3 = <0x05>;
+		part-4 = <0x06>;
+		part-5 = <0x07>;
+		part-6 = <0x08>;
+		part-7 = <0x09>;
+		part-8 = <0x0a>;
+		part-9 = <0x0b>;
+		part-10 = <0x0c>;
+		part-11 = <0x0d>;
+		part-12 = <0x0e>;
+		part-13 = <0x0f>;
+		part-14 = <0x10>;
+		part-15 = <0x11>;
+		part-16 = <0x12>;
+		phandle = <0xa1>;
 
+		logo {
+			pname = "logo";
+			size = <0x00 0x800000>;
+			mask = <0x01>;
+			phandle = <0x02>;
+		};
+
+		recovery {
+			pname = "recovery";
+			size = <0x00 0x1800000>;
+			mask = <0x01>;
+			phandle = <0x03>;
+		};
+
+		tee {
+			pname = "tee";
+			size = <0x00 0x2000000>;
+			mask = <0x01>;
+			phandle = <0x04>;
+		};
+
+		factory {
+			pname = "factory";
+			size = <0x00 0x800000>;
+			mask = <0x11>;
+			phandle = <0x05>;
+		};
+
+		misc {
+			pname = "misc";
+			size = <0x00 0x200000>;
+			mask = <0x01>;
+			phandle = <0x06>;
+		};
+
+		dtbo {
+			pname = "dtbo";
+			size = <0x00 0x200000>;
+			mask = <0x01>;
+			phandle = <0x07>;
+		};
+
+		cri_data {
+			pname = "cri_data";
+			size = <0x00 0x800000>;
+			mask = <0x02>;
+			phandle = <0x08>;
+		};
+
+		oem {
+			pname = "oem";
+			size = <0x00 0x1000000>;
+			mask = <0x01>;
+			phandle = <0x0b>;
+		};
+
+		odm_ext {
+			pname = "odm_ext";
+			size = <0x00 0x1000000>;
+			mask = <0x01>;
+			phandle = <0x0c>;
+		};
+
+		rsv {
+			pname = "rsv";
+			size = <0x00 0x1000000>;
+			mask = <0x01>;
+			phandle = <0x0d>;
+		};
+
+		metadata {
+			pname = "metadata";
+			size = <0x00 0x1000000>;
+			mask = <0x01>;
+			phandle = <0x0e>;
+		};
+
+		vbmeta {
+			pname = "vbmeta";
+			size = <0x00 0x200000>;
+			mask = <0x01>;
+			phandle = <0x0f>;
+		};
+
+		param {
+			pname = "param";
+			size = <0x00 0x1000000>;
+			mask = <0x02>;
+			phandle = <0x09>;
+		};
+
+		boot {
+			pname = "boot";
+			size = <0x00 0x1000000>;
+			mask = <0x01>;
+			phandle = <0x0a>;
+		};
+
+		super {
+			pname = "super";
+			size = <0x00 0x64000000>;
+			mask = <0x01>;
+			phandle = <0x10>;
+		};
+
+		cache {
+			pname = "cache";
+			size = <0x00 0x32000000>;
+			mask = <0x02>;
+			phandle = <0x11>;
+		};
+
+		data {
+			pname = "data";
+			size = <0xffffffff 0xffffffff>;
+			mask = <0x04>;
+			phandle = <0x12>;
+		};
+	};
 ```
 
 ### vim3-ubuntu-24.04-gnome-linux-5.15-fenix-1.6.9-240618-emmc.img.xz
@@ -96,3 +235,21 @@ file="_aml_dtb.PARTITION"		main_type="PARTITION"		sub_type="_aml_dtb"
 file="DDR.USB"		main_type="PARTITION"		sub_type="bootloader"
 file="rootfs.PARTITION"		main_type="PARTITION"		sub_type="rootfs"
 ```
+
+dts /partitions 节点（_aml_dtb.PARTITION 需要先gunzip）:
+
+```
+	partitions {
+		parts = <0x01>;
+		part-0 = <0x7d>;
+		phandle = <0x133>;
+
+		rootfs {
+			pname = "rootfs";
+			size = <0xffffffff 0xffffffff>;
+			mask = <0x04>;
+			phandle = <0x7d>;
+		};
+	};
+```
+
