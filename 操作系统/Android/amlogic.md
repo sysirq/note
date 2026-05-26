@@ -2,7 +2,7 @@
 
 ### VIM3.uboot-mainline.emmc.aml.img
 
-```
+```ini
 [LIST_NORMAL]
 file="DDR.USB"		main_type="USB"		sub_type="DDR"	file_type="normal"
 file="DDR.USB"		main_type="USB"		sub_type="UBOOT"	file_type="normal"
@@ -18,7 +18,7 @@ file="bootloader.PARTITION"		main_type="PARTITION"		sub_type="bootloader"	file_t
 
 ### vim3-android-11-32bit-v241024.img.xz
 
-```
+```ini
 [LIST_NORMAL]
 file="DDR.USB"		main_type="USB"		sub_type="DDR"
 file="DDR.USB"		main_type="USB"		sub_type="UBOOT"
@@ -42,7 +42,7 @@ file="vbmeta.PARTITION"		main_type="PARTITION"		sub_type="vbmeta"
 
 ### vim3-ubuntu-24.04-gnome-linux-5.15-fenix-1.6.9-240618-emmc.img.xz
 
-```
+```ini
 [LIST_NORMAL]
 file="DDR.USB"		main_type="USB"		sub_type="DDR"
 file="DDR.USB"		main_type="USB"		sub_type="UBOOT"
