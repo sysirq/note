@@ -49,6 +49,44 @@ dts /partitions 节点:
         };
 ```
 
+uboot读取emmc上的EPT分区表
+
+```sh
+=> mmc list
+mmc@ffe03000: 0
+mmc@ffe05000: 1
+mmc@ffe07000: 2 (eMMC)
+=> mmc dev 2
+switch to partitions #0, OK
+mmc2(part 0) is current device
+=> mmc info
+Device: mmc@ffe07000
+Manufacturer ID: 15
+OEM: 0
+Name: BJTD4R
+Bus Speed: 26000000
+Mode: MMC High Speed (26MHz)
+Rd Block Len: 512
+MMC version 5.1
+High Capacity: Yes
+Capacity: 29.1 GiB
+Bus Width: 8-bit
+Erase Group Size: 512 KiB
+HC WP Group Size: 8 MiB
+User Capacity: 29.1 GiB WRREL
+Boot Capacity: 4 MiB ENH
+RPMB Capacity: 4 MiB ENH
+Boot area 0 is not write protected
+Boot area 1 is not write protected
+=> mmc read 0x1080000 0x12000 0x20
+MMC read: dev # 2, block # 73728, count 32 ... 32 blocks read: OK
+=> md.b 0x1080000
+01080000: 4d 50 54 00 30 31 2e 30 30 2e 30 30 00 00 00 00  MPT.01.00.00....
+01080010: 06 00 00 00 32 e7 67 16 62 6f 6f 74 6c 6f 61 64  ....2.g.bootload
+01080020: 65 72 00 00 00 00 00 00 00 00 40 00 00 00 00 00  er........@.....
+01080030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+```
+
 
 ### vim3-android-11-32bit-v241024.img.xz
 
