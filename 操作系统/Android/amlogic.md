@@ -16,6 +16,40 @@ file="_aml_dtb.PARTITION"		main_type="PARTITION"		sub_type="_aml_dtb"	file_type=
 file="bootloader.PARTITION"		main_type="PARTITION"		sub_type="bootloader"	file_type="normal"
 ```
 
+dts /partitions 节点:
+
+```dts
+        partitions {
+                parts = <0x03>;
+                part-0 = <0x61>;
+                part-1 = <0x62>;
+                part-2 = <0x63>;
+                phandle = <0x100>;
+
+                logo {
+                        pname = "logo";
+                        size = <0x00 0x800000>;
+                        mask = <0x01>;
+                        phandle = <0x61>;
+                };
+
+                ramdisk {
+                        pname = "ramdisk";
+                        size = <0x00 0x2000000>;
+                        mask = <0x01>;
+                        phandle = <0x62>;
+                };
+
+                rootfs {
+                        pname = "rootfs";
+                        size = <0xffffffff 0xffffffff>;
+                        mask = <0x04>;
+                        phandle = <0x63>;
+                };
+        };
+```
+
+
 ### vim3-android-11-32bit-v241024.img.xz
 
 ```ini
@@ -38,6 +72,12 @@ file="oem.PARTITION"		main_type="PARTITION"		sub_type="oem"
 file="recovery.PARTITION"		main_type="PARTITION"		sub_type="recovery"
 file="super.PARTITION"		main_type="PARTITION"		sub_type="super"
 file="vbmeta.PARTITION"		main_type="PARTITION"		sub_type="vbmeta"
+```
+
+dts /partitions 节点:
+
+```dts
+
 ```
 
 ### vim3-ubuntu-24.04-gnome-linux-5.15-fenix-1.6.9-240618-emmc.img.xz
