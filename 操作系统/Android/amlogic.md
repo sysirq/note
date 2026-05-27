@@ -823,3 +823,37 @@ Pack image[aaa.img] OK
 
 ```
 
+通过u-boot命令读取rsv中的分区表
+
+```
+=> mmc list
+mmc@ffe03000: 0
+mmc@ffe05000: 1
+mmc@ffe07000: 2 (eMMC)
+=> mmc dev 2
+switch to partitions #0, OK
+mmc2(part 0) is current device
+=> mmc info
+Device: mmc@ffe07000
+Manufacturer ID: 15
+OEM: 0
+Name: BJTD4R
+Bus Speed: 26000000
+Mode: MMC High Speed (26MHz)
+Rd Block Len: 512
+MMC version 5.1
+High Capacity: Yes
+Capacity: 29.1 GiB
+Bus Width: 8-bit
+Erase Group Size: 512 KiB
+HC WP Group Size: 8 MiB
+User Capacity: 29.1 GiB WRREL
+Boot Capacity: 4 MiB ENH
+RPMB Capacity: 4 MiB ENH
+Boot area 0 is not write protected
+Boot area 1 is not write protected
+=> mmc read 0x1080000 0x12000 0x20
+MMC read: dev # 2, block # 73728, count 32 ... 32 blocks read: OK
+=> md.b  0x1080000 0x518
+```
+
