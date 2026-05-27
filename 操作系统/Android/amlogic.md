@@ -49,7 +49,7 @@ dts /partitions 节点:
         };
 ```
 
-uboot读取emmc上的MPT分区表
+uboot读取emmc上的Emmc Partition Table分区表
 
 ```sh
 => mmc list
