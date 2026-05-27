@@ -730,11 +730,11 @@ idx name                 size       offset          end     gap_prev
 
 发现貌似bootloader分区、reserved分区、env分区是必须存在的，不能通过dtb修改。
 
-删除partitions中的ramdisk、rootfs节点，修改logo的名字为justForFun:
+删除partitions中的ramdisk、rootfs节点，修改logo的名字为justForFun，（**parts属性也记得修改**）:
 
 ```
 	partitions {
-		parts = <0x03>;
+		parts = <0x01>;
 		part-0 = <0x61>;
 		phandle = <0x100>;
 
