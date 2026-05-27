@@ -44,6 +44,258 @@
 
 普通 eMMC 分区之间预留的固定间隔，大小是 8MB
 
+# 有用的脚本
+
+### rsv_partitions_parser.py
+
+功能：解析 rsv中的partition table
+
+```python
+#!/usr/bin/env python3
+
+import re
+import struct
+import sys
+from typing import Iterable, List, Sequence, Tuple
+
+
+MAX_PART_NAME_LEN = 16
+PARTITION_STRUCT_SIZE = 40
+HEADER_STRUCT = struct.Struct("<4s12sIi")
+PARTITION_STRUCT = struct.Struct("<16sQQII")
+MPT_VERSION_1 = b"01.00.00"
+MPT_VERSION_2 = b"01.02.00"
+
+
+def extract_bytes(lines: Iterable[str]) -> bytes:
+    data = bytearray()
+    byte_re = re.compile(r"\b[0-9A-Fa-f]{2}\b")
+
+    for raw_line in lines:
+        line = raw_line.rstrip("\n")
+        if not line.strip():
+            continue
+
+        if ":" in line:
+            line = line.split(":", 1)[1]
+
+        hex_bytes: List[int] = []
+        for token in byte_re.findall(line):
+            hex_bytes.append(int(token, 16))
+            if len(hex_bytes) == 16:
+                break
+
+        if not hex_bytes:
+            continue
+
+        data.extend(hex_bytes)
+
+    return bytes(data)
+
+
+def decode_c_string(raw: bytes) -> str:
+    return raw.split(b"\0", 1)[0].decode("ascii", errors="replace")
+
+
+def detect_version(raw_version: bytes) -> int:
+    if raw_version.startswith(MPT_VERSION_2):
+        return 2
+    if raw_version.startswith(MPT_VERSION_1):
+        return 1
+    return -1
+
+
+def calc_checksum_v1(partitions_blob: bytes, count: int) -> int:
+    checksum = 0
+    words_per_partition = PARTITION_STRUCT_SIZE // 4
+    ints = struct.unpack("<{}I".format(len(partitions_blob) // 4), partitions_blob)
+
+    for _ in range(count):
+        for index in range(words_per_partition):
+            checksum = (checksum + ints[index]) & 0xFFFFFFFF
+
+    return checksum
+
+
+def calc_checksum_v2(partitions_blob: bytes, count: int) -> int:
+    ints = struct.unpack("<{}I".format((count * PARTITION_STRUCT_SIZE) // 4), partitions_blob)
+    checksum = 0
+    for value in ints:
+        checksum = (checksum + value) & 0xFFFFFFFF
+    return checksum
+
+
+def parse_partitions(blob: bytes, count: int) -> Sequence[Tuple[str, int, int, int, int]]:
+    partitions = []
+    offset = HEADER_STRUCT.size
+
+    for index in range(count):
+        end = offset + PARTITION_STRUCT_SIZE
+        if end > len(blob):
+            raise ValueError(
+                "input is truncated: need {} bytes for {} partitions, got {} bytes".format(
+                    end, count, len(blob)
+                )
+            )
+
+        name_raw, size, part_offset, mask_flags, protect_flags = PARTITION_STRUCT.unpack(
+            blob[offset:end]
+        )
+        partitions.append((decode_c_string(name_raw), size, part_offset, mask_flags, protect_flags))
+        offset = end
+
+    return partitions
+
+
+def format_size(value: int) -> str:
+    mib = value / (1024 * 1024)
+    if value % (1024 * 1024) == 0:
+        return "{} MiB".format(int(mib))
+    return "{:.3f} MiB".format(mib)
+
+
+def main() -> int:
+    blob = extract_bytes(sys.stdin)
+    if not blob:
+        print("no hex bytes found on stdin", file=sys.stderr)
+        return 1
+
+    if len(blob) < HEADER_STRUCT.size:
+        print(
+            "input is too short: need at least {} bytes, got {}".format(
+                HEADER_STRUCT.size, len(blob)
+            ),
+            file=sys.stderr,
+        )
+        return 1
+
+    magic_raw, version_raw, count, checksum = HEADER_STRUCT.unpack(blob[: HEADER_STRUCT.size])
+    magic = decode_c_string(magic_raw)
+    version = decode_c_string(version_raw)
+    version_id = detect_version(version_raw)
+
+    try:
+        partitions = parse_partitions(blob, count)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+
+    partitions_blob = blob[HEADER_STRUCT.size : HEADER_STRUCT.size + count * PARTITION_STRUCT_SIZE]
+    checksum_v1 = calc_checksum_v1(partitions_blob, count)
+    checksum_v2 = calc_checksum_v2(partitions_blob, count)
+
+    print("rsv partition table")
+    print("magic        : {} ({})".format(magic, magic_raw.hex()))
+    print("version      : {}".format(version))
+    print("count        : {}".format(count))
+    print("checksum     : 0x{:08x}".format(checksum & 0xFFFFFFFF))
+
+    if version_id == 1:
+        print(
+            "checksum v1  : 0x{:08x} {}".format(
+                checksum_v1, "OK" if checksum_v1 == (checksum & 0xFFFFFFFF) else "MISMATCH"
+            )
+        )
+    elif version_id == 2:
+        print(
+            "checksum v2  : 0x{:08x} {}".format(
+                checksum_v2, "OK" if checksum_v2 == (checksum & 0xFFFFFFFF) else "MISMATCH"
+            )
+        )
+    else:
+        print("checksum v1  : 0x{:08x}".format(checksum_v1))
+        print("checksum v2  : 0x{:08x}".format(checksum_v2))
+        print("warning      : unknown version string, cannot choose checksum variant")
+
+    print()
+    print(
+        "{:<3} {:<16} {:>14} {:>14} {:>12} {:>12}".format(
+            "idx", "name", "size", "offset", "mask", "protect"
+        )
+    )
+    print("-" * 78)
+
+    for index, (name, size, part_offset, mask_flags, protect_flags) in enumerate(partitions):
+        print(
+            "{:<3} {:<16} {:>14} {:>14} {:>12} {:>12}".format(
+                index,
+                name or "<empty>",
+                "0x{:x}".format(size),
+                "0x{:x}".format(part_offset),
+                "0x{:x}".format(mask_flags),
+                "0x{:x}".format(protect_flags),
+            )
+        )
+        print(
+            "    size={} offset={}".format(
+                format_size(size),
+                format_size(part_offset),
+            )
+        )
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+```
+
+eg:
+
+```shell
+$ echo "01080000: 4d 50 54 00 30 31 2e 30 30 2e 30 30 00 00 00 00  MPT.01.00.00....
+01080010: 06 00 00 00 32 e7 67 16 62 6f 6f 74 6c 6f 61 64  ....2.g.bootload
+01080020: 65 72 00 00 00 00 00 00 00 00 40 00 00 00 00 00  er........@.....
+01080030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+01080040: 72 65 73 65 72 76 65 64 00 00 00 00 00 00 00 00  reserved........
+01080050: 00 00 00 04 00 00 00 00 00 00 40 02 00 00 00 00  ..........@.....
+01080060: 00 00 00 00 00 00 00 00 65 6e 76 00 00 00 00 00  ........env.....
+01080070: 00 00 00 00 00 00 00 00 00 00 80 00 00 00 00 00  ................
+01080080: 00 00 c0 06 00 00 00 00 00 00 00 00 00 00 00 00  ................
+01080090: 6c 6f 67 6f 00 00 00 00 00 00 00 00 00 00 00 00  logo............
+010800a0: 00 00 80 00 00 00 00 00 00 00 c0 07 00 00 00 00  ................
+010800b0: 01 00 00 00 00 00 00 00 72 61 6d 64 69 73 6b 00  ........ramdisk.
+010800c0: 00 00 00 00 00 00 00 00 00 00 00 02 00 00 00 00  ................
+010800d0: 00 00 c0 08 00 00 00 00 01 00 00 00 00 00 00 00  ................
+010800e0: 72 6f 6f 74 66 73 00 00 00 00 00 00 00 00 00 00  rootfs..........
+010800f0: 00 00 80 3c 07 00 00 00 00 00 40 0b 00 00 00 00  ...<......@.....
+01080100: 04 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+01080110: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+01080120: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+01080130: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+01080140: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+01080150: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+01080160: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+01080170: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+01080180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+01080190: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+010801a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+010801b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................" | python3 rsv_partitions_parser.py
+
+rsv partition table
+magic        : MPT (4d505400)
+version      : 01.00.00
+count        : 6
+checksum     : 0x1667e732
+checksum v1  : 0x1667e732 OK
+
+idx name                       size         offset         mask      protect
+------------------------------------------------------------------------------
+0   bootloader             0x400000            0x0          0x0          0x0
+    size=4 MiB offset=0 MiB
+1   reserved              0x4000000      0x2400000          0x0          0x0
+    size=64 MiB offset=36 MiB
+2   env                    0x800000      0x6c00000          0x0          0x0
+    size=8 MiB offset=108 MiB
+3   logo                   0x800000      0x7c00000          0x1          0x0
+    size=8 MiB offset=124 MiB
+4   ramdisk               0x2000000      0x8c00000          0x1          0x0
+    size=32 MiB offset=140 MiB
+5   rootfs              0x73c800000      0xb400000          0x4          0x0
+    size=29640 MiB offset=180 MiB
+
+```
+
 # USB Burn Image ---  image config
 
 ### VIM3.uboot-mainline.emmc.aml.img
