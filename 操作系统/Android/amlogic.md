@@ -213,29 +213,37 @@ def main() -> int:
 
     print()
     print(
-        "{:<3} {:<16} {:>14} {:>14} {:>12} {:>12}".format(
-            "idx", "name", "size", "offset", "mask", "protect"
+        "{:<3} {:<12} {:>12} {:>12} {:>12} {:>12}".format(
+            "idx", "name", "size", "offset", "end", "gap_prev"
         )
     )
-    print("-" * 78)
+    print("-" * 71)
 
+    previous_end = None
     for index, (name, size, part_offset, mask_flags, protect_flags) in enumerate(partitions):
+        part_end = part_offset + size
+        gap_from_prev = None if previous_end is None else part_offset - previous_end
         print(
-            "{:<3} {:<16} {:>14} {:>14} {:>12} {:>12}".format(
+            "{:<3} {:<12} {:>12} {:>12} {:>12} {:>12}".format(
                 index,
-                name or "<empty>",
+                (name or "<empty>")[:12],
                 "0x{:x}".format(size),
                 "0x{:x}".format(part_offset),
-                "0x{:x}".format(mask_flags),
-                "0x{:x}".format(protect_flags),
+                "0x{:x}".format(part_end),
+                "-" if gap_from_prev is None else "0x{:x}".format(gap_from_prev),
             )
         )
         print(
-            "    size={} offset={}".format(
+            "    size={} offset={} end={} gap_from_prev={} mask=0x{:x} protect=0x{:x}".format(
                 format_size(size),
                 format_size(part_offset),
+                format_size(part_end),
+                "-" if gap_from_prev is None else format_size(gap_from_prev),
+                mask_flags,
+                protect_flags,
             )
         )
+        previous_end = part_end
 
     return 0
 
@@ -247,7 +255,7 @@ if __name__ == "__main__":
 eg:
 
 ```shell
-$ echo "01080000: 4d 50 54 00 30 31 2e 30 30 2e 30 30 00 00 00 00  MPT.01.00.00....
+echo "01080000: 4d 50 54 00 30 31 2e 30 30 2e 30 30 00 00 00 00  MPT.01.00.00....
 01080010: 06 00 00 00 32 e7 67 16 62 6f 6f 74 6c 6f 61 64  ....2.g.bootload
 01080020: 65 72 00 00 00 00 00 00 00 00 40 00 00 00 00 00  er........@.....
 01080030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
@@ -283,20 +291,20 @@ count        : 6
 checksum     : 0x1667e732
 checksum v1  : 0x1667e732 OK
 
-idx name                       size         offset         mask      protect
-------------------------------------------------------------------------------
-0   bootloader             0x400000            0x0          0x0          0x0
-    size=4 MiB offset=0 MiB
-1   reserved              0x4000000      0x2400000          0x0          0x0
-    size=64 MiB offset=36 MiB
-2   env                    0x800000      0x6c00000          0x0          0x0
-    size=8 MiB offset=108 MiB
-3   logo                   0x800000      0x7c00000          0x1          0x0
-    size=8 MiB offset=124 MiB
-4   ramdisk               0x2000000      0x8c00000          0x1          0x0
-    size=32 MiB offset=140 MiB
-5   rootfs              0x73c800000      0xb400000          0x4          0x0
-    size=29640 MiB offset=180 MiB
+idx name                 size       offset          end     gap_prev
+-----------------------------------------------------------------------
+0   bootloader       0x400000          0x0     0x400000            -
+    size=4 MiB offset=0 MiB end=4 MiB gap_from_prev=- mask=0x0 protect=0x0
+1   reserved        0x4000000    0x2400000    0x6400000    0x2000000
+    size=64 MiB offset=36 MiB end=100 MiB gap_from_prev=32 MiB mask=0x0 protect=0x0
+2   env              0x800000    0x6c00000    0x7400000     0x800000
+    size=8 MiB offset=108 MiB end=116 MiB gap_from_prev=8 MiB mask=0x0 protect=0x0
+3   logo             0x800000    0x7c00000    0x8400000     0x800000
+    size=8 MiB offset=124 MiB end=132 MiB gap_from_prev=8 MiB mask=0x1 protect=0x0
+4   ramdisk         0x2000000    0x8c00000    0xac00000     0x800000
+    size=32 MiB offset=140 MiB end=172 MiB gap_from_prev=8 MiB mask=0x1 protect=0x0
+5   rootfs        0x73c800000    0xb400000  0x747c00000     0x800000
+    size=29640 MiB offset=180 MiB end=29820 MiB gap_from_prev=8 MiB mask=0x4 protect=0x0
 
 ```
 
