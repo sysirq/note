@@ -664,3 +664,162 @@ GNU ld (Arm GNU Toolchain 15.2.Rel1 (Build arm-15.86)) 2.45.1.20251203
 ```
 
 替换成功
+
+### 自定义分区
+
+从替换u-boot后的工作目录开始。
+
+反编译dtb:
+
+```sh
+$ cd aaa
+$ dtc -I dtb -O dts -o original.dts _aml_dtb.PARTITION 
+```
+
+查看dts partitions 内容：
+
+```dts
+	partitions {
+		parts = <0x03>;
+		part-0 = <0x61>;
+		part-1 = <0x62>;
+		part-2 = <0x63>;
+		phandle = <0x100>;
+
+		logo {
+			pname = "logo";
+			size = <0x00 0x800000>;
+			mask = <0x01>;
+			phandle = <0x61>;
+		};
+
+		ramdisk {
+			pname = "ramdisk";
+			size = <0x00 0x2000000>;
+			mask = <0x01>;
+			phandle = <0x62>;
+		};
+
+		rootfs {
+			pname = "rootfs";
+			size = <0xffffffff 0xffffffff>;
+			mask = <0x04>;
+			phandle = <0x63>;
+		};
+	};
+```
+
+通过rsv_partitions_parser.py，解析出来的:
+
+```
+idx name                 size       offset          end     gap_prev
+-----------------------------------------------------------------------
+0   bootloader       0x400000          0x0     0x400000            -
+    size=4 MiB offset=0 MiB end=4 MiB gap_from_prev=- mask=0x0 protect=0x0
+1   reserved        0x4000000    0x2400000    0x6400000    0x2000000
+    size=64 MiB offset=36 MiB end=100 MiB gap_from_prev=32 MiB mask=0x0 protect=0x0
+2   env              0x800000    0x6c00000    0x7400000     0x800000
+    size=8 MiB offset=108 MiB end=116 MiB gap_from_prev=8 MiB mask=0x0 protect=0x0
+3   logo             0x800000    0x7c00000    0x8400000     0x800000
+    size=8 MiB offset=124 MiB end=132 MiB gap_from_prev=8 MiB mask=0x1 protect=0x0
+4   ramdisk         0x2000000    0x8c00000    0xac00000     0x800000
+    size=32 MiB offset=140 MiB end=172 MiB gap_from_prev=8 MiB mask=0x1 protect=0x0
+5   rootfs        0x73c800000    0xb400000  0x747c00000     0x800000
+    size=29640 MiB offset=180 MiB end=29820 MiB gap_from_prev=8 MiB mask=0x4 protect=0x0
+```
+
+发现貌似bootloader分区、reserved分区、env分区是必须存在的，不能通过dtb修改。
+
+删除partitions中的ramdisk、rootfs节点，修改logo的名字为justForFun:
+
+```
+	partitions {
+		parts = <0x03>;
+		part-0 = <0x61>;
+		phandle = <0x100>;
+
+		justForFun {
+			pname = "justForFun";
+			size = <0x00 0x800000>;
+			mask = <0x01>;
+			phandle = <0x61>;
+		};
+	};
+
+```
+
+删除 ```__symbols __``` 节点下rootfs、ramdisk，替换logo的名称为justForFun。
+
+重新生成dtb
+
+```sh
+$ rm _aml_dtb.PARTITION 
+$ dtc -I dts -O dtb -o _aml_dtb.PARTITION original.dts
+$ ls
+_aml_dtb.PARTITION  aml_sdc_burn.ini  aml_sdc_burn.UBOOT  bootloader.PARTITION  DDR.USB  image.cfg  original.dts  platform.conf
+```
+
+创建justForFun.PARTITION:
+
+```sh
+$ dd if=/dev/urandom of=justForFun.PARTITION bs=1M count=2
+$ ls
+_aml_dtb.PARTITION  aml_sdc_burn.ini  aml_sdc_burn.UBOOT  bootloader.PARTITION  DDR.USB  image.cfg  justForFun.PARTITION  original.dts  platform.conf
+```
+
+修改image.cfg，原文件内容为：
+
+```
+[LIST_NORMAL]
+file="DDR.USB"		main_type="USB"		sub_type="DDR"	file_type="normal"
+file="DDR.USB"		main_type="USB"		sub_type="UBOOT"	file_type="normal"
+file="aml_sdc_burn.UBOOT"		main_type="UBOOT"		sub_type="aml_sdc_burn"	file_type="normal"
+file="aml_sdc_burn.ini"		main_type="ini"		sub_type="aml_sdc_burn"	file_type="normal"
+file="_aml_dtb.PARTITION"		main_type="dtb"		sub_type="meson1"	file_type="normal"
+file="platform.conf"		main_type="conf"		sub_type="platform"	file_type="normal"
+
+[LIST_VERIFY]
+file="_aml_dtb.PARTITION"		main_type="PARTITION"		sub_type="_aml_dtb"	file_type="normal"
+file="bootloader.PARTITION"		main_type="PARTITION"		sub_type="bootloader"	file_type="normal"
+```
+
+修改后为：
+
+```
+[LIST_NORMAL]
+file="DDR.USB"		main_type="USB"		sub_type="DDR"	file_type="normal"
+file="DDR.USB"		main_type="USB"		sub_type="UBOOT"	file_type="normal"
+file="aml_sdc_burn.UBOOT"		main_type="UBOOT"		sub_type="aml_sdc_burn"	file_type="normal"
+file="aml_sdc_burn.ini"		main_type="ini"		sub_type="aml_sdc_burn"	file_type="normal"
+file="_aml_dtb.PARTITION"		main_type="dtb"		sub_type="meson1"	file_type="normal"
+file="platform.conf"		main_type="conf"		sub_type="platform"	file_type="normal"
+
+[LIST_VERIFY]
+file="_aml_dtb.PARTITION"		main_type="PARTITION"		sub_type="_aml_dtb"	file_type="normal"
+file="bootloader.PARTITION"		main_type="PARTITION"		sub_type="bootloader"	file_type="normal"
+file="justForFun.PARTITION"		main_type="PARTITION"		sub_type="justForFun"	file_type="normal"
+```
+
+重打包，然后烧写:
+
+```sh
+$ ./utils/aml_image_v2_packer -r aaa/image.cfg aaa/ aaa.img
+[Msg]Pack Item[USB         ,              DDR] from (aaa/DDR.USB),sz[0x144970]B,fileType[normal]	
+[Msg]Pack Item[USB         ,            UBOOT] from (aaa/DDR.USB),Duplicated for DDR.USB
+
+[Msg]Pack Item[PARTITION   ,         _aml_dtb] from (aaa/_aml_dtb.PARTITION),sz[0x15617]B,fileType[normal]	
+[Msg]Pack Item[VERIFY      ,         _aml_dtb] from (aaa/_aml_dtb.PARTITION),vry[sha1sum 2d921c8dee5357cd5f32f48969327ad6db0bc719]	
+[Msg]Pack Item[UBOOT       ,     aml_sdc_burn] from (aaa/aml_sdc_burn.UBOOT),sz[0x144b70]B,fileType[normal]	
+[Msg]Pack Item[ini         ,     aml_sdc_burn] from (aaa/aml_sdc_burn.ini),sz[0x24d]B,fileType[normal]	
+[Msg]Pack Item[PARTITION   ,       bootloader] from (aaa/bootloader.PARTITION),sz[0x145000]B,fileType[normal]	
+[Msg]Pack Item[VERIFY      ,       bootloader] from (aaa/bootloader.PARTITION),vry[sha1sum c586f54a671313e7b82d9c087277af91670f7118]	
+[Msg]Pack Item[PARTITION   ,       justForFun] from (aaa/justForFun.PARTITION),sz[0x200000]B,fileType[normal]	
+[Msg]Pack Item[VERIFY      ,       justForFun] from (aaa/justForFun.PARTITION),vry[sha1sum 74f55372958afc218040de65f5a7bc135e8c3892]	
+[Msg]Pack Item[dtb         ,           meson1] from (aaa/_aml_dtb.PARTITION),Duplicated for _aml_dtb.PARTITION
+
+[Msg]Pack Item[conf        ,         platform] from (aaa/platform.conf),sz[0x9b]B,fileType[normal]	
+[Msg]version:0x2 crc:0x8c395092 size:6183347 bytes[5MB]
+Pack image[aaa.img] OK
+
+```
+
