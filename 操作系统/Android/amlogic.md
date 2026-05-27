@@ -823,6 +823,8 @@ Pack image[aaa.img] OK
 
 ```
 
+**烧写时报DiskInitial命令出错的解决方法：去掉USB_Burn_Tool_V2.2.0中的两个“擦除”选择框(或单独去掉擦除flash)**
+
 通过u-boot命令读取rsv中的分区表
 
 ```
