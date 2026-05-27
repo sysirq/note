@@ -1,3 +1,7 @@
+# 环境 
+
+khadas vim3 4GB内存
+
 # 关于amlogic emmc 分区表(EPT: Emmc Partition Table)的研究
 
 ### 分区表强制同步校验机制
@@ -594,3 +598,61 @@ dts /partitions 节点（_aml_dtb.PARTITION 需要先gunzip）:
 	};
 ```
 
+# 关于修改 burn image 实现自定义分区与bootloader的研究
+
+### 自定义bootloader
+
+```shell
+$ ./utils/aml_image_v2_packer -d VIM3.uboot-mainline.emmc.aml.img aaa
+[Msg]Image package version 0x2
+[Msg]Unpack item [USB         ,              DDR] to (aaa/DDR.USB) size:1329520 bytes
+[Msg]Backup item [USB         ,            UBOOT] backItemId[0][USB, DDR]
+[Msg]Unpack item [PARTITION   ,         _aml_dtb] to (aaa/_aml_dtb.PARTITION) size:87858 bytes
+[Msg]Unpack item [UBOOT       ,     aml_sdc_burn] to (aaa/aml_sdc_burn.UBOOT) size:1330032 bytes
+[Msg]Unpack item [ini         ,     aml_sdc_burn] to (aaa/aml_sdc_burn.ini) size:589 bytes
+[Msg]Unpack item [PARTITION   ,       bootloader] to (aaa/bootloader.PARTITION) size:1331200 bytes
+[Msg]Backup item [dtb         ,           meson1] backItemId[2][PARTITION, _aml_dtb]
+[Msg]Unpack item [conf        ,         platform] to (aaa/platform.conf) size:155 bytes
+[Msg]Write config file "aaa/image.cfg" OK!
+Image unpack OK!
+$ cd aaa/
+$ cp ../amlogic-boot-fip/my-output-dir/u-boot.bin bootloader.PARTITION 
+$ cd ..
+$ ./utils/aml_image_v2_packer -r aaa/image.cfg aaa/ aaa.img
+[Msg]Pack Item[USB         ,              DDR] from (aaa/DDR.USB),sz[0x144970]B,fileType[normal]	
+[Msg]Pack Item[USB         ,            UBOOT] from (aaa/DDR.USB),Duplicated for DDR.USB
+
+[Msg]Pack Item[PARTITION   ,         _aml_dtb] from (aaa/_aml_dtb.PARTITION),sz[0x15732]B,fileType[normal]	
+[Msg]Pack Item[VERIFY      ,         _aml_dtb] from (aaa/_aml_dtb.PARTITION),vry[sha1sum 7ee07f3471bac2523c9a3f9aebc22f3ab108155b]	
+[Msg]Pack Item[UBOOT       ,     aml_sdc_burn] from (aaa/aml_sdc_burn.UBOOT),sz[0x144b70]B,fileType[normal]	
+[Msg]Pack Item[ini         ,     aml_sdc_burn] from (aaa/aml_sdc_burn.ini),sz[0x24d]B,fileType[normal]	
+[Msg]Pack Item[PARTITION   ,       bootloader] from (aaa/bootloader.PARTITION),sz[0x1a3970]B,fileType[normal]	
+[Msg]Pack Item[VERIFY      ,       bootloader] from (aaa/bootloader.PARTITION),vry[sha1sum c9f75412790a4c3369ddf616619a911098c4aeef]	
+[Msg]Pack Item[dtb         ,           meson1] from (aaa/_aml_dtb.PARTITION),Duplicated for _aml_dtb.PARTITION
+
+[Msg]Pack Item[conf        ,         platform] from (aaa/platform.conf),sz[0x9b]B,fileType[normal]	
+[Msg]version:0x2 crc:0x6495db22 size:4472723 bytes[4MB]
+Pack image[aaa.img] OK
+```
+
+先用USB_Burning_Tool 刷写原版VIM3.uboot-mainline.emmc.aml.img，查看version:
+
+
+```
+=> version
+U-Boot 2021.07 (Nov 12 2021 - 11:31:01 +0800) khadas-vim3
+
+aarch64-none-linux-gnu-gcc (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) 9.2.1 20191025
+GNU ld (GNU Toolchain for the A-profile Architecture 9.2-2019.12 (arm-9.10)) 2.33.1.20191209
+```
+
+然后重新刷写我们刚刚构建的aaa.img,查看version:
+
+```
+U-Boot 2026.07-rc2-00064-g38dbe637c9df (May 21 2026 - 05:32:04 -0400) khadas-vim3
+
+aarch64-none-elf-gcc (Arm GNU Toolchain 15.2.Rel1 (Build arm-15.86)) 15.2.1 20251203
+GNU ld (Arm GNU Toolchain 15.2.Rel1 (Build arm-15.86)) 2.45.1.20251203
+```
+
+替换成功
