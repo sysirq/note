@@ -42,6 +42,8 @@
 |               | env            | 628MiB   | 8MiB     | U-Boot 环境变量                           | 0     | 8          |
 |               | data           | ~636MiB  | 剩余空间 | 用户数据分区                              | 4     | –          |
 
+普通 eMMC 分区之间预留的固定间隔，大小是 8MB
+
 # USB Burn Image ---  image config
 
 ### VIM3.uboot-mainline.emmc.aml.img
