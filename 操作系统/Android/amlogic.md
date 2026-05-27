@@ -49,7 +49,7 @@ dts /partitions 节点:
         };
 ```
 
-uboot读取emmc上的EPT分区表
+uboot读取emmc上的MPT分区表
 
 ```sh
 => mmc list
@@ -87,6 +87,11 @@ MMC read: dev # 2, block # 73728, count 32 ... 32 blocks read: OK
 01080030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
 ```
 
+分区表强制同步校验机制:
+
+- 检测物理不一致： U-Boot会将此动态构建的分区映像与物理eMMC上 36MiB 偏移处的物理 EPT 逐项比对 。
+- 强制覆盖策略： 如果两者发生不一致，U-Boot会默认当前的 DTB 节点配置具有最高置信度，并在对物理存储介质上的旧 EPT 进行全盘覆盖擦写后，用最新的 DTB 分区布局强行同步复写物理 EPT 结构 。
+- 无节点回退模式： 只有当在当前 DTB 中完全无法寻获 /partitions 节点结构时，U-Boot 才会放弃对物理分区的重写，并允许内核直接信任并读取现存的 eMMC 物理 EPT 。
 
 ### vim3-android-11-32bit-v241024.img.xz
 
