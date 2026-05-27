@@ -1,3 +1,26 @@
+# 关于amlogic emmc 分区表的研究
+
+### 分区表强制同步校验机制
+
+- 检测物理不一致： (原厂)U-Boot会将此动态构建的分区映像与物理eMMC上 36MiB 偏移处的物理 EPT 逐项比对 。
+- 强制覆盖策略： 如果两者发生不一致，(原厂)U-Boot会默认当前的 DTB 节点配置具有最高置信度，并在对物理存储介质上的旧 EPT 进行全盘覆盖擦写后，用最新的 DTB 分区布局强行同步复写物理 EPT 结构 。
+- 无节点回退模式： 只有当在当前 DTB 中完全无法寻获 /partitions 节点结构时，(原厂)U-Boot 才会放弃对物理分区的重写，并允许内核直接信任并读取现存的 eMMC 物理 EPT 。
+
+###  reserved partition 布局 
+
+```c
+  Global offset of reserved partition is 36MBytes
+  since MMC_BOOT_PARTITION_RESERVED is 32MBytes and
+  MMC_BOOT_DEVICE_SIZE is 4MBytes.
+  MMC_RESERVED_SIZE is 64MBytes for now.
+  layout detail inside reserved partition.
+  0x000000 - 0x003fff: partition table
+  0x004000 - 0x03ffff: storage key area	(16k offset & 256k size)
+  0x400000 - 0x47ffff: dtb area  (4M offset & 512k size)
+  0x480000 - 64MBytes: resv for other usage.
+  ...
+```
+
 # USB Burn Image ---  image config
 
 ### VIM3.uboot-mainline.emmc.aml.img
@@ -49,7 +72,7 @@ dts /partitions 节点:
         };
 ```
 
-uboot读取emmc上的Emmc Partition Table分区表
+uboot读取emmc上rsv的Emmc Partition Table分区表
 
 ```sh
 => mmc list
