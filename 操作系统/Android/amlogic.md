@@ -1,4 +1,4 @@
-# 关于amlogic emmc 分区表的研究
+# 关于amlogic emmc 分区表(EPT: Emmc Partition Table)的研究
 
 ### 分区表强制同步校验机制
 
@@ -20,6 +20,27 @@
   0x480000 - 64MBytes: resv for other usage.
   ...
 ```
+
+### 常见 SoC EPT 分区示例
+
+| SoC           | 分区名         | 起始偏移 | 大小     | 用途/说明                                 | flags | 对齐 (MiB) |
+| :------------ | :------------- | :------- | :------- | :---------------------------------------- | :---- | :--------- |
+| S905/S905X    | **bootloader** | 0x0      | 4MiB     | Amlogic 内置 bootloader（二阶段、三阶段） | 0     | 4          |
+|               | **(GAP)**      | 4MiB     | 32MiB    | 引导区与第一个分区间隙                    | –     | –          |
+|               | **reserved**   | 36MiB    | 64MiB    | 保留区（DDR 参数、设备树、厂商配置等）    | 0     | 8          |
+|               | **(GAP)**      | 100MiB   | 8MiB     | 保留空隙                                  | –     | –          |
+|               | **cache**      | 108MiB   | 512MiB   | 缓存区（Android cache）                   | 2     | 8          |
+|               | **(GAP)**      | 620MiB   | 8MiB     | 缓存与环境变量分区间隙                    | –     | –          |
+|               | **env**        | 628MiB   | 8MiB     | U-Boot 环境变量                           | 0     | 8          |
+|               | **data**       | ~636MiB  | 剩余空间 | Android 用户数据等                        | 4     | –          |
+| S912          | 与 S905X 类似  | –        | –        | 实际大小视出厂固件而定                    | –     | –          |
+| S905X3/SM1    | 类似 S905X     | –        | –        | 同上                                      | –     | –          |
+| S922X (A311D) | bootloader     | 0x0      | 4MiB     | bootloader (BL2/BL31 等)                  | 0     | 4          |
+|               | reserved       | 36MiB    | 64MiB    | 保留区 (DDR, DTB 等)                      | 0     | 8          |
+|               | cache          | 108MiB   | 512MiB   | 缓存区                                    | 2     | 8          |
+|               | (padding)      | 620MiB   | 8MiB     | 保留空隙                                  | –     | –          |
+|               | env            | 628MiB   | 8MiB     | U-Boot 环境变量                           | 0     | 8          |
+|               | data           | ~636MiB  | 剩余空间 | 用户数据分区                              | 4     | –          |
 
 # USB Burn Image ---  image config
 
