@@ -767,6 +767,14 @@ $ ls
 _aml_dtb.PARTITION  aml_sdc_burn.ini  aml_sdc_burn.UBOOT  bootloader.PARTITION  DDR.USB  image.cfg  justForFun.PARTITION  original.dts  platform.conf
 ```
 
+创建my_dtb.PARTITION:
+
+```sh
+$ dd if=/dev/urandom of=my_dtb.PARTITION bs=1024 count=200
+$ ls
+_aml_dtb.PARTITION  aml_sdc_burn.ini  aml_sdc_burn.UBOOT  bootloader.PARTITION  DDR.USB  image.cfg  justForFun.PARTITION  my_dtb.PARTITION  original.dts  platform.conf
+```
+
 修改image.cfg，原文件内容为：
 
 ```
@@ -795,7 +803,7 @@ file="_aml_dtb.PARTITION"		main_type="dtb"		sub_type="meson1"	file_type="normal"
 file="platform.conf"		main_type="conf"		sub_type="platform"	file_type="normal"
 
 [LIST_VERIFY]
-file="_aml_dtb.PARTITION"		main_type="PARTITION"		sub_type="_aml_dtb"	file_type="normal"
+file="my_dtb.PARTITION"		main_type="PARTITION"		sub_type="_aml_dtb"	file_type="normal"
 file="bootloader.PARTITION"		main_type="PARTITION"		sub_type="bootloader"	file_type="normal"
 file="justForFun.PARTITION"		main_type="PARTITION"		sub_type="justForFun"	file_type="normal"
 ```
@@ -807,20 +815,18 @@ $ ./utils/aml_image_v2_packer -r aaa/image.cfg aaa/ aaa.img
 [Msg]Pack Item[USB         ,              DDR] from (aaa/DDR.USB),sz[0x144970]B,fileType[normal]	
 [Msg]Pack Item[USB         ,            UBOOT] from (aaa/DDR.USB),Duplicated for DDR.USB
 
-[Msg]Pack Item[PARTITION   ,         _aml_dtb] from (aaa/_aml_dtb.PARTITION),sz[0x15617]B,fileType[normal]	
-[Msg]Pack Item[VERIFY      ,         _aml_dtb] from (aaa/_aml_dtb.PARTITION),vry[sha1sum 2d921c8dee5357cd5f32f48969327ad6db0bc719]	
+[Msg]Pack Item[PARTITION   ,         _aml_dtb] from (aaa/my_dtb.PARTITION),sz[0x32000]B,fileType[normal]	
+[Msg]Pack Item[VERIFY      ,         _aml_dtb] from (aaa/my_dtb.PARTITION),vry[sha1sum ab37ceb4b793e726e3fa4bb505af131f17c2b99d]	
 [Msg]Pack Item[UBOOT       ,     aml_sdc_burn] from (aaa/aml_sdc_burn.UBOOT),sz[0x144b70]B,fileType[normal]	
 [Msg]Pack Item[ini         ,     aml_sdc_burn] from (aaa/aml_sdc_burn.ini),sz[0x24d]B,fileType[normal]	
-[Msg]Pack Item[PARTITION   ,       bootloader] from (aaa/bootloader.PARTITION),sz[0x145000]B,fileType[normal]	
-[Msg]Pack Item[VERIFY      ,       bootloader] from (aaa/bootloader.PARTITION),vry[sha1sum c586f54a671313e7b82d9c087277af91670f7118]	
+[Msg]Pack Item[PARTITION   ,       bootloader] from (aaa/bootloader.PARTITION),sz[0x1a3970]B,fileType[normal]	
+[Msg]Pack Item[VERIFY      ,       bootloader] from (aaa/bootloader.PARTITION),vry[sha1sum c9f75412790a4c3369ddf616619a911098c4aeef]	
 [Msg]Pack Item[PARTITION   ,       justForFun] from (aaa/justForFun.PARTITION),sz[0x200000]B,fileType[normal]	
 [Msg]Pack Item[VERIFY      ,       justForFun] from (aaa/justForFun.PARTITION),vry[sha1sum 74f55372958afc218040de65f5a7bc135e8c3892]	
-[Msg]Pack Item[dtb         ,           meson1] from (aaa/_aml_dtb.PARTITION),Duplicated for _aml_dtb.PARTITION
-
+[Msg]Pack Item[dtb         ,           meson1] from (aaa/_aml_dtb.PARTITION),sz[0x15617]B,fileType[normal]	
 [Msg]Pack Item[conf        ,         platform] from (aaa/platform.conf),sz[0x9b]B,fileType[normal]	
-[Msg]version:0x2 crc:0x8c395092 size:6183347 bytes[5MB]
+[Msg]version:0x2 crc:0xe3b914e6 size:6775587 bytes[6MB]
 Pack image[aaa.img] OK
-
 ```
 
 **烧写时报DiskInitial命令出错的解决方法：去掉USB_Burn_Tool_V2.2.0中的两个“擦除”选择框(或单独去掉擦除flash)**
@@ -858,4 +864,32 @@ Boot area 1 is not write protected
 MMC read: dev # 2, block # 73728, count 32 ... 32 blocks read: OK
 => md.b  0x1080000 0x518
 ```
+
+使用rsv_partitions_parser.py解析：
+
+```
+rsv partition table
+magic        : MPT (4d505400)
+version      : 01.00.00
+count        : 4
+checksum     : 0x644544cc
+checksum v1  : 0x644544cc OK
+
+idx name                 size       offset          end     gap_prev
+-----------------------------------------------------------------------
+0   bootloader       0x400000          0x0     0x400000            -
+    size=4 MiB offset=0 MiB end=4 MiB gap_from_prev=- mask=0x0 protect=0x0
+1   reserved        0x4000000    0x2400000    0x6400000    0x2000000
+    size=64 MiB offset=36 MiB end=100 MiB gap_from_prev=32 MiB mask=0x0 protect=0x0
+2   env              0x800000    0x6c00000    0x7400000     0x800000
+    size=8 MiB offset=108 MiB end=116 MiB gap_from_prev=8 MiB mask=0x0 protect=0x0
+3   justForFun    0x740000000    0x7c00000  0x747c00000     0x800000
+    size=29696 MiB offset=124 MiB end=29820 MiB gap_from_prev=8 MiB mask=0x4 protect=0x0
+```
+
+成功实现自定义分区
+
+查看justForFun分区在emmc中的数据，是否与justForFun.PARTITION 一致：**完全一致**
+
+查看一下reserved中的dtb（offset: 36MB + 4MB）是否与my_dtb.PARTITION一致：**完全一致**
 
