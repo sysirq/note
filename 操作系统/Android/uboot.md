@@ -119,7 +119,3 @@ https://zhuanlan.zhihu.com/p/391101179
 ARM Trusted Firmware-A && RISC-V OpenSBI
 
 https://www.cnblogs.com/Avalon-Nausica/p/18574664
-
-初学者教程：修改和理解设备树（dts）
-
-https://zhuanlan.zhihu.com/p/665624816
