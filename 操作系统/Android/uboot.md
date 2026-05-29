@@ -9,7 +9,7 @@ uboot代码分析：
 - `u- boot --> arch/arm/lib/vectors.S: _start` 跳转到reset
 - `arch/arm/cpu/armv7/start.S: reset`主要做了：save_boot_params、关中断、切 CPU mode、设置 VBAR、cpu_init_cp15、cpu_init_crit，然后跳转到_main
 - `arch/arm/lib/crt0.S:_main`  解决“怎么把 C 运行环境、重定位和 U-Boot 主流程真正搭起来” , 调用了两个比较重要的函数board_init_f（继续板级/架构级早期初始化、探测内存、计算后续重定位地址、决定新的栈位置、GD 位置等）、board_init_r(重定位之后的执行函数)
-- 
+- `common/board_r.c:board_init_r`核心就是跑一组后期初始化表 init_sequence_r,这一步之后会一路进入 main_loop，最后到 U-Boot 命令行。
 
 # uboot borad kconfig分析
 
