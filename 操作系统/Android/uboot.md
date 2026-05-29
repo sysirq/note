@@ -90,6 +90,13 @@ emmc:
 dd if=fip/u-boot.bin.sd.bin of=$DEV conv=fsync,notrunc bs=1 count=440
 ```
 
+# 内核启动
+
+### u-boot 命令
+
+- booti
+- bootm
+
 # 参考资料
 
 **U-Boot** 源代码分析 源代码分析 源代码分析 源代码分析
