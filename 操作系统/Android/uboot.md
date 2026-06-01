@@ -108,6 +108,7 @@ doc/usage/cmd/bootm.rst
 
 ```sh
 bootm $fit_addr#conf-1
+bootm <fit_addr>:kernel-1 <fit_addr>:ramdisk-1 <fit_addr>:fdt-1
 bootm $kernel_uimage_addr $ramdisk_addr $fdt_addr
 ```
 
