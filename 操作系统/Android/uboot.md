@@ -119,6 +119,50 @@ bootm $kernel_uimage_addr $ramdisk_addr $fdt_addr
 - 指定 kernel + ramdisk + fdt：bootm <fit>:<kernel> <fit>:<ramdisk> <fit>:<fdt>
 - 没有 ramdisk：bootm <fit>:<kernel> - <fit>:<fdt>
 
+### bootm_run_states函数
+
+bootm_run_states 是 U-Boot 启动框架的核心状态机执行器，它根据 states 位掩码按固定顺序推进启动流程，包括初始化上下文、查找 OS 镜像、查找 ramdisk/FDT、加载或解压内核、重定位附属镜像、处理 bootargs、执行 OS 启动前准备以及最终跳转进入 OS。它不是 bootm 独占的实现，而是 bootm、bootz、booti 共用的公共骨架。bootm 通过它执行完整启动流程，booti 和 bootz 则复用其公共阶段，只在各自特有的镜像准备逻辑上做补充。它的核心价值在于：把复杂启动过程拆成可组合、可复用、可单步调试的多个阶段，并清晰地分离了通用启动逻辑和 OS 专属启动逻辑。
+
+```
+1.合并状态到 images.state
+2.如果请求 START，就执行 bootm_start：初始化全局启动上下文
+3.如果请求 PRE_LOAD，就执行 bootm_pre_load：
+4.如果请求 FINDOS，就执行 bootm_find_os：找到内核，识别格式、架构、入口、load 地址
+5.如果请求 FINDOTHER，就执行 bootm_find_other：找到 initrd、FDT、loadables
+6.如果请求 MEASURE，就执行 bootm_measure
+7.如果请求 LOADOS，就关中断并执行 bootm_load_os：解压或搬移内核到目标位置
+8.如果请求 RAMDISK，就重定位 initrd：重定位配套数据
+9.如果请求 FDT，就重定位设备树：重定位配套数据
+10.根据 images.os.os 选择具体 OS 的 boot_fn
+11.如果请求 OS_CMDLINE，就调用 boot_fn 对应阶段
+12.如果请求 OS_BD_T，就调用 boot_fn 对应阶段
+13.如果请求 OS_PREP，就先处理 bootargs，再调用 boot_fn
+14.如果请求 OS_FAKE_GO，就执行假启动逻辑
+15.如果请求 OS_GO，就真正调用 boot_selected_os 进入内核：真正进入 OS
+16.收尾处理错误、中断恢复、必要时复位
+
+bootm_run_states
+-> 记录 states 到 images.state
+-> START: bootm_start()
+-> PRE_LOAD: bootm_pre_load()
+-> FINDOS: bootm_find_os()
+-> FINDOTHER: bootm_find_other()
+-> MEASURE: bootm_measure()
+-> LOADOS: 关中断 -> bootm_load_os()
+-> RAMDISK: boot_ramdisk_high()
+-> FDT: boot_relocate_fdt()
+-> 获取 boot_fn
+-> OS_CMDLINE: boot_fn(OS_CMDLINE)
+-> OS_BD_T: boot_fn(OS_BD_T)
+-> OS_PREP: bootm_process_cmdline_env() -> boot_fn(OS_PREP)
+-> OS_FAKE_GO: boot_selected_os(FAKE_GO)
+-> OS_GO: boot_selected_os(OS_GO)
+-> err 收尾:
+   -> 必要时恢复中断
+   -> 处理 UNIMPLEMENTED / RESET
+   -> 返回 ret
+```
+
 # 参考资料
 
 **U-Boot** 源代码分析 源代码分析 源代码分析 源代码分析
