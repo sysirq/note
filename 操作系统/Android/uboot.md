@@ -163,6 +163,50 @@ bootm_run_states
    -> 返回 ret
 ```
 
+### uImage 数据结构
+
+uImage 是 U-Boot 早期最经典的镜像格式，由 mkimage 工具生成。它本质上是：
+
+```
++------------------+
+| image_header_t   | 64字节头部
++------------------+
+| Kernel Data      | 内核/ramdisk/dtb等数据
++------------------+
+```
+
+```c
+#define IH_MAGIC	0x27051956	/* Image Magic Number		*/
+/*
+ * Legacy format image header,
+ * all data in network byte order (aka natural aka bigendian).
+ */
+struct legacy_img_hdr {
+	uint32_t	ih_magic;	/* Image Header Magic Number	*/
+	uint32_t	ih_hcrc;	/* Image Header CRC Checksum	*/
+	uint32_t	ih_time;	/* Image Creation Timestamp	*/
+	uint32_t	ih_size;	/* Image Data Size		*/
+	uint32_t	ih_load;	/* Data	 Load  Address		*/
+	uint32_t	ih_ep;		/* Entry Point Address		*/
+	uint32_t	ih_dcrc;	/* Image Data CRC Checksum	*/
+	uint8_t		ih_os;		/* Operating System		*/
+	uint8_t		ih_arch;	/* CPU architecture		*/
+	uint8_t		ih_type;	/* Image Type			*/
+	uint8_t		ih_comp;	/* Compression Type		*/
+	uint8_t		ih_name[IH_NMLEN];	/* Image Name		*/
+};
+
+enum image_type_t {
+	IH_TYPE_INVALID		= 0,	/* Invalid Image		*/
+	IH_TYPE_STANDALONE,		/* Standalone Program		*/
+	IH_TYPE_KERNEL,			/* OS Kernel Image		*/
+	IH_TYPE_RAMDISK,		/* RAMDisk Image		*/
+	IH_TYPE_MULTI,			/* Multi-File Image		*/
+	IH_TYPE_FIRMWARE,		/* Firmware Image		*/
+	............
+};
+```
+
 # 参考资料
 
 **U-Boot** 源代码分析 源代码分析 源代码分析 源代码分析
