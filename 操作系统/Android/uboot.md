@@ -92,10 +92,24 @@ dd if=fip/u-boot.bin.sd.bin of=$DEV conv=fsync,notrunc bs=1 count=440
 
 # 内核启动
 
-### u-boot 命令
+### booti(cmd/booti.c)
 
-- booti
-- bootm
+doc/usage/cmd/booti.rst
+
+Image / Image.gz / 压缩 Image，用 booti
+
+```sh
+booti $kernel_addr_r $ramdisk_addr_r:$filesize $fdt_addr_r
+```
+
+### bootm(cmd/bootm.c)
+
+doc/usage/cmd/bootm.rst
+
+```sh
+bootm $fit_addr#conf-1
+bootm $kernel_uimage_addr $ramdisk_addr $fdt_addr
+```
 
 # 参考资料
 
