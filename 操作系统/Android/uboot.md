@@ -112,6 +112,13 @@ bootm <fit_addr>:kernel-1 <fit_addr>:ramdisk-1 <fit_addr>:fdt-1
 bootm $kernel_uimage_addr $ramdisk_addr $fdt_addr
 ```
 
+- 启动默认配置：bootm <fit>
+- 启动指定配置：bootm <fit>#<conf>
+- 启动配置并叠加 overlay：bootm <fit>#<conf>#<extra-conf>
+- 直接指定 kernel：bootm <fit>:<kernel>
+- 指定 kernel + ramdisk + fdt：bootm <fit>:<kernel> <fit>:<ramdisk> <fit>:<fdt>
+- 没有 ramdisk：bootm <fit>:<kernel> - <fit>:<fdt>
+
 # 参考资料
 
 **U-Boot** 源代码分析 源代码分析 源代码分析 源代码分析
