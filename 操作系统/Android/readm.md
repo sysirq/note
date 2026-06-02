@@ -23,3 +23,7 @@ https://www.jianshu.com/p/89dee4891f70
 AndroidStudio生成aar包和如何使用aar包
 
 https://blog.csdn.net/feikudai8460/article/details/120727645
+
+Android系统分区与升级
+
+https://zhuanlan.zhihu.com/p/364003927
