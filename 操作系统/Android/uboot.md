@@ -594,6 +594,43 @@ struct andr_image_data {
 - bootmeth：引导方法，实现特定格式的引导逻辑（如从 extlinux.conf、PXE、Android boot.img、U-Boot 脚本等加载内核）。每个 bootmeth 驱动包含查找和验证 bootflow 的代码片段。例如 u-boot,extlinux 驱动寻找 /extlinux/extlinux.conf，u-boot,script 驱动寻找 boot.scr.uimg/boot.scr，u-boot,android 驱动负责 Android 分区布局。
 - bootflow：具体的引导流程实例，包含操作系统映像的位置、参数等信息。bootflow 由 bootdev+bootmeth 组合查找生成，可能源自 BLS/extlinux 格式的文件或 Android Boot Image 等。
 
+
+bootflow_scan_first() 内部做了什么：
+
+```c
+bootflow_scan_first()
+  │
+  ├─ bootmeth_setup_iter_order(iter, ...)
+  │    → 读取 bootmeths="android" 环境变量
+  │    → iter->method_order[] = [bootmeth_android]  只有一个
+  │    → iter->method = bootmeth_android
+  │
+  ├─ bootdev_setup_iter(iter, ...)
+  │    → 找 mmc bootdev，按优先级排序
+  │    → VIM3: mmc2(eMMC) 优先级最高
+  │    → iter->dev = mmc2_bootdev
+  │
+  └─ bootflow_check(iter, bflow)      ← 对这个 dev+method 组合做检查
+
+do_bootflow_scan()                       cmd/bootflow.c
+  └─ bootflow_scan_first()               boot/bootflow.c
+       ├─ bootmeth_setup_iter_order()    → method = bootmeth_android
+       ├─ bootdev_setup_iter()           → dev = mmc2
+       └─ bootflow_check()
+            └─ bootdev_get_bootflow()
+                 └─ bootmeth_read_bootflow()
+                      └─ android_read_bootflow()  ← 这里读 BCB、验证分区 magic
+                           → bflow.state = BOOTFLOWST_READY
+                           → ret = 0（成功）
+  └─ bootflow_run_boot()                 找到了，立刻启动
+       └─ bootmeth_boot()
+            └─ android_boot()            boot/bootmeth_android.c
+                 └─ boot_android_normal()
+                      └─ bootm_boot_start()
+```
+
+bootflow_scan_first/next 是迭代器，逐一枚举设备和方法的组合。每次枚举都调用 bootflow_check → android_read_bootflow，一旦成功（bflow.err == 0）就立刻 bootflow_run_boot 启动。
+
 # 参考资料
 
 **U-Boot** 源代码分析 源代码分析 源代码分析 源代码分析
