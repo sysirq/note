@@ -585,6 +585,15 @@ struct andr_image_data {
 		android_boot_image_v3_v4_parse_hdr(hdr, &data);
 ```
 
+# bootstd 分析
+
+**以下多少材料来自AI，请自行判断正确性：**
+
+- bootstd：标准启动框架的顶层设备（对应 UCLASS_BOOTSTD），其私有数据 struct bootstd_priv 保存全局配置和扫描列表。bootstd 设备默认由驱动模型自动创建（即使设备树中未显式定义），并负责协调所有 bootdev 和 bootmeth 的操作。
+- bootdev：引导设备，即可提供引导介质访问的设备（通常是存储或网络硬件）。每个 bootdev 驱动与一个底层“媒体”设备相关联（例如 mmc_bootdev 属于对应的 MMC 设备），通过遍历该介质的分区和文件系统来寻找引导文件。
+- bootmeth：引导方法，实现特定格式的引导逻辑（如从 extlinux.conf、PXE、Android boot.img、U-Boot 脚本等加载内核）。每个 bootmeth 驱动包含查找和验证 bootflow 的代码片段。例如 u-boot,extlinux 驱动寻找 /extlinux/extlinux.conf，u-boot,script 驱动寻找 boot.scr.uimg/boot.scr，u-boot,android 驱动负责 Android 分区布局。
+- bootflow：具体的引导流程实例，包含操作系统映像的位置、参数等信息。bootflow 由 bootdev+bootmeth 组合查找生成，可能源自 BLS/extlinux 格式的文件或 Android Boot Image 等。
+
 # 参考资料
 
 **U-Boot** 源代码分析 源代码分析 源代码分析 源代码分析
