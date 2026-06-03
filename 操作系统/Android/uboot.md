@@ -626,3 +626,7 @@ https://zhuanlan.zhihu.com/p/391101179
 ARM Trusted Firmware-A && RISC-V OpenSBI
 
 https://www.cnblogs.com/Avalon-Nausica/p/18574664
+
+Standard Boot
+
+https://docs.u-boot.org/en/stable/develop/bootstd/index.html
