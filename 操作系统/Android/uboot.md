@@ -693,6 +693,141 @@ struct bootloader_control {
 
 用于控制从那个slot中启动（具体实现函数为：ab_select_slot）
 
+### vbmeta header
+
+AvbVBMetaImageHeader
+
+```c
+typedef struct AvbVBMetaImageHeader {
+  /*   0: Four bytes equal to "AVB0" (AVB_MAGIC). */
+  uint8_t magic[AVB_MAGIC_LEN];
+
+  /*   4: The major version of libavb required for this header. */
+  uint32_t required_libavb_version_major;
+  /*   8: The minor version of libavb required for this header. */
+  uint32_t required_libavb_version_minor;
+
+  /*  12: The size of the signature block. */
+  uint64_t authentication_data_block_size;
+  /*  20: The size of the auxiliary data block. */
+  uint64_t auxiliary_data_block_size;
+
+  /*  28: The verification algorithm used, see |AvbAlgorithmType| enum. */
+  uint32_t algorithm_type;
+
+  /*  32: Offset into the "Authentication data" block of hash data. */
+  uint64_t hash_offset;
+  /*  40: Length of the hash data. */
+  uint64_t hash_size;
+
+  /*  48: Offset into the "Authentication data" block of signature data. */
+  uint64_t signature_offset;
+  /*  56: Length of the signature data. */
+  uint64_t signature_size;
+
+  /*  64: Offset into the "Auxiliary data" block of public key data. */
+  uint64_t public_key_offset;
+  /*  72: Length of the public key data. */
+  uint64_t public_key_size;
+
+  /*  80: Offset into the "Auxiliary data" block of public key metadata. */
+  uint64_t public_key_metadata_offset;
+  /*  88: Length of the public key metadata. Must be set to zero if there
+   *  is no public key metadata.
+   */
+  uint64_t public_key_metadata_size;
+
+  /*  96: Offset into the "Auxiliary data" block of descriptor data. */
+  uint64_t descriptors_offset;
+  /* 104: Length of descriptor data. */
+  uint64_t descriptors_size;
+
+  /* 112: The rollback index which can be used to prevent rollback to
+   *  older versions.
+   */
+  uint64_t rollback_index;
+
+  /* 120: Flags from the AvbVBMetaImageFlags enumeration. This must be
+   * set to zero if the vbmeta image is not a top-level image.
+   */
+  uint32_t flags;
+
+  /* 124: Reserved to ensure |release_string| start on a 16-byte
+   * boundary. Must be set to zeroes.
+   */
+  uint8_t reserved0[4];
+
+  /* 128: The release string from avbtool, e.g. "avbtool 1.0.0" or
+   * "avbtool 1.0.0 xyz_board Git-234abde89". Is guaranteed to be NUL
+   * terminated. Applications must not make assumptions about how this
+   * string is formatted.
+   */
+  uint8_t release_string[AVB_RELEASE_STRING_SIZE];
+
+  /* 176: Padding to ensure struct is size AVB_VBMETA_IMAGE_HEADER_SIZE
+   * bytes. This must be set to zeroes.
+   */
+  uint8_t reserved[80];
+} AVB_ATTR_PACKED AvbVBMetaImageHeader;
+```
+
+```
+字节偏移   字段                              大小    说明
+─────────────────────────────────────────────────────────────────
+  0 ~  3   magic[4]                          4B    固定 "AVB0"
+  4 ~  7   required_libavb_version_major     4B    主版本（必须精确匹配）
+  8 ~ 11   required_libavb_version_minor     4B    次版本（不能超过运行时）
+─────────────────────────────────────────────────────────────────
+ 12 ~ 19   authentication_data_block_size    8B    认证块大小（64的倍数）
+ 20 ~ 27   auxiliary_data_block_size         8B    辅助块大小（64的倍数）
+─────────────────────────────────────────────────────────────────
+ 28 ~ 31   algorithm_type                    4B    签名算法枚举
+─────────────────────────────────────────────────────────────────
+ 32 ~ 39   hash_offset                       8B    ┐ hash 在认证块内的位置
+ 40 ~ 47   hash_size                         8B    ┘
+ 48 ~ 55   signature_offset                  8B    ┐ 签名在认证块内的位置
+ 56 ~ 63   signature_size                    8B    ┘
+─────────────────────────────────────────────────────────────────
+ 64 ~ 71   public_key_offset                 8B    ┐ 公钥在辅助块内的位置
+ 72 ~ 79   public_key_size                   8B    ┘
+ 80 ~ 87   public_key_metadata_offset        8B    ┐ 公钥元数据（可选）
+ 88 ~ 95   public_key_metadata_size          8B    ┘ 为0表示无元数据
+ 96 ~103   descriptors_offset                8B    ┐ 描述符在辅助块内的位置
+104 ~111   descriptors_size                  8B    ┘
+─────────────────────────────────────────────────────────────────
+112 ~119   rollback_index                    8B    防回滚版本号
+120 ~123   flags                             4B    AvbVBMetaImageFlags
+124 ~127   reserved0[4]                      4B    填充对齐，必须为0
+─────────────────────────────────────────────────────────────────
+128 ~175   release_string[48]               48B    如 "avbtool 1.0.0"，NUL结尾
+176 ~255   reserved[80]                     80B    填充至256字节，必须为0
+─────────────────────────────────────────────────────────────────
+总计：256 字节 = AVB_VBMETA_IMAGE_HEADER_SIZE
+```
+
+```
+磁盘/内存中 vbmeta 完整镜像:
+┌──────────────────────────────────┐ ← data[0]
+│  Header Block (256B 固定)         │  magic + 版本 + 所有偏移量和大小描述
+└──────────────────────────────────┘
+┌──────────────────────────────────┐ ← data + 256
+│  Authentication Block            │  大小 = authentication_data_block_size
+│  ┌────────────────────────────┐  │
+│  │ hash   (hash_offset起)     │  │  SHA256/SHA512(Header||Auxiliary)
+│  ├────────────────────────────┤  │
+│  │ signature (sig_offset起)   │  │  RSA签名(上面的hash)
+│  └────────────────────────────┘  │
+└──────────────────────────────────┘
+┌──────────────────────────────────┐ ← data + 256 + auth_block_size
+│  Auxiliary Block                 │  大小 = auxiliary_data_block_size
+│  ┌────────────────────────────┐  │
+│  │ public_key (pubkey_offset) │  │  ← out_public_key_data 指向这里
+│  ├────────────────────────────┤  │
+│  │ public_key_metadata        │  │  可选，size=0时不存在
+│  ├────────────────────────────┤  │
+│  │ descriptors (desc_offset)  │  │  HASH/HASHTREE/CHAIN/CMDLINE 描述符
+│  └────────────────────────────┘  │
+```
 
 # 参考资料
 
