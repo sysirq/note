@@ -640,6 +640,58 @@ while (get next bootdev)
            try to boot it
 ```
 
+# Android 启动阶段分析(A/B分区)
+
+### misc 分区
+
+一共4KB，u-boot中的表示方法为:
+
+```c
+struct bootloader_message_ab {
+    struct bootloader_message message;  // 2048 字节
+    char slot_suffix[32];               // 32 字节
+    char update_channel[128];           // 128 字节
+    char reserved[1888];                // 填充至 4096 字节
+};
+```
+
+message 字段是 bootloader 与 Android 系统/recovery 之间通信的消息通道
+
+其中slot_suffix用于存放struct bootloader_control：
+
+```c
+/* Bootloader Control AB
+ *
+ * This struct can be used to manage A/B metadata. It is designed to
+ * be put in the 'slot_suffix' field of the 'bootloader_message'
+ * structure described above. It is encouraged to use the
+ * 'bootloader_control' structure to store the A/B metadata, but not
+ * mandatory.
+ */
+struct bootloader_control {
+    // NUL terminated active slot suffix.
+    char slot_suffix[4];
+    // Bootloader Control AB magic number (see BOOT_CTRL_MAGIC).
+    uint32_t magic;
+    // Version of struct being used (see BOOT_CTRL_VERSION).
+    uint8_t version;
+    // Number of slots being managed.
+    uint8_t nb_slot : 3;
+    // Number of times left attempting to boot recovery.
+    uint8_t recovery_tries_remaining : 3;
+    // Ensure 4-bytes alignment for slot_info field.
+    uint8_t reserved0[2];
+    // Per-slot information.  Up to 4 slots.
+    struct slot_metadata slot_info[4];
+    // Reserved for further use.
+    uint8_t reserved1[8];
+    // CRC32 of all 28 bytes preceding this field (little endian
+    // format).
+    uint32_t crc32_le;
+} __attribute__((packed));
+```
+
+用于控制从那个slot中启动（具体实现函数为：ab_select_slot）
 
 
 # 参考资料
