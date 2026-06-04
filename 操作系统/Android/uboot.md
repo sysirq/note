@@ -631,6 +631,17 @@ do_bootflow_scan()                       cmd/bootflow.c
 
 bootflow_scan_first/next 是迭代器，逐一枚举设备和方法的组合。每次枚举都调用 bootflow_check → android_read_bootflow，一旦成功（bflow.err == 0）就立刻 bootflow_run_boot 启动。
 
+来自u-boot官方描述：
+
+```c
+while (get next bootdev)
+   while (get next bootmeth)
+       while (get next bootflow)
+           try to boot it
+```
+
+
+
 # 参考资料
 
 **U-Boot** 源代码分析 源代码分析 源代码分析 源代码分析
