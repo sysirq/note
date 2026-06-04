@@ -829,6 +829,43 @@ typedef struct AvbVBMetaImageHeader {
 │  └────────────────────────────┘  │
 ```
 
+其中descriptors的结构体为:
+
+```c
+/* The header for a serialized descriptor.
+ *
+ * A descriptor always have two fields, a |tag| (denoting its type,
+ * see the |AvbDescriptorTag| enumeration) and the size of the bytes
+ * following, |num_bytes_following|.
+ *
+ * For padding, |num_bytes_following| is always a multiple of 8.
+ */
+typedef struct AvbDescriptor {
+  uint64_t tag;
+  uint64_t num_bytes_following;
+} AVB_ATTR_PACKED AvbDescriptor;
+```
+
+tag的值为:
+
+```c
+/* Well-known descriptor tags.
+ *
+ * AVB_DESCRIPTOR_TAG_PROPERTY: see |AvbPropertyDescriptor| struct.
+ * AVB_DESCRIPTOR_TAG_HASHTREE: see |AvbHashtreeDescriptor| struct.
+ * AVB_DESCRIPTOR_TAG_HASH: see |AvbHashDescriptor| struct.
+ * AVB_DESCRIPTOR_TAG_KERNEL_CMDLINE: see |AvbKernelCmdlineDescriptor| struct.
+ * AVB_DESCRIPTOR_TAG_CHAIN_PARTITION: see |AvbChainPartitionDescriptor| struct.
+ */
+typedef enum {
+  AVB_DESCRIPTOR_TAG_PROPERTY,
+  AVB_DESCRIPTOR_TAG_HASHTREE,
+  AVB_DESCRIPTOR_TAG_HASH,
+  AVB_DESCRIPTOR_TAG_KERNEL_CMDLINE,
+  AVB_DESCRIPTOR_TAG_CHAIN_PARTITION,
+} AvbDescriptorTag;
+```
+
 # 参考资料
 
 **U-Boot** 源代码分析 源代码分析 源代码分析 源代码分析
