@@ -24,3 +24,6 @@ AndroidStudio生成aar包和如何使用aar包
 
 https://blog.csdn.net/feikudai8460/article/details/120727645
 
+引导加载程序
+
+https://source.android.com/docs/core/architecture/bootloader?hl=zh-cn
