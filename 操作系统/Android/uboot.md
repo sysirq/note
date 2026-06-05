@@ -869,7 +869,7 @@ typedef enum {
 所有 Descriptor 以 AvbDescriptor（tag + num_bytes_following）为基础，派生出：
 
 - AVB_DESCRIPTOR_TAG_HASH：用于 boot/recovery 等整分区哈希校验
-- AVB_DESCRIPTOR_TAG_HASHTREE：用于 system/vendor 等 dm-verity 哈希树
+- AVB_DESCRIPTOR_TAG_HASHTREE：用于 system/vendor 等 dm-verity 哈希树,走 dm-verity 相关信息生成
 - AVB_DESCRIPTOR_TAG_KERNEL_CMDLINE：向内核传递 cmdline 参数
 - AVB_DESCRIPTOR_TAG_CHAIN_PARTITION：链式 vbmeta（chained partition）
 - AVB_DESCRIPTOR_TAG_PROPERTY：键值对属性
