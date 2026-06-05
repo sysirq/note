@@ -866,6 +866,41 @@ typedef enum {
 } AvbDescriptorTag;
 ```
 
+所有 Descriptor 以 AvbDescriptor（tag + num_bytes_following）为基础，派生出：
+
+- AVB_DESCRIPTOR_TAG_HASH：用于 boot/recovery 等整分区哈希校验
+- AVB_DESCRIPTOR_TAG_HASHTREE：用于 system/vendor 等 dm-verity 哈希树
+- AVB_DESCRIPTOR_TAG_KERNEL_CMDLINE：向内核传递 cmdline 参数
+- AVB_DESCRIPTOR_TAG_CHAIN_PARTITION：链式 vbmeta（chained partition）
+- AVB_DESCRIPTOR_TAG_PROPERTY：键值对属性
+
+### avb启动验证流程
+
+```c
+run_avb_verification()
+  │
+  ├─ avb_ops_alloc()           ← 初始化平台 IO 操作
+  ├─ read_is_device_unlocked() ← 检查设备锁定状态
+  │
+  └─ avb_slot_verify()
+       │
+       ├─ 读取 vbmeta_a/vbmeta_b 分区
+       ├─ avb_vbmeta_image_verify()
+       │    ├─ 校验 magic、版本
+       │    ├─ 计算 SHA256/SHA512 哈希，与 auth block 比对
+       │    └─ RSA 验签（auth block 中的签名 vs aux block 中的公钥）
+       │
+       ├─ validate_vbmeta_public_key() ← 校验公钥是否是 OEM 内置信任公钥
+       ├─ read_rollback_index()        ← 防回滚检查
+       │
+       ├─ 遍历 Descriptors
+       │    ├─ HashDescriptor → 加载分区，计算哈希并比对（boot、vendor_boot）
+       │    ├─ HashtreeDescriptor → 生成 dm-verity 参数写入 cmdline（system、vendor）
+       │    └─ KernelCmdlineDescriptor → 追加 cmdline 参数
+       │
+       └─ 输出 AvbSlotVerifyData（cmdline、rollback_indexes 等）
+```
+
 # 参考资料
 
 **U-Boot** 源代码分析 源代码分析 源代码分析 源代码分析
