@@ -49,6 +49,37 @@ $ ./mk TARGET
 $ make bootimage
 ```
 
+对应的makefile解析:
+
+```
+bootimage (phony)
+└── out/.../boot.img                  [Makefile:812]
+      ├── mkbootimg (host tool)       [config.mk:651]
+      ├── out/.../kernel              [Makefile:677] ← 叶节点(预编译)
+      └── out/.../ramdisk.img         [Makefile:692]
+            ├── mkbootfs (host tool)  [config.mk:647]
+            ├── minigzip (host tool)  [config.mk:648]  order-only
+            └── INTERNAL_RAMDISK_FILES                 [Makefile:684]
+                  = filter(root/%, ALL_DEFAULT_INSTALLED_MODULES)
+                  └── ALL_DEFAULT_INSTALLED_MODULES    [main.mk:1018]
+                        ├── PRODUCT_COPY_FILES 安装文件  [Makefile:40]
+                        │     (init.rc, fstab.*, ueventd.rc ...)
+                        ├── default.prop / build.prop   [Makefile:145]
+                        └── modules_to_install          [main.mk:951]
+                              = PRODUCT_PACKAGES 各模块的 INSTALLED 路径
+                              └── ALL_MODULES.xxx.INSTALLED [base_rules.mk:643]
+                                    (每个模块在 Android.mk 编译时注册)
+```
+
+### Build Android
+
+```sh
+$ cd PATH_YOUR_PROJECT
+$ source build/envsetup.sh
+$ lunch TARGET_LUNCH
+$ make -jN otapackage
+```
+
 # 参考资料
 
 Khadas VIM1
