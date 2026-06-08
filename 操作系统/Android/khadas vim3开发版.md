@@ -33,7 +33,21 @@ i2c mw 0x18 0x29 1 1 # LED_ON_MODE
 i2c mw 0x18 0x29 0 1 # LED_OFF_MODE
 ```
 
-# Android 源码编译
+# Android 9 32位源码编译
+
+### Build U-Boot
+
+```shell
+$ cd PATH_YOUR_PROJECT
+$ cd bootloader/uboot
+$ ./mk TARGET
+```
+
+### Build Linux Kernel
+
+```shell
+$ make bootimage
+```
 
 # 参考资料
 
@@ -68,3 +82,7 @@ https://7ji.github.io/embedded/2022/11/08/alarm-install.html
 Partitioning on Amlogic's proprietary eMMC partition table with ampart / 使用ampart在Amlogic专有的eMMC分区表上分区
 
 https://7ji.github.io/embedded/2022/11/11/ept-with-ampart.html
+
+VIM3/3L Build Android
+
+https://docs.khadas.com/products/sbc/vim3/development/android/build-android#vim33l-build-android
