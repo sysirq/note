@@ -33,6 +33,8 @@ i2c mw 0x18 0x29 1 1 # LED_ON_MODE
 i2c mw 0x18 0x29 0 1 # LED_OFF_MODE
 ```
 
+# Android 源码编译
+
 # 参考资料
 
 Khadas VIM1
