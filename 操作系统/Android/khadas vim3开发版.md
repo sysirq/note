@@ -73,6 +73,8 @@ bootimage (phony)
                                     (每个模块在 Android.mk 编译时注册)
 ```
 
+kernel对应的makefile为：device/khadas/kvim3/Kernel.mk
+
 ### Build Android
 
 ```sh
