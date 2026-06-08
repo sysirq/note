@@ -46,6 +46,8 @@ $ ./mk TARGET
 ### Build Linux Kernel
 
 ```shell
+$ source build/envsetup.sh 
+$ lunch kvim3-userdebug
 $ make bootimage
 ```
 
