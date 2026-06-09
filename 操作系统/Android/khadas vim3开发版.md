@@ -105,7 +105,7 @@ Working FDT set to 198c800
    Loading Device Tree to 000000007ffe5000, end 000000007ffff818 ... OK
 Working FDT set to 7ffe5000
 => fdt chosen
-=> fdt set /chosen bootargs "root=/dev/mmcblk0p18 rw console=ttyS0,115200 earlycon=aml_uart,0xff803000 rootwait initcall_debug androidboot.console=ttyS0 loglevel=8"
+=> fdt set /chosen bootargs "root=/dev/mmcblk0p18 rw console=ttyS0,115200 earlycon=aml_uart,0xff803000 rootwait initcall_debug androidboot.console=ttyS0 loglevel=8 memblock=debug"
 => fdt set /chosen stdout-path "/soc/aobus@ff800000/serial@3000"
 => fdt print /chosen
 chosen {
@@ -129,6 +129,10 @@ Starting kernel ...
 [    0.000000@0] Machine model: Khadas
 [    0.000000@0] earlycon: aml_uart0 at MMIO 0xff803000 (options '')
 [    0.000000@0] bootconsole [aml_uart0] enabled
+[    0.000000@0] memblock_reserve: [0x00000000200000-0x000000018b2e43] flags 0x0 arm_memblock_init+0x44/0x190
+[    0.000000@0] memblock_reserve: [0x00000000104000-0x00000000107fff] flags 0x0 arm_mm_memblock_reserve+0x20/0x24
+[    0.000000@0] memblock_reserve: [0x0000007ffe5000-0x0000007ffff818] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
+[    0.000000@0] memblock_reserve: [0x00000007400000-0x000000074fffff] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
 [    0.000000@0]        07400000 - 07500000,     1024 KB, ramoops@0x07400000
 [    0.000000@0] failed to allocate memory for node linux,secmon, size:4 MB
 [    0.000000@0] failed to allocate memory for node linux,meson-fb, size:8 MB
@@ -143,7 +147,17 @@ Starting kernel ...
 [    0.000000@0] failed to allocate memory for node linux,isp_cma, size:128 MB
 [    0.000000@0] failed to allocate memory for node linux,adapt_cma, size:24 MB
 [    0.000000@0] cma: Failed to reserve 8 MiB
+[    0.000000@0] MEMBLOCK configuration:
+[    0.000000@0]  memory size = 0x0 reserved size = 0x17d165d
+[    0.000000@0]  memory.cnt  = 0x1
+[    0.000000@0]  memory[0x0]   [0x00000000000000-0xffffffffffffffff], 0x0 bytes flags: 0x0
+[    0.000000@0]  reserved.cnt  = 0x4
+[    0.000000@0]  reserved[0x0] [0x00000000104000-0x00000000107fff], 0x4000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x1] [0x00000000200000-0x000000018b2e43], 0x16b2e44 bytes flags: 0x0
+[    0.000000@0]  reserved[0x2] [0x00000007400000-0x000000074fffff], 0x100000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x3] [0x0000007ffe5000-0x0000007ffff818], 0x1a819 bytes flags: 0x0
 [    0.000000@0] Memory policy: Data cache writealloc
+
 ```
 
 其中earlycon=aml_uart,0xff803000的来源为：
