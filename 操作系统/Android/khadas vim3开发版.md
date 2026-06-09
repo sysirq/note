@@ -180,6 +180,26 @@ aliases {
 };
 ```
 
+### 内存大小获取
+
+对于 Amlogic G12B（Khadas VIM3 的 A311D/S922X），AO_SEC_GP_CFG0 是 AO（Always-On）安全域中的一个通用配置寄存器，由 BL2/ATF 在启动早期写入，后续 U-Boot 和 Linux 用它获取一些启动信息。它并不是硬件自动生成的寄存器，而是 BootROM/BL2 软件约定使用的“信息传递寄存器”。
+
+从 Amlogic 的 U-Boot 代码可以直接看到：
+
+```c
+#define AO_SEC_GP_CFG0 (0xff800000 + (0x090 << 2))
+#define CONFIG_SYS_MEM_TOP_HIDE 0x08000000 //hide 128MB for kernel reserve
+phys_size_t get_effective_memsize(void)
+{
+  #if defined(CONFIG_SYS_MEM_TOP_HIDE)
+    size[0] = (((readl(AO_SEC_GP_CFG0)) & 0xFFFF0000) << 4) - CONFIG_SYS_MEM_TOP_HIDE;
+  #else
+    size[0] = (((readl(AO_SEC_GP_CFG0)) & 0xFFFF0000) << 4);
+  #endif
+}
+```
+
+也就是说，DDR 容量信息就是从 AO_SEC_GP_CFG0 里取出来的。
 
 # 参考资料
 
