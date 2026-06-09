@@ -201,6 +201,13 @@ phys_size_t get_effective_memsize(void)
 
 也就是说，DDR 容量信息就是从 AO_SEC_GP_CFG0 里取出来的。
 
+```
+=> md.l 0xFF800240 1
+ff800240: 0f5808f1                             ..X.
+```
+
+((0x0f5808f1 & 0xFFFF0000)<<4) - 0x08000000 = (0xF580000 << 4) - 0x08000000 =  0xF5800000 -  0x08000000 = 0xED800000 = 3,984,588,800 
+
 # 参考资料
 
 Khadas VIM1
