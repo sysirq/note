@@ -84,6 +84,68 @@ $ lunch TARGET_LUNCH
 $ make -jN otapackage
 ```
 
+# 手动启动boot.img(内核)
+
+```sh
+=> mmc dev 2
+switch to partitions #0, OK
+mmc2(part 0) is current device
+=> mmc read 0x1080000 0x3E000 0x5000
+MMC read: dev # 2, block # 253952, count 20480 ... 20480 blocks read: OK
+=> bootm start 0x1080000
+## Booting Android Image at 0x01080000 ...
+Kernel load addr 0x01080000 size 9264 KiB
+Kernel command line: androidboot.dtbo_idx=0 --cmdline root=/dev/mmcblk0p18 buildvariant=userdebug
+Error: header_version must be >= 2 to get dtb
+second address is 0x198c800
+Working FDT set to 198c800
+=> bootm loados
+   Loading Kernel Image to 1080000
+=> bootm fdt
+   Loading Device Tree to 000000007ffe5000, end 000000007ffff818 ... OK
+Working FDT set to 7ffe5000
+=> fdt chosen
+=> fdt set /chosen bootargs "root=/dev/mmcblk0p18 rw console=ttyS0,115200 earlycon=aml_uart,0xff803000 rootwait initcall_debug androidboot.console=ttyS0 loglevel=8"
+=> fdt set /chosen stdout-path "/soc/aobus@ff800000/serial@3000"
+=> fdt print /chosen
+chosen {
+        stdout-path = "/soc/aobus@ff800000/serial@3000";
+        smbios3-entrypoint = <0x00000000 0xeaf3b000>;
+        u-boot,version = "2026.07-rc3-00031-g9b1f6ba072a5-dirty";
+        bootargs = "root=/dev/mmcblk0p18 rw console=ttyS0,115200 earlycon=aml_uart,0xff803000 rootwait initcall_debug androidboot.console=ttyS0 loglevel=8";
+        kaslr-seed = <0xb028fd10 0xea5cf5c8>;
+};
+=> bootm go
+
+Starting kernel ...
+
+   FDT blob at 0x7ffe5000, size 108569 bytes
+   IH_ARCH_DEFAULT is 22, images->os.arch is 0
+[    0.000000@0] Booting Linux on physical CPU 0x0
+[    0.000000@0] Linux version 4.9.113 (root@c6fcd1183ec2) (gcc version 6.3.1 20170109 (Linaro GCC 6.3-2017.02) ) #1 SMP PREEMPT Mon Jun 8 18:07:09 CST 2026
+[    0.000000@0] CPU: cpu_v7_name [410fd034] revision 4 (ARMv7), cr=10c5383d
+[    0.000000@0] CPU: div instructions available: patching division code
+[    0.000000@0] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+[    0.000000@0] Machine model: Khadas
+[    0.000000@0] earlycon: aml_uart0 at MMIO 0xff803000 (options '')
+[    0.000000@0] bootconsole [aml_uart0] enabled
+[    0.000000@0]        07400000 - 07500000,     1024 KB, ramoops@0x07400000
+[    0.000000@0] failed to allocate memory for node linux,secmon, size:4 MB
+[    0.000000@0] failed to allocate memory for node linux,meson-fb, size:8 MB
+[    0.000000@0] failed to allocate memory for node linux,ion-dev, size:128 MB
+[    0.000000@0] failed to allocate memory for node linux,di_cma, size:40 MB
+[    0.000000@0] failed to allocate memory for node linux,ppmgr, size:0 MB
+[    0.000000@0] failed to allocate memory for node linux,codec_mm_cma, size:308 MB
+[    0.000000@0] failed to allocate memory for node linux,codec_mm_reserved, size:0 MB
+[    0.000000@0] failed to allocate memory for node linux,vdin0_cma, size:64 MB
+[    0.000000@0] failed to allocate memory for node linux,vdin1_cma, size:64 MB
+[    0.000000@0] failed to allocate memory for node linux,galcore, size:16 MB
+[    0.000000@0] failed to allocate memory for node linux,isp_cma, size:128 MB
+[    0.000000@0] failed to allocate memory for node linux,adapt_cma, size:24 MB
+[    0.000000@0] cma: Failed to reserve 8 MiB
+[    0.000000@0] Memory policy: Data cache writealloc
+```
+
 # 参考资料
 
 Khadas VIM1
