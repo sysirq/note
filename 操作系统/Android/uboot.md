@@ -163,6 +163,47 @@ bootm_run_states
    -> 返回 ret
 ```
 
+通过bootm命令单步执行，以跟踪启动过程:
+
+```shell
+Sub-commands to do part of the bootm sequence.  The sub-commands must be
+issued in the order below (it's ok to not issue all sub-commands):
+        start [addr [arg ...]]
+        loados  - load OS image
+        ramdisk - relocate initrd, set env initrd_start/initrd_end
+        fdt     - relocate flat device tree
+        cmdline - OS specific command line processing/setup
+        bdt     - OS specific bd_info processing
+        prep    - OS specific prep before relocation or go
+        go      - start OS
+```
+
+对应的函数为：cmd/bootm.c:do_bootm_subcommand
+
+- bootm start 对应的state为: BOOTM_STATE_START|BOOTM_STATE_PRE_LOAD |BOOTM_STATE_FINDOS |BOOTM_STATE_FINDOTHER
+- bootm loados 对应的state为: BOOTM_STATE_LOADOS
+- bootm ramdisk 对应的state为: BOOTM_STATE_RAMDISK
+- bootm fdt 对应的state为: BOOTM_STATE_FDT
+- bootm cmdline 对应的state为: BOOTM_STATE_OS_CMDLINE
+- bootm bdt 对应的state为: BOOTM_STATE_OS_BD_T
+- bootm prep 对应的state为: BOOTM_STATE_PRE_LOAD | BOOTM_STATE_START
+- bootm go 对应的state为: BOOTM_STATE_OS_GO
+
+```shell
+=> mmc dev 2
+switch to partitions #0, OK
+mmc2(part 0) is current device
+=> mmc read 0x1080000 0x3E000 0x5000
+MMC read: dev # 2, block # 253952, count 20480 ... 20480 blocks read: OK
+=> bootm start 0x1080000
+## Booting Android Image at 0x01080000 ...
+Kernel load addr 0x01080000 size 9264 KiB
+Kernel command line: androidboot.dtbo_idx=0 --cmdline root=/dev/mmcblk0p18 buildvariant=userdebug
+Error: header_version must be >= 2 to get dtb
+second address is 0x198c800
+Working FDT set to 198c800
+```
+
 ### uImage 数据结构
 
 uImage 是 U-Boot 早期最经典的镜像格式，由 mkimage 工具生成。它本质上是：
