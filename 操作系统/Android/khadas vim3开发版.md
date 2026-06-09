@@ -146,6 +146,27 @@ Starting kernel ...
 [    0.000000@0] Memory policy: Data cache writealloc
 ```
 
+其中earlycon=aml_uart,0xff803000的来源为：
+
+```
+fdt print /aliases
+aliases {
+        serial0 = "/soc/aobus@ff800000/serial@3000";
+        serial1 = "/serial@ffd24000";
+        serial2 = "/serial@ffd23000";
+        serial3 = "/serial@ffd22000";
+        serial4 = "/soc/aobus@ff800000/serial@4000";
+        i2c0 = "/soc/cbus@ffd00000/i2c@1f000";
+        i2c1 = "/soc/cbus@ffd00000/i2c@1e000";
+        i2c2 = "/soc/cbus@ffd00000/i2c@1d000";
+        i2c3 = "/soc/cbus@ffd00000/i2c@1c000";
+        i2c4 = "/soc/aobus@ff800000/i2c@5000";
+        tsensor0 = "/p_tsensor@ff634594";
+        tsensor1 = "/d_tsensor@ff800228";
+};
+```
+
+
 # 参考资料
 
 Khadas VIM1
