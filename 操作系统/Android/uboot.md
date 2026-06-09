@@ -202,6 +202,21 @@ Kernel command line: androidboot.dtbo_idx=0 --cmdline root=/dev/mmcblk0p18 build
 Error: header_version must be >= 2 to get dtb
 second address is 0x198c800
 Working FDT set to 198c800
+=> bootm loados
+   Loading Kernel Image to 1080000
+=> bootm ramdisk
+=> bootm fdt
+   Loading Device Tree to 000000007ffe5000, end 000000007ffff818 ... OK
+Working FDT set to 7ffe5000
+=> bootm cmdline
+subcommand failed (err=-1)
+=> bootm go
+
+Starting kernel ...
+
+## Jumping to a 64-bit kernel at 0x1080000...
+   FDT blob at 0x7ffe5000, size 108569 bytes
+   IH_ARCH_DEFAULT is 22, images->os.arch is 0
 ```
 
 ### uImage 数据结构
