@@ -87,6 +87,7 @@ $ make -jN otapackage
 # 手动启动boot.img(内核)
 
 ```sh
+=> setenv fdt_high 0x20000000
 => mmc dev 2
 switch to partitions #0, OK
 mmc2(part 0) is current device
@@ -102,8 +103,8 @@ Working FDT set to 198c800
 => bootm loados
    Loading Kernel Image to 1080000
 => bootm fdt
-   Loading Device Tree to 000000007ffe5000, end 000000007ffff818 ... OK
-Working FDT set to 7ffe5000
+   Loading Device Tree to 000000001ffe5000, end 000000001ffff818 ... OK
+Working FDT set to 1ffe5000
 => fdt chosen
 => fdt set /chosen bootargs "root=/dev/mmcblk0p18 rw console=ttyS0,115200 earlycon=aml_uart,0xff803000 rootwait initcall_debug androidboot.console=ttyS0 loglevel=8 memblock=debug"
 => fdt set /chosen stdout-path "/soc/aobus@ff800000/serial@3000"
@@ -140,14 +141,13 @@ Starting kernel ...
 [    0.000000@0] bootconsole [aml_uart0] enabled
 [    0.000000@0] memblock_reserve: [0x00000000200000-0x000000018b2e43] flags 0x0 arm_memblock_init+0x44/0x190
 [    0.000000@0] memblock_reserve: [0x00000000104000-0x00000000107fff] flags 0x0 arm_mm_memblock_reserve+0x20/0x24
-[    0.000000@0] memblock_reserve: [0x0000007ffe5000-0x0000007ffff818] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
+[    0.000000@0] memblock_reserve: [0x0000001ffe5000-0x0000001ffff818] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
 [    0.000000@0] memblock_reserve: [0x00000007400000-0x000000074fffff] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
 [    0.000000@0]        07400000 - 07500000,     1024 KB, ramoops@0x07400000
 [    0.000000@0] memblock_reserve: [0x00000005000000-0x000000053fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
 [    0.000000@0]        05000000 - 05400000,     4096 KB, linux,secmon
-[    0.000000@0] memblock_reserve: [0x0000007f400000-0x0000007fbfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
-[    0.000000@0]    memblock_free: [0x0000007f400000-0x0000007fbfffff] early_init_dt_alloc_reserved_memory_arch+0x44/0x74
-[    0.000000@0] failed to allocate memory for node linux,meson-fb, size:8 MB
+[    0.000000@0] memblock_reserve: [0x0000007f800000-0x0000007fffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        7f800000 - 80000000,     8192 KB, linux,meson-fb
 [    0.000000@0] memblock_reserve: [0x000000e5800000-0x000000ed7fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
 [    0.000000@0]        e5800000 - ed800000,   131072 KB, linux,ion-dev
 [    0.000000@0] memblock_reserve: [0x000000e3000000-0x000000e57fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
@@ -171,16 +171,17 @@ Starting kernel ...
 [    0.000000@0] memblock_reserve: [0x000000bcc00000-0x000000bd3fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
 [    0.000000@0] cma: Reserved 8 MiB at 0xbcc00000
 [    0.000000@0] MEMBLOCK configuration:
-[    0.000000@0]  memory size = 0xed800000 reserved size = 0x327d165d
+[    0.000000@0]  memory size = 0xed800000 reserved size = 0x32fd165d
 [    0.000000@0]  memory.cnt  = 0x1
 [    0.000000@0]  memory[0x0]   [0x00000000000000-0x000000ed7fffff], 0xed800000 bytes flags: 0x0
-[    0.000000@0]  reserved.cnt  = 0x6
+[    0.000000@0]  reserved.cnt  = 0x7
 [    0.000000@0]  reserved[0x0] [0x00000000104000-0x00000000107fff], 0x4000 bytes flags: 0x0
 [    0.000000@0]  reserved[0x1] [0x00000000200000-0x000000018b2e43], 0x16b2e44 bytes flags: 0x0
 [    0.000000@0]  reserved[0x2] [0x00000005000000-0x000000053fffff], 0x400000 bytes flags: 0x0
 [    0.000000@0]  reserved[0x3] [0x00000007400000-0x000000074fffff], 0x100000 bytes flags: 0x0
-[    0.000000@0]  reserved[0x4] [0x0000007ffe5000-0x0000007ffff818], 0x1a819 bytes flags: 0x0
-[    0.000000@0]  reserved[0x5] [0x000000bcc00000-0x000000ed7fffff], 0x30c00000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x4] [0x0000001ffe5000-0x0000001ffff818], 0x1a819 bytes flags: 0x0
+[    0.000000@0]  reserved[0x5] [0x0000007f800000-0x0000007fffffff], 0x800000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x6] [0x000000bcc00000-0x000000ed7fffff], 0x30c00000 bytes flags: 0x0
 [    0.000000@0] Memory policy: Data cache writealloc
 [    0.000000@0] memblock_reserve: [0x0000002fffffd8-0x0000002fffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
 [    0.000000@0] memblock_reserve: [0x0000002fffe000-0x0000002fffefff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
