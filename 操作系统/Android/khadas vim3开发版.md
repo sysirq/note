@@ -115,6 +115,15 @@ chosen {
         bootargs = "root=/dev/mmcblk0p18 rw console=ttyS0,115200 earlycon=aml_uart,0xff803000 rootwait initcall_debug androidboot.console=ttyS0 loglevel=8";
         kaslr-seed = <0xb028fd10 0xea5cf5c8>;
 };
+=> fdt mknod / memory           
+=> fdt set /memory device_type "memory"  
+=> fdt set /memory reg <0x0 0xED800000>  
+=> fdt print /memory
+memory {
+        reg = <0x00000000 0xed800000>;
+        device_type = "memory";
+};
+
 => bootm go
 
 Starting kernel ...
@@ -134,29 +143,48 @@ Starting kernel ...
 [    0.000000@0] memblock_reserve: [0x0000007ffe5000-0x0000007ffff818] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
 [    0.000000@0] memblock_reserve: [0x00000007400000-0x000000074fffff] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
 [    0.000000@0]        07400000 - 07500000,     1024 KB, ramoops@0x07400000
-[    0.000000@0] failed to allocate memory for node linux,secmon, size:4 MB
+[    0.000000@0] memblock_reserve: [0x00000005000000-0x000000053fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        05000000 - 05400000,     4096 KB, linux,secmon
+[    0.000000@0] memblock_reserve: [0x0000007f400000-0x0000007fbfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]    memblock_free: [0x0000007f400000-0x0000007fbfffff] early_init_dt_alloc_reserved_memory_arch+0x44/0x74
 [    0.000000@0] failed to allocate memory for node linux,meson-fb, size:8 MB
-[    0.000000@0] failed to allocate memory for node linux,ion-dev, size:128 MB
-[    0.000000@0] failed to allocate memory for node linux,di_cma, size:40 MB
-[    0.000000@0] failed to allocate memory for node linux,ppmgr, size:0 MB
-[    0.000000@0] failed to allocate memory for node linux,codec_mm_cma, size:308 MB
-[    0.000000@0] failed to allocate memory for node linux,codec_mm_reserved, size:0 MB
-[    0.000000@0] failed to allocate memory for node linux,vdin0_cma, size:64 MB
-[    0.000000@0] failed to allocate memory for node linux,vdin1_cma, size:64 MB
-[    0.000000@0] failed to allocate memory for node linux,galcore, size:16 MB
-[    0.000000@0] failed to allocate memory for node linux,isp_cma, size:128 MB
-[    0.000000@0] failed to allocate memory for node linux,adapt_cma, size:24 MB
-[    0.000000@0] cma: Failed to reserve 8 MiB
+[    0.000000@0] memblock_reserve: [0x000000e5800000-0x000000ed7fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        e5800000 - ed800000,   131072 KB, linux,ion-dev
+[    0.000000@0] memblock_reserve: [0x000000e3000000-0x000000e57fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        e3000000 - e5800000,    40960 KB, linux,di_cma
+[    0.000000@0] memblock_reserve: [0x000000e3000000-0x000000e2ffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0] Reserved memory: regions without no-map are not yet supported
+[    0.000000@0] memblock_reserve: [0x000000cfc00000-0x000000e2ffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        cfc00000 - e3000000,   315392 KB, linux,codec_mm_cma
+[    0.000000@0] memblock_reserve: [0x000000cfc00000-0x000000cfbfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        cfc00000 - cfc00000,        0 KB, linux,codec_mm_reserved
+[    0.000000@0] memblock_reserve: [0x000000cbc00000-0x000000cfbfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        cbc00000 - cfc00000,    65536 KB, linux,vdin0_cma
+[    0.000000@0] memblock_reserve: [0x000000c7c00000-0x000000cbbfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        c7c00000 - cbc00000,    65536 KB, linux,vdin1_cma
+[    0.000000@0] memblock_reserve: [0x000000c6c00000-0x000000c7bfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        c6c00000 - c7c00000,    16384 KB, linux,galcore
+[    0.000000@0] memblock_reserve: [0x000000bec00000-0x000000c6bfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        bec00000 - c6c00000,   131072 KB, linux,isp_cma
+[    0.000000@0] memblock_reserve: [0x000000bd400000-0x000000bebfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        bd400000 - bec00000,    24576 KB, linux,adapt_cma
+[    0.000000@0] memblock_reserve: [0x000000bcc00000-0x000000bd3fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0] cma: Reserved 8 MiB at 0xbcc00000
 [    0.000000@0] MEMBLOCK configuration:
-[    0.000000@0]  memory size = 0x0 reserved size = 0x17d165d
+[    0.000000@0]  memory size = 0xed800000 reserved size = 0x327d165d
 [    0.000000@0]  memory.cnt  = 0x1
-[    0.000000@0]  memory[0x0]   [0x00000000000000-0xffffffffffffffff], 0x0 bytes flags: 0x0
-[    0.000000@0]  reserved.cnt  = 0x4
+[    0.000000@0]  memory[0x0]   [0x00000000000000-0x000000ed7fffff], 0xed800000 bytes flags: 0x0
+[    0.000000@0]  reserved.cnt  = 0x6
 [    0.000000@0]  reserved[0x0] [0x00000000104000-0x00000000107fff], 0x4000 bytes flags: 0x0
 [    0.000000@0]  reserved[0x1] [0x00000000200000-0x000000018b2e43], 0x16b2e44 bytes flags: 0x0
-[    0.000000@0]  reserved[0x2] [0x00000007400000-0x000000074fffff], 0x100000 bytes flags: 0x0
-[    0.000000@0]  reserved[0x3] [0x0000007ffe5000-0x0000007ffff818], 0x1a819 bytes flags: 0x0
+[    0.000000@0]  reserved[0x2] [0x00000005000000-0x000000053fffff], 0x400000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x3] [0x00000007400000-0x000000074fffff], 0x100000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x4] [0x0000007ffe5000-0x0000007ffff818], 0x1a819 bytes flags: 0x0
+[    0.000000@0]  reserved[0x5] [0x000000bcc00000-0x000000ed7fffff], 0x30c00000 bytes flags: 0x0
 [    0.000000@0] Memory policy: Data cache writealloc
+[    0.000000@0] memblock_reserve: [0x0000002fffffd8-0x0000002fffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0] memblock_reserve: [0x0000002fffe000-0x0000002fffefff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0] memblock_reserve: [0x0000002fffd000-0x0000002fffdfff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
 
 ```
 
