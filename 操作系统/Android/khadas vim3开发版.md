@@ -1230,7 +1230,7 @@ ff800240: 0f5808f1                             ..X.
 
 # 一些有用的知识
 
-- dts文件路径: common/arch/arm/boot/dts/amlogic/kvim3.dts
+- dts文件路径: common/arch/arm/boot/dts/amlogic/kvim3.dts（编译规则定义在：device/khadas/common/factory.mk）
 
 # 参考资料
 
