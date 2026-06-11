@@ -1270,6 +1270,56 @@ index b9d51c1125..f034a3db4f 100644
 
 - dts文件路径: common/arch/arm/boot/dts/amlogic/kvim3.dts（编译规则定义在：device/khadas/common/factory.mk）
 
+- First Stage Mount：位于system/core/init/init_first_stage.cpp，根据dt挂载对应的分区，具体为：
+
+```dt
+/*
+ * Amlogic partition set for normal
+ *
+ * Copyright (c) 2017-2017 Amlogic Ltd
+ *
+ * This file is licensed under a dual GPLv2 or BSD license.
+ *
+ */
+/ {
+	firmware {
+		android {
+			compatible = "android,firmware";
+			vbmeta {
+				compatible = "android,vbmeta";
+				parts = "vbmeta,boot,system,vendor";
+				by_name_prefix="/dev/block";
+			};
+		fstab {
+			compatible = "android,fstab";
+
+			vendor {
+				compatible = "android,vendor";
+				dev = "/dev/block/vendor";
+				type = "ext4";
+				mnt_flags = "ro,barrier=1,inode_readahead_blks=8";
+				fsmgr_flags = "wait";
+				};
+			product {
+				compatible = "android,product";
+				dev = "/dev/block/product";
+				type = "ext4";
+				mnt_flags = "ro,barrier=1,inode_readahead_blks=8";
+				fsmgr_flags = "wait";
+				};
+			odm {
+				compatible = "android,odm";
+				dev = "/dev/block/odm";
+				type = "ext4";
+				mnt_flags = "ro,barrier=1,inode_readahead_blks=8";
+				fsmgr_flags = "wait";
+				};
+			};
+		};
+	};
+};/* end of / */
+```
+
 # 参考资料
 
 Khadas VIM1
