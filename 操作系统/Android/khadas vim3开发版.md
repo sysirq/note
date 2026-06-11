@@ -1230,10 +1230,40 @@ ff800240: 0f5808f1                             ..X.
 
 # system.img
 
+### 编译时map报错问题
+
 ```
 FAILED: out/target/product/kvim3/dex_bootjars/system/framework/arm/boot.art 
 /bin/bash -c "(mkdir -p out/target/product/kvim3/symbols/system/framework/arm/ ) && (rm -f out/target/product/kvim3/dex_bootjars/system/framework/arm//*.art out/target/product/kvim3/dex_bootjars/system/framework/arm//*.oat out/target/product/kvim3/dex_bootjars/system/framework/arm//*.art.rel ) && (rm -f out/target/product/kvim3/symbols/system/framework/arm//*.art ) && (rm -f out/target/product/kvim3/symbols/system/framework/arm//*.oat ) && (rm -f out/target/product/kvim3/symbols/system/framework/arm//*.art.rel ) && (ANDROID_LOG_TAGS=\"*:e\" out/host/linux-x86/bin/dex2oatd --runtime-arg -Xms64m 		--runtime-arg -Xmx64m 		--compiler-filter=speed-profile --profile-file=out/target/product/kvim3/dex_bootjars/system/framework/boot.prof 		--dex-file=out/target/common/obj/JAVA_LIBRARIES/exoplayer_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/core-oj_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/core-libart_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/conscrypt_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/okhttp_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/bouncycastle_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/apache-xml_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/ext_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/telephony-common_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/voip-common_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/ims-common_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/android.hidl.base-V1.0-java_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/android.hidl.manager-V1.0-java_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/framework-oahl-backward-compatibility_intermediates/javalib.jar --dex-file=out/target/common/obj/JAVA_LIBRARIES/android.test.base_intermediates/javalib.jar 		--dex-location=/system/framework/exoplayer.jar --dex-location=/system/framework/core-oj.jar --dex-location=/system/framework/core-libart.jar --dex-location=/system/framework/conscrypt.jar --dex-location=/system/framework/okhttp.jar --dex-location=/system/framework/bouncycastle.jar --dex-location=/system/framework/apache-xml.jar --dex-location=/system/framework/ext.jar --dex-location=/system/framework/framework.jar --dex-location=/system/framework/telephony-common.jar --dex-location=/system/framework/voip-common.jar --dex-location=/system/framework/ims-common.jar --dex-location=/system/framework/android.hidl.base-V1.0-java.jar --dex-location=/system/framework/android.hidl.manager-V1.0-java.jar --dex-location=/system/framework/framework-oahl-backward-compatibility.jar --dex-location=/system/framework/android.test.base.jar 		--oat-symbols=out/target/product/kvim3/symbols/system/framework/arm/boot.oat 		--oat-file=out/target/product/kvim3/dex_bootjars/system/framework/arm/boot.oat 		--oat-location=/system/framework/arm/boot.oat--image=out/target/product/kvim3/dex_bootjars/system/framework/arm/boot.art --base=0x70000000 		--instruction-set=arm 		--instruction-set-variant=cortex-a9 		--instruction-set-features=default 		--android-root=out/target/product/kvim3/system 		--runtime-arg -Xnorelocate --compile-pic 		--no-generate-debug-info --generate-build-id 		--multi-image --no-inline-from=core-oj.jar 		--abort-on-hard-verifier-error 		--abort-on-soft-verifier-error 		 --generate-mini-debug-info   		|| ( echo \"ERROR: Dex2oat failed to compile a boot image. It is likely that the boot classpath is inconsistent. Rebuild with ART_BOOT_IMAGE_EXTRA_ARGS=\"--runtime-arg -verbose:verifier\" to see verification errors.\" ; false ) && 	ANDROID_LOG_TAGS=\"*:e\" ANDROID_ROOT=out/target/product/kvim3/system ANDROID_DATA=out/target/product/kvim3/dex_bootjars/system/framework/arm/ out/host/linux-x86/bin/patchoatd 		--input-image-location=out/target/product/kvim3/dex_bootjars/system/framework/boot.art 		--output-image-relocation-directory=out/target/product/kvim3/dex_bootjars/system/framework/arm/ 		--instruction-set=arm 		--base-offset-delta=0x10000000 )"
 patchoatd E 06-11 15:06:32 19956 19956 image_space.cc:1761] Could not create image space with image file 'out/target/product/kvim3/dex_bootjars/system/framework/boot.art'. Attempting to fall back to imageless running. Error was: Failed to mmap at expected address, mapped at 0x7f3c97c00000 instead of 0x704c2000
+```
+
+解决方法：
+
+- https://groups.google.com/g/android-building/c/ZfUQQWt_ABI
+- https://android-review.googlesource.com/c/platform/art/+/2226578
+- https://android-review.googlesource.com/c/platform/art/+/2226578/2/runtime/mem_map.cc
+
+就是修改art/runtime/mem_map.cc中的文件.
+
+```
+project art/
+diff --git a/runtime/mem_map.cc b/runtime/mem_map.cc
+index b9d51c1125..f034a3db4f 100644
+--- a/runtime/mem_map.cc
++++ b/runtime/mem_map.cc
+@@ -504,6 +504,11 @@ MemMap* MemMap::MapFileAtAddress(uint8_t* expected_ptr,
+     DCHECK(ContainedWithinExistingMap(expected_ptr, byte_count, error_msg))
+         << ((error_msg != nullptr) ? *error_msg : std::string());
+     flags |= MAP_FIXED;
++#if !defined(ART_TARGET)
++  } else if (expected_ptr) {
++#define MAP_FIXED_NOREPLACE 0x100000
++    flags |= MAP_FIXED_NOREPLACE;
++#endif
+   } else {
+     CHECK_EQ(0, flags & MAP_FIXED);
+     // Don't bother checking for an overlapping region here. We'll
 ```
 
 # 一些有用的知识
