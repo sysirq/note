@@ -1396,6 +1396,9 @@ TLB addr    = 0x00000000f4ff0000
 irq_sp      = 0x00000000eaefa390
 sp start    = 0x00000000eaefa390
 Early malloc usage: 1080 / 2000
+fdt rsvmem print
+index              start                    size
+------------------------------------------------
 => bootm go
 
 Starting kernel ...
@@ -1489,7 +1492,7 @@ chosen {
         smbios3-entrypoint = <0x00000000 0xeaf3a000>;
         u-boot,version = "2026.07-rc3-00035-gf850b4d66d23-dirty";
         bootargs = "console=ttyS0,115200n8 no_console_suspend earlycon=aml-uart,0xff803000 buildvariant=userdebug";
-        kaslr-seed = <0xadef2989 0x6dc8be72>;
+        kaslr-seed = <0x4a03290b 0x1cdbdde6>;
 };
 => fdt set /chosen bootargs "init=/init console=ttyS0,115200 no_console_suspend earlycon=aml-uart,0xff803000 initcall_debug ignore_loglevel loglevel=8 memblock=debug"
 => fdt print /chosen
@@ -1497,7 +1500,7 @@ chosen {
         smbios3-entrypoint = <0x00000000 0xeaf3a000>;
         u-boot,version = "2026.07-rc3-00035-gf850b4d66d23-dirty";
         bootargs = "init=/init console=ttyS0,115200 no_console_suspend earlycon=aml-uart,0xff803000 initcall_debug ignore_loglevel loglevel=8 memblock=debug";
-        kaslr-seed = <0xadef2989 0x6dc8be72>;
+        kaslr-seed = <0x4a03290b 0x1cdbdde6>;
 };
 => bdinfo
 boot_params = 0x0000000000000000
@@ -1535,6 +1538,11 @@ TLB addr    = 0x00000000f4ff0000
 irq_sp      = 0x00000000eaefa390
 sp start    = 0x00000000eaefa390
 Early malloc usage: 1080 / 2000
+=> fdt rsvmem print 
+index              start                    size
+------------------------------------------------
+    0   0000000005000000        0000000000300000
+    1   00000000f4e5b000        00000000001a5000
 => bootm go
 
 Starting kernel ...
