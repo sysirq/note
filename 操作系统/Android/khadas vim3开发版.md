@@ -1361,6 +1361,41 @@ memory {
         reg = <0x00000000 0xed800000>;
         device_type = "memory";
 };
+=> bdinfo
+boot_params = 0x0000000000000000
+DRAM bank   = 0x0000000000000000
+-> start    = 0x0000000000000000
+-> size     = 0x00000000f5000000
+flashstart  = 0x0000000000000000
+flashsize   = 0x0000000000000000
+flashoffset = 0x0000000000000000
+baudrate    = 115200 bps
+relocaddr   = 0x00000000f2f1f000
+reloc off   = 0x00000000f1f1f000
+Build       = 64-bit
+current eth = ethernet@ff3f0000
+ethaddr     = c8:63:14:70:5a:50
+IP addr     = <NULL>
+fdt_blob    = 0x00000000eaefa3a0
+Video       = vpu@ff900000 active
+FB base     = 0x00000000f4e5b000
+FB size     = 720x576x32
+lmb_dump_all:
+ memory.count = 0x1
+ memory[0]      [0x0-0xf4ffffff], 0xf5000000 bytes, flags: none
+ reserved.count = 0x6
+ reserved[0]    [0x1080000-0x198bde7], 0x90bde8 bytes, flags: none
+ reserved[1]    [0x5000000-0x72fffff], 0x2300000 bytes, flags: no-map
+ reserved[2]    [0x7400000-0x74fffff], 0x100000 bytes, flags: no-overwrite
+ reserved[3]    [0x1ffe5000-0x1ffff818], 0x1a819 bytes, flags: none
+ reserved[4]    [0xe9eed000-0xe9ef9fff], 0xd000 bytes, flags: no-notify, no-overwrite
+ reserved[5]    [0xe9efa390-0xf4ffffff], 0xb105c70 bytes, flags: no-overwrite
+devicetree  = separate
+arch_number = 0x0000000000000000
+TLB addr    = 0x00000000f4ff0000
+irq_sp      = 0x00000000eaefa390
+sp start    = 0x00000000eaefa390
+Early malloc usage: 1080 / 2000
 => bootm go
 
 Starting kernel ...
@@ -1464,6 +1499,42 @@ chosen {
         bootargs = "init=/init console=ttyS0,115200 no_console_suspend earlycon=aml-uart,0xff803000 initcall_debug ignore_loglevel loglevel=8 memblock=debug";
         kaslr-seed = <0xadef2989 0x6dc8be72>;
 };
+=> bdinfo
+boot_params = 0x0000000000000000
+DRAM bank   = 0x0000000000000000
+-> start    = 0x0000000000000000
+-> size     = 0x00000000f5000000
+flashstart  = 0x0000000000000000
+flashsize   = 0x0000000000000000
+flashoffset = 0x0000000000000000
+baudrate    = 115200 bps
+relocaddr   = 0x00000000f2f1f000
+reloc off   = 0x00000000f1f1f000
+Build       = 64-bit
+current eth = ethernet@ff3f0000
+ethaddr     = c8:63:14:70:5a:50
+IP addr     = <NULL>
+fdt_blob    = 0x00000000eaefa3a0
+Video       = vpu@ff900000 active
+FB base     = 0x00000000f4e5b000
+FB size     = 720x576x32
+lmb_dump_all:
+ memory.count = 0x1
+ memory[0]      [0x0-0xf4ffffff], 0xf5000000 bytes, flags: none
+ reserved.count = 0x7
+ reserved[0]    [0x1080000-0x198bde7], 0x90bde8 bytes, flags: none
+ reserved[1]    [0x5000000-0x72fffff], 0x2300000 bytes, flags: no-map
+ reserved[2]    [0x7400000-0x74fffff], 0x100000 bytes, flags: no-overwrite
+ reserved[3]    [0x1ffc7000-0x1ffdefff], 0x18000 bytes, flags: none
+ reserved[4]    [0x1ffe5000-0x1ffff818], 0x1a819 bytes, flags: none
+ reserved[5]    [0xe9eed000-0xe9ef9fff], 0xd000 bytes, flags: no-notify, no-overwrite
+ reserved[6]    [0xe9efa390-0xf4ffffff], 0xb105c70 bytes, flags: no-overwrite
+devicetree  = separate
+arch_number = 0x0000000000000000
+TLB addr    = 0x00000000f4ff0000
+irq_sp      = 0x00000000eaefa390
+sp start    = 0x00000000eaefa390
+Early malloc usage: 1080 / 2000
 => bootm go
 
 Starting kernel ...
