@@ -1320,6 +1320,215 @@ index b9d51c1125..f034a3db4f 100644
 };/* end of / */
 ```
 
+# bug
+
+### 关于mainline u-boot 在 bootm go 之前添加 bootm prep 无法启动分析
+
+正常的memblock 布局：
+
+```log
+=> mmc dev 2
+switch to partitions #0, OK
+mmc2(part 0) is current device
+=> mmc read 0x1080000 0x3E000 0x5000
+MMC read: dev # 2, block # 253952, count 20480 ... 20480 blocks read: OK
+=> bootm start 0x1080000
+## Booting Android Image at 0x01080000 ...
+Kernel load addr 0x01080000 size 9264 KiB
+Kernel command line: console=ttyS0,115200n8 no_console_suspend earlycon=aml-uart,0xff803000 buildvariant=userdebug
+Error: header_version must be >= 2 to get dtb
+second address is 0x198c800
+Working FDT set to 198c800
+=> bootm loados
+   Loading Kernel Image to 1080000
+=> bootm fdt
+   Loading Device Tree to 000000001ffe5000, end 000000001ffff818 ... OK
+Working FDT set to 1ffe5000
+=> fdt chosen
+=> fdt set /chosen bootargs "init=/init console=ttyS0,115200 no_console_suspend earlycon=aml-uart,0xff803000 initcall_debug ignore_loglevel loglevel=8 memblock=debug"
+=> fdt print /chosen
+chosen {
+        smbios3-entrypoint = <0x00000000 0xeaf3a000>;
+        u-boot,version = "2026.07-rc3-00035-gf850b4d66d23-dirty";
+        bootargs = "init=/init console=ttyS0,115200 no_console_suspend earlycon=aml-uart,0xff803000 initcall_debug ignore_loglevel loglevel=8 memblock=debug";
+        kaslr-seed = <0x86900b6e 0xbdccdc5f>;
+};
+=> fdt mknod / memory   
+=> fdt set /memory device_type "memory" 
+=> fdt set /memory reg <0x0 0xED800000> 
+=> fdt print /memory
+memory {
+        reg = <0x00000000 0xed800000>;
+        device_type = "memory";
+};
+=> bootm go
+
+Starting kernel ...
+
+   FDT blob at 0x1ffe5000, size 108569 bytes
+   IH_ARCH_DEFAULT is 22, images->os.arch is 0
+[    0.000000@0] Booting Linux on physical CPU 0x0
+[    0.000000@0] Linux version 4.9.113 (root@9a46a5882b4c) (gcc version 6.3.1 20170109 (Linaro GCC 6.3-2017.02) ) #2 SMP PREEMPT Fri Jun 12 11:55:34 CST 2026
+[    0.000000@0] CPU: cpu_v7_name [410fd034] revision 4 (ARMv7), cr=10c5383d
+[    0.000000@0] CPU: div instructions available: patching division code
+[    0.000000@0] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+[    0.000000@0] Machine model: Khadas
+[    0.000000@0] earlycon: aml-uart0 at MMIO 0xff803000 (options '')
+[    0.000000@0] bootconsole [aml-uart0] enabled
+[    0.000000@0] debug: ignoring loglevel setting.
+[    0.000000@0] memblock_reserve: [0x00000000200000-0x000000018b2e43] flags 0x0 arm_memblock_init+0x44/0x190
+[    0.000000@0] memblock_reserve: [0x00000000104000-0x00000000107fff] flags 0x0 arm_mm_memblock_reserve+0x20/0x24
+[    0.000000@0] memblock_reserve: [0x0000001ffe5000-0x0000001ffff818] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
+[    0.000000@0] memblock_reserve: [0x00000007400000-0x000000074fffff] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
+[    0.000000@0]        07400000 - 07500000,     1024 KB, ramoops@0x07400000
+[    0.000000@0] memblock_reserve: [0x00000005000000-0x000000053fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        05000000 - 05400000,     4096 KB, linux,secmon
+[    0.000000@0] memblock_reserve: [0x0000007f800000-0x0000007fffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        7f800000 - 80000000,     8192 KB, linux,meson-fb
+[    0.000000@0] memblock_reserve: [0x000000e5800000-0x000000ed7fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        e5800000 - ed800000,   131072 KB, linux,ion-dev
+[    0.000000@0] memblock_reserve: [0x000000e3000000-0x000000e57fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        e3000000 - e5800000,    40960 KB, linux,di_cma
+[    0.000000@0] memblock_reserve: [0x000000e3000000-0x000000e2ffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0] Reserved memory: regions without no-map are not yet supported
+[    0.000000@0] memblock_reserve: [0x000000cfc00000-0x000000e2ffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        cfc00000 - e3000000,   315392 KB, linux,codec_mm_cma
+[    0.000000@0] memblock_reserve: [0x000000cfc00000-0x000000cfbfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        cfc00000 - cfc00000,        0 KB, linux,codec_mm_reserved
+[    0.000000@0] memblock_reserve: [0x000000cbc00000-0x000000cfbfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        cbc00000 - cfc00000,    65536 KB, linux,vdin0_cma
+[    0.000000@0] memblock_reserve: [0x000000c7c00000-0x000000cbbfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        c7c00000 - cbc00000,    65536 KB, linux,vdin1_cma
+[    0.000000@0] memblock_reserve: [0x000000c6c00000-0x000000c7bfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        c6c00000 - c7c00000,    16384 KB, linux,galcore
+[    0.000000@0] memblock_reserve: [0x000000bec00000-0x000000c6bfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        bec00000 - c6c00000,   131072 KB, linux,isp_cma
+[    0.000000@0] memblock_reserve: [0x000000bd400000-0x000000bebfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        bd400000 - bec00000,    24576 KB, linux,adapt_cma
+[    0.000000@0] memblock_reserve: [0x000000bcc00000-0x000000bd3fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0] cma: Reserved 8 MiB at 0xbcc00000
+[    0.000000@0] MEMBLOCK configuration:
+[    0.000000@0]  memory size = 0xed800000 reserved size = 0x32fd165d
+[    0.000000@0]  memory.cnt  = 0x1
+[    0.000000@0]  memory[0x0]   [0x00000000000000-0x000000ed7fffff], 0xed800000 bytes flags: 0x0
+[    0.000000@0]  reserved.cnt  = 0x7
+[    0.000000@0]  reserved[0x0] [0x00000000104000-0x00000000107fff], 0x4000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x1] [0x00000000200000-0x000000018b2e43], 0x16b2e44 bytes flags: 0x0
+[    0.000000@0]  reserved[0x2] [0x00000005000000-0x000000053fffff], 0x400000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x3] [0x00000007400000-0x000000074fffff], 0x100000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x4] [0x0000001ffe5000-0x0000001ffff818], 0x1a819 bytes flags: 0x0
+[    0.000000@0]  reserved[0x5] [0x0000007f800000-0x0000007fffffff], 0x800000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x6] [0x000000bcc00000-0x000000ed7fffff], 0x30c00000 bytes flags: 0x0
+[    0.000000@0] Memory policy: Data cache writealloc
+[    0.000000@0] memblock_reserve: [0x0000002fffffd8-0x0000002fffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0] memblock_reserve: [0x0000002fffe000-0x0000002fffefff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0] memblock_reserve: [0x0000002fffd000-0x0000002fffdfff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+```
+
+非正常memblock:
+
+```log
+=> mmc dev 2
+switch to partitions #0, OK
+mmc2(part 0) is current device
+=> mmc read 0x1080000 0x3E000 0x5000
+MMC read: dev # 2, block # 253952, count 20480 ... 20480 blocks read: OK
+=> bootm start 0x1080000
+## Booting Android Image at 0x01080000 ...
+Kernel load addr 0x01080000 size 9264 KiB
+Kernel command line: console=ttyS0,115200n8 no_console_suspend earlycon=aml-uart,0xff803000 buildvariant=userdebug
+Error: header_version must be >= 2 to get dtb
+second address is 0x198c800
+Working FDT set to 198c800
+=> bootm loados
+   Loading Kernel Image to 1080000
+=> bootm fdt
+   Loading Device Tree to 000000001ffe5000, end 000000001ffff818 ... OK
+Working FDT set to 1ffe5000
+=> bootm prep
+   Loading Device Tree to 000000001ffc7000, end 000000001ffe4818 ... OK
+Working FDT set to 1ffc7000
+Cannot setup simplefb: node not found
+=> fdt print /chosen
+chosen {
+        smbios3-entrypoint = <0x00000000 0xeaf3a000>;
+        u-boot,version = "2026.07-rc3-00035-gf850b4d66d23-dirty";
+        bootargs = "console=ttyS0,115200n8 no_console_suspend earlycon=aml-uart,0xff803000 buildvariant=userdebug";
+        kaslr-seed = <0xadef2989 0x6dc8be72>;
+};
+=> fdt set /chosen bootargs "init=/init console=ttyS0,115200 no_console_suspend earlycon=aml-uart,0xff803000 initcall_debug ignore_loglevel loglevel=8 memblock=debug"
+=> fdt print /chosen
+chosen {
+        smbios3-entrypoint = <0x00000000 0xeaf3a000>;
+        u-boot,version = "2026.07-rc3-00035-gf850b4d66d23-dirty";
+        bootargs = "init=/init console=ttyS0,115200 no_console_suspend earlycon=aml-uart,0xff803000 initcall_debug ignore_loglevel loglevel=8 memblock=debug";
+        kaslr-seed = <0xadef2989 0x6dc8be72>;
+};
+=> bootm go
+
+Starting kernel ...
+
+   FDT blob at 0x1ffc7000, size 108569 bytes
+   IH_ARCH_DEFAULT is 22, images->os.arch is 0
+[    0.000000@0] Booting Linux on physical CPU 0x0
+[    0.000000@0] Linux version 4.9.113 (root@9a46a5882b4c) (gcc version 6.3.1 20170109 (Linaro GCC 6.3-2017.02) ) #2 SMP PREEMPT Fri Jun 12 11:55:34 CST 2026
+[    0.000000@0] CPU: cpu_v7_name [410fd034] revision 4 (ARMv7), cr=10c5383d
+[    0.000000@0] CPU: div instructions available: patching division code
+[    0.000000@0] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+[    0.000000@0] Machine model: Khadas
+[    0.000000@0] earlycon: aml-uart0 at MMIO 0xff803000 (options '')
+[    0.000000@0] bootconsole [aml-uart0] enabled
+[    0.000000@0] debug: ignoring loglevel setting.
+[    0.000000@0] memblock_reserve: [0x00000000200000-0x000000018b2e43] flags 0x0 arm_memblock_init+0x44/0x190
+[    0.000000@0] memblock_reserve: [0x00000000104000-0x00000000107fff] flags 0x0 arm_mm_memblock_reserve+0x20/0x24
+[    0.000000@0] memblock_reserve: [0x0000001ffc7000-0x0000001ffdefff] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
+[    0.000000@0] memblock_reserve: [0x00000005000000-0x000000052fffff] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
+[    0.000000@0] memblock_reserve: [0x000000f4e5b000-0x000000f4ffffff] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
+[    0.000000@0] memblock_reserve: [0x00000007400000-0x000000074fffff] flags 0x0 early_init_dt_reserve_memory_arch+0x20/0x24
+[    0.000000@0]        07400000 - 07500000,     1024 KB, ramoops@0x07400000
+[    0.000000@0] memblock_reserve: [0x00000004c00000-0x00000004ffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]    memblock_free: [0x00000004c00000-0x00000004ffffff] early_init_dt_alloc_reserved_memory_arch+0x44/0x74
+[    0.000000@0] failed to allocate memory for node linux,secmon, size:4 MB
+[    0.000000@0] memblock_reserve: [0x0000007f800000-0x0000007fffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        7f800000 - 80000000,     8192 KB, linux,meson-fb
+[    0.000000@0] memblock_reserve: [0x000000e5800000-0x000000ed7fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        e5800000 - ed800000,   131072 KB, linux,ion-dev
+[    0.000000@0] memblock_reserve: [0x000000e3000000-0x000000e57fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        e3000000 - e5800000,    40960 KB, linux,di_cma
+[    0.000000@0] memblock_reserve: [0x000000e3000000-0x000000e2ffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0] Reserved memory: regions without no-map are not yet supported
+[    0.000000@0] memblock_reserve: [0x000000cfc00000-0x000000e2ffffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        cfc00000 - e3000000,   315392 KB, linux,codec_mm_cma
+[    0.000000@0] memblock_reserve: [0x000000cfc00000-0x000000cfbfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        cfc00000 - cfc00000,        0 KB, linux,codec_mm_reserved
+[    0.000000@0] memblock_reserve: [0x000000cbc00000-0x000000cfbfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        cbc00000 - cfc00000,    65536 KB, linux,vdin0_cma
+[    0.000000@0] memblock_reserve: [0x000000c7c00000-0x000000cbbfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        c7c00000 - cbc00000,    65536 KB, linux,vdin1_cma
+[    0.000000@0] memblock_reserve: [0x000000c6c00000-0x000000c7bfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        c6c00000 - c7c00000,    16384 KB, linux,galcore
+[    0.000000@0] memblock_reserve: [0x000000bec00000-0x000000c6bfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        bec00000 - c6c00000,   131072 KB, linux,isp_cma
+[    0.000000@0] memblock_reserve: [0x000000bd400000-0x000000bebfffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0]        bd400000 - bec00000,    24576 KB, linux,adapt_cma
+[    0.000000@0] memblock_reserve: [0x000000bcc00000-0x000000bd3fffff] flags 0x0 memblock_alloc_range_nid+0x40/0x58
+[    0.000000@0] cma: Reserved 8 MiB at 0xbcc00000
+[    0.000000@0] MEMBLOCK configuration:
+[    0.000000@0]  memory size = 0xed800000 reserved size = 0x33073e44
+[    0.000000@0]  memory.cnt  = 0x1
+[    0.000000@0]  memory[0x0]   [0x00000000000000-0x000000ed7fffff], 0xed800000 bytes flags: 0x0
+[    0.000000@0]  reserved.cnt  = 0x8
+[    0.000000@0]  reserved[0x0] [0x00000000104000-0x00000000107fff], 0x4000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x1] [0x00000000200000-0x000000018b2e43], 0x16b2e44 bytes flags: 0x0
+[    0.000000@0]  reserved[0x2] [0x00000005000000-0x000000052fffff], 0x300000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x3] [0x00000007400000-0x000000074fffff], 0x100000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x4] [0x0000001ffc7000-0x0000001ffdefff], 0x18000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x5] [0x0000007f800000-0x0000007fffffff], 0x800000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x6] [0x000000bcc00000-0x000000ed7fffff], 0x30c00000 bytes flags: 0x0
+[    0.000000@0]  reserved[0x7] [0x000000f4e5b000-0x000000f4ffffff], 0x1a5000 bytes flags: 0x0
+[    0.000000@0] Memory policy: Data cache writealloc
+```
+
 # 参考资料
 
 Khadas VIM1
