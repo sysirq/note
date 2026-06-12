@@ -1612,7 +1612,7 @@ Starting kernel ...
 
 meson_init_reserved_memory
 
-调用链：ft_board_setup → meson_init_reserved_memory → meson_board_add_reserved_memory → fdt_add_mem_rsv(fdt, start, size)
+调用链：boot_prep_linux→  image_setup_linux→ image_setup_libfdt→ ft_board_setup → meson_init_reserved_memory → meson_board_add_reserved_memory → fdt_add_mem_rsv(fdt, start, size)
 
 （meson_init_reserved_memory）board-g12a.c:27 从硬件寄存器读取 BL31/BL32（TF-A/OP-TEE）的实际内存位置，然后通过 fdt_add_mem_rsv 添加到 FDT 的二进制 memreserve 表，而不是 /reserved-memory 节点：
 
