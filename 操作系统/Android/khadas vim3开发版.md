@@ -1608,6 +1608,16 @@ Starting kernel ...
 [    0.000000@0] Memory policy: Data cache writealloc
 ```
 
+根本原因：
+
+meson_init_reserved_memory
+
+调用链：ft_board_setup → meson_init_reserved_memory → meson_board_add_reserved_memory → fdt_add_mem_rsv(fdt, start, size)
+
+（meson_init_reserved_memory）board-g12a.c:27 从硬件寄存器读取 BL31/BL32（TF-A/OP-TEE）的实际内存位置，然后通过 fdt_add_mem_rsv 添加到 FDT 的二进制 memreserve 表，而不是 /reserved-memory 节点。
+
+这就是为什么 fdt print /reserved-memory/linux,secmon 看不到变化——memreserve 表是 FDT 二进制头部的独立结构，不是 DT 节点。只能通过 **fdt rsvmem print** 看出变化。
+
 # 参考资料
 
 Khadas VIM1
