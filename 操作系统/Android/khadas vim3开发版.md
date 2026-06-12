@@ -1614,9 +1614,59 @@ meson_init_reserved_memory
 
 调用链：ft_board_setup → meson_init_reserved_memory → meson_board_add_reserved_memory → fdt_add_mem_rsv(fdt, start, size)
 
-（meson_init_reserved_memory）board-g12a.c:27 从硬件寄存器读取 BL31/BL32（TF-A/OP-TEE）的实际内存位置，然后通过 fdt_add_mem_rsv 添加到 FDT 的二进制 memreserve 表，而不是 /reserved-memory 节点。
+（meson_init_reserved_memory）board-g12a.c:27 从硬件寄存器读取 BL31/BL32（TF-A/OP-TEE）的实际内存位置，然后通过 fdt_add_mem_rsv 添加到 FDT 的二进制 memreserve 表，而不是 /reserved-memory 节点：
+
+```c
+bl31_start = readl(G12A_AO_SEC_GP_CFG5);
+bl32_start = readl(G12A_AO_SEC_GP_CFG4);
+
+meson_board_add_reserved_memory(fdt, bl31_start, bl31_size);  // fdt_add_mem_rsv!
+meson_board_add_reserved_memory(fdt, bl32_start, bl32_size);  // fdt_add_mem_rsv!
+```
 
 这就是为什么 fdt print /reserved-memory/linux,secmon 看不到变化——memreserve 表是 FDT 二进制头部的独立结构，不是 DT 节点。只能通过 **fdt rsvmem print** 看出变化。
+
+
+**与内核日志的对应关系**
+
+kernel log 中这两行正是 memreserve 表的 BL31/BL32 条目：
+
+```
+memblock_reserve: [0x0000001ffe5000-0x0000001fffcfff]  ← BL31
+memblock_reserve: [0x00000005000000-0x000000052fffff]  ← BL32
+```
+
+内核处理 FDT memreserve 表时调用 early_init_dt_reserve_memory_arch(base, size, false)（nomap=false），产生 memblock_reserve 调用。
+
+随后内核处理 /reserved-memory 中 BL32 对应的 static no-map 节点时：
+
+```c
+if (memblock_is_region_reserved(0x5000000, 0x300000))  // TRUE! (已被memreserve加入)
+    return memblock_mark_nomap(base, size);  // 改为mark_nomap而非remove
+return memblock_remove(base, size);          // 本应走这里
+```
+
+这改变了 memblock.memory 的布局，影响了 linux,secmon 的动态分配。
+
+**根本原因**
+
+Android DTB 中 linux,secmon 是动态分配节点（无固定 reg），它的 alloc-ranges 大概率覆盖了 0x5000000 附近区域（OP-TEE 运行内存）。
+
+内核处理顺序：
+
+- 1. 先处理 memreserve 表 → memblock_reserve(0x5000000, 0x300000) ← U-Boot 加的
+- 2. 再处理 /reserved-memory/linux,secmon（no-map，动态分配）
+- 3. memblock_phys_alloc_range 发现 0x5000000 已被占用，退而求其次分配到 0x4c00000
+- 4. memblock_mark_nomap(0x4c00000, ...) 失败（0x4c00000 不在 alloc-ranges 允许的范围内）
+- 5. memblock_free 回滚 → failed to allocate
+
+**根本矛盾**
+
+meson_init_reserved_memory 是为主线内核设计的——主线 DTB 没有 linux,secmon 节点，需要 U-Boot 把 BL32 加入 memreserve 让内核知道它。
+
+但 Android 内核的 DTB 已经通过 /reserved-memory/linux,secmon 管理这块内存，U-Boot 再加入 memreserve 就造成了双重冲突。
+
+
 
 # 参考资料
 
