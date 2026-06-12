@@ -1006,3 +1006,7 @@ https://docs.u-boot.org/en/stable/develop/bootstd/index.html
 Android Verified Boot 2.0
 
 https://android.googlesource.com/platform/external/avb/+/master/README.md
+
+从dtb获取内存布局并传递到内核
+
+https://zhuanlan.zhihu.com/p/638302877
