@@ -1266,6 +1266,26 @@ index b9d51c1125..f034a3db4f 100644
      // Don't bother checking for an overlapping region here. We'll
 ```
 
+# AVB 配置
+
+```log
+Hit any key to stop autoboot: 0
+Card did not respond to voltage select! : -110
+Card did not respond to voltage select! : -110
+** Booting bootflow 'mmc@ffe07000.bootdev.whole' with android
+get_partition: can't find partition 'vbmeta'
+avb_footer.c:22: ERROR: Footer magic is incorrect.
+avb_vbmeta_image.c:46: ERROR: Magic is incorrect.
+avb_slot_verify.c:745: ERROR: boot: Error verifying vbmeta image: invalid vbmeta header
+Unlocked verification failed, reason: Metadata is invalid or inconsistent
+Boot failed (err=-5)
+meson_pcie_wait_link_up: error: wait linkup timeout
+PCIE-0: Link up (Gen1-x1, Bus0)
+USB XHCI 1.10
+Bus usb@ff500000: 2 USB Device(s) found
+=>
+```
+
 # 一些有用的知识
 
 - dts文件路径: common/arch/arm/boot/dts/amlogic/kvim3.dts（编译规则定义在：device/khadas/common/factory.mk）, 其中分区的定义以#include "partition..."开头(partition_mbox_normal_P_32.dtsi)。
