@@ -1286,6 +1286,25 @@ Bus usb@ff500000: 2 USB Device(s) found
 =>
 ```
 
+### 密钥配置
+
+用于avbtool的密钥生成：
+
+```shell
+$ openssl genrsa -out avb_private_key_4096.pem 4096
+```
+
+从密钥生成用于u-boot进行验证的共钥：
+
+```shell
+$ python2.7 out/host/linux-x86/bin/avbtool extract_public_key --key avb_private_key_4096.pem --output a
+$ xxd -i a
+```
+
+用这个生成的公钥替换u-boot中的avb_root_pub变量
+
+### 生成vbmeta.img
+
 # 一些有用的知识
 
 - dts文件路径: common/arch/arm/boot/dts/amlogic/kvim3.dts（编译规则定义在：device/khadas/common/factory.mk）, 其中分区的定义以#include "partition..."开头(partition_mbox_normal_P_32.dtsi)。
