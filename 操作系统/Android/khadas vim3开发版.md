@@ -1268,7 +1268,7 @@ index b9d51c1125..f034a3db4f 100644
 
 # 一些有用的知识
 
-- dts文件路径: common/arch/arm/boot/dts/amlogic/kvim3.dts（编译规则定义在：device/khadas/common/factory.mk）
+- dts文件路径: common/arch/arm/boot/dts/amlogic/kvim3.dts（编译规则定义在：device/khadas/common/factory.mk）, 其中分区的定义以#include "partition..."开头。
 
 - First Stage Mount：位于system/core/init/init_first_stage.cpp，根据dt挂载对应的分区，具体为：
 
