@@ -1305,6 +1305,22 @@ $ xxd -i a
 
 ### 生成vbmeta.img
 
+```shell
+$ python2.7 out/host/linux-x86/bin/avbtool add_hash_footer \
+  --image out/target/product/kvim3/boot.img \
+  --partition_name boot \
+  --partition_size 16777216 \
+  --algorithm SHA256_RSA4096 \
+  --key avb_private_key_4096.pem
+
+$ python2.7 out/host/linux-x86/bin/avbtool make_vbmeta_image \
+	--key avb_private_key_4096.pem \
+	--output vbmeta.img \
+	--algorithm SHA256_RSA4096 \
+	--rollback_index 0 \
+	--include_descriptors_from_image out/target/product/kvim3/boot.img 
+```
+
 # 一些有用的知识
 
 - dts文件路径: common/arch/arm/boot/dts/amlogic/kvim3.dts（编译规则定义在：device/khadas/common/factory.mk）, 其中分区的定义以#include "partition..."开头(partition_mbox_normal_P_32.dtsi)。
