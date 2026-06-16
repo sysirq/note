@@ -1375,6 +1375,8 @@ $ python2.7 out/host/linux-x86/bin/avbtool make_vbmeta_image \
 };/* end of / */
 ```
 
+- 对于system.img:system.img: Android sparse image, version: 1.0, Total of 409600 4096-byte output blocks in 18 input chunks. 在burn image构建时，记得将file_type设置为sparse。
+
 # bug
 
 ### 关于mainline u-boot 在 bootm go 之前添加 bootm prep 无法启动分析
