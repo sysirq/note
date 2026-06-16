@@ -1321,6 +1321,15 @@ $ python2.7 out/host/linux-x86/bin/avbtool make_vbmeta_image \
 	--include_descriptors_from_image out/target/product/kvim3/boot.img 
 ```
 
+### 生成无需验证的vbmeta.img
+
+```shell
+$ python2.7 out/host/linux-x86/bin/avbtool make_vbmeta_image \
+	--flag 2 \
+	--padding_size 4096 \
+	--output vbmeta.img 
+```
+
 # 一些有用的知识
 
 - dts文件路径: common/arch/arm/boot/dts/amlogic/kvim3.dts（编译规则定义在：device/khadas/common/factory.mk）, 其中分区的定义以#include "partition..."开头(partition_mbox_normal_P_32.dtsi)。
