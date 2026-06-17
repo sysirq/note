@@ -1368,6 +1368,20 @@ U_BOOT_PART_TYPE(ept) = {
 
 ```
 
+# 进入init后的一些问题
+
+### data 没有自动挂载
+
+在aosp system/core/fs_mgr/fs_mgr_fstab.cpp 中，fs_mgr_read_fstab_default函数会将vendor/etc/fstab.${ro.hardware} 与 fdt中的fstab组合，然后用于挂载。
+
+而 ro.hardware 如果为空，就会导致 vendor/etc/fstab.amlogic无法被解析，data的挂载信息就没有被系统识别，从而导致挂载失败
+
+bootloader 通过 androidboot.hardware=amlogic 传递该值（ro.hardware ）。
+
+```shell
+setenv bootargs androidboot.hardware=amlogic
+```
+
 # 一些有用的知识
 
 - dts文件路径: common/arch/arm/boot/dts/amlogic/kvim3.dts（编译规则定义在：device/khadas/common/factory.mk）, 其中分区的定义以#include "partition..."开头(partition_mbox_normal_P_32.dtsi)。
