@@ -1,3 +1,7 @@
+# 版本
+
+android 9 32位
+
 # VIM3
 
 VIM3/3L Setup Serial Debug Console
