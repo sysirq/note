@@ -1321,6 +1321,49 @@ $ python2.7 out/host/linux-x86/bin/avbtool make_vbmeta_image \
 	--include_descriptors_from_image out/target/product/kvim3/boot.img 
 ```
 
+### uuid 支持
+
+用于dm初始化.不然dm无法初始化。
+
+内核patch:
+
+```c
+diff --git a/drivers/amlogic/mmc/emmc_partitions.c b/drivers/amlogic/mmc/emmc_partitions.c
+index 77cb42a8bb76..a3372428a088 100644
+--- a/drivers/amlogic/mmc/emmc_partitions.c
++++ b/drivers/amlogic/mmc/emmc_partitions.c
+@@ -1045,6 +1045,7 @@ static struct hd_struct *add_emmc_each_part(struct gendisk *disk, int partno,
+        p->policy = get_disk_ro(disk);
+        p->info = alloc_part_info(disk);
+        sprintf(p->info->volname, "%s", pname);
++       snprintf(p->info->uuid, sizeof(p->info->uuid), "7A926B1B-B48C-4345-94D2-FBAF457AE1%02d", partno);
+ 
+        dname = dev_name(ddev);
+        dev_set_name(pdev, "%s", pname);
+```
+
+mainline-u-boot patch:
+disk/part_ept.c中（自己添加的），
+```c
+static void part_print_ept(struct blk_desc *desc)
+{
+.....................
+            #if CONFIG_IS_ENABLED(PARTITION_UUIDS)
+            snprintf((char *)info->uuid, sizeof(info->uuid),"7A926B1B-B48C-4345-94D2-FBAF457AE1%02d", i+1);
+            #endif
+.....................
+}
+U_BOOT_PART_TYPE(ept) = {
+	.name		= "EPT",
+	.part_type	= PART_TYPE_EPT,
+	.max_entries	= EPT_ENTRY_NUMBERS,
+	.get_info	= part_get_info_ept,
+	.print		= part_print_ept,
+	.test		= part_test_ept,
+};
+
+```
+
 # 一些有用的知识
 
 - dts文件路径: common/arch/arm/boot/dts/amlogic/kvim3.dts（编译规则定义在：device/khadas/common/factory.mk）, 其中分区的定义以#include "partition..."开头(partition_mbox_normal_P_32.dtsi)。
