@@ -1382,6 +1382,8 @@ bootloader 通过 androidboot.hardware=amlogic 传递该值（ro.hardware ）。
 setenv bootargs androidboot.hardware=amlogic
 ```
 
+### 卡bootanimation
+
 # 一些有用的知识
 
 - dts文件路径: common/arch/arm/boot/dts/amlogic/kvim3.dts（编译规则定义在：device/khadas/common/factory.mk）, 其中分区的定义以#include "partition..."开头(partition_mbox_normal_P_32.dtsi)。
