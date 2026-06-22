@@ -1438,7 +1438,21 @@ setenv bootargs androidboot.hardware=amlogic
 
 - 对于system.img:system.img: Android sparse image, version: 1.0, Total of 409600 4096-byte output blocks in 18 input chunks. 在burn image构建时，记得将file_type设置为sparse。
 
-- setenv bootargs androidboot.firstboot=1 ：用于第一次初始化。
+- setenv bootargs androidboot.firstboot=1 ：用于第一次初始化。以及调用mmc erase data。
+
+- 捕获特定的内核启动参数hwver=,eg:
+
+```c
+static int __init hwver_setup(char *str)
+{
+	if (str == NULL)
+		snprintf(khadas_hwver, sizeof(khadas_hwver), "%s", HW_VERSION_UNKNOW_STR);
+	else
+		snprintf(khadas_hwver, sizeof(khadas_hwver), "%s", str);
+	return 1;
+}
+__setup("hwver=", hwver_setup);//这是一个 Linux 内核宏。它的作用是向内核注册一个启动参数监听器。当内核在启动时（Boot time）解析到命令行参数（cmdline）中包含 hwver=xxx 时，就会自动调用后面的回调函数 hwver_setup，并将等号后面的字符串（xxx）作为参数传递给它。
+```
 
 # bug
 
