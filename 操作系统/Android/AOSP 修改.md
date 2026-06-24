@@ -258,3 +258,6 @@ https://developer.android.com/ndk/guides/android_mk?hl=zh-cn
 
 https://android.googlesource.com/platform/build/+/main/tools/docker
 
+GmsCore
+
+https://github.com/microg/GmsCore/wiki
