@@ -14,6 +14,30 @@ cat /sdcard/adbkey.pub >> /data/misc/adb/adb_keys
 ~/.android/adbkey.pub    # 公钥文件
 ```
 
+# 有用的命令
+
+| 命令      | 全称                  | 对应服务                        | 作用                            |
+| ------- | ------------------- | --------------------------- | ----------------------------- |
+| pm      | Package Manager     | PackageManagerService(PMS)  | 应用安装、卸载、查询                    |
+| am      | Activity Manager    | ActivityManagerService(AMS) | 启动 Activity/Service/Broadcast |
+| dumpsys | Dump System Service | 所有 System Service           | 查看系统运行状态和调试信息                 |
+
+
+### pm
+
+- pm list packages: 查看所有应用
+- pm path com.kartina.tv.daydream:查看APK路径
+
+### am
+
+- am start -n com.android.settings: 启动Activity
+- am start -a android.settings.WIFI_SETTINGS
+
+### dumpsys
+
+- dumpsys -l : 查看所有服务
+- dumpsys package com.demo.app：查看指定应用
+
 # 资料
 
 APK加固原理详解
