@@ -238,9 +238,27 @@ e g: LOCAL_MODULE_PATH := $(TARGET_OUT_ETC)/my_config  → 安装到 /system/etc
 
 # 自定义root目录
 
-- 1. 修改system/core/rootdir/Android.mk以mkdir
+以创建/tmp为例子：
+
+- 1. 修改system/core/rootdir/Android.mk：
+
+```mk
+LOCAL_POST_INSTALL_CMD += ; mkdir -p $(TARGET_ROOT_OUT)/tmp
+```
+
 - 2. 修改system/sepolicy/private/file_contexts添加selinux权限
-- 3. 修改system/core/rootdir/init.rc 对tmpfs进行其它的修改
+
+```rc
+/tmp                u:object_r:tmpfs:s0
+```
+
+- 3. 修改system/core/init/init.cpp创建 tmp挂载
+
+```c
+mount("tmpfs", "/tmp", "tmpfs", MS_NOSUID | MS_NODEV | MS_NOEXEC, "mode=0777");
+```
+
+- 4. 修改system/core/rootdir/init.rc 对tmpfs进行其它的修改
 
 # 资料
 
