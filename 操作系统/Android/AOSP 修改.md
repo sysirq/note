@@ -261,3 +261,7 @@ https://android.googlesource.com/platform/build/+/main/tools/docker
 GmsCore
 
 https://github.com/microg/GmsCore/wiki
+
+Android在rootdir根目录创建自定义目录和挂载点的方法
+
+https://developer.aliyun.com/article/1598841
