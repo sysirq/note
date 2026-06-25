@@ -236,6 +236,12 @@ e g: LOCAL_MODULE_PATH := $(TARGET_OUT_ETC)/my_config  → 安装到 /system/etc
 
 - 对于 Android 9 AOSP，PRODUCT_COPY_FILES 中如果多个条目使用相同 destination，通常是“第一个生效，后面的被忽略（并可能产生警告）”，而不是“后面的覆盖前面的”。
 
+# 自定义root目录
+
+- 1. 修改system/core/rootdir/Android.mk以mkdir
+- 2. 修改system/sepolicy/private/file_contexts添加selinux权限
+- 3. 修改system/core/rootdir/init.rc 对tmpfs进行其它的修改
+
 # 资料
 
 添加新设备
