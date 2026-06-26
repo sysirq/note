@@ -262,15 +262,14 @@ mount("tmpfs", "/tmp", "tmpfs", MS_NOSUID | MS_NODEV | MS_NOEXEC, "mode=0777");
 
 # AOSP启动阶段
 
-| 阶段              | 含义                   |
-| --------------- | -------------------- |
-| on early-init   | 最早期                  |
-| on init         | 基础初始化                |
-| on post-fs      | /system 挂载后          |
-| on post-fs-data | /data 可用             |
-| on boot         | Android framework启动前 |
-| boot completed  | 系统完全起来               |
-
+| 阶段           | 状态                    |
+| -------------- | ----------------------- |
+| early-init     | 内核 + init启动         |
+| init           | 基础设备节点            |
+| post-fs        | /system / vendor 已挂载 |
+| ✅ post-fs-data | /data 可用（关键点）    |
+| boot           | framework启动           |
+| boot_completed | 系统已完全起来          |
 
 # 资料
 
