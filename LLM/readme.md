@@ -25,3 +25,7 @@ https://geminicli.com/docs/
 CyberGym-E2E: Scalable Real-World Benchmark for AI Agents' End-to-End Cybersecurity Capabilities
 
 https://arxiv.org/abs/2606.04460
+
+Crystalline on CyberGym
+
+https://github.com/synchopate/cybergym-logos
