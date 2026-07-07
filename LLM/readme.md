@@ -29,3 +29,7 @@ https://arxiv.org/abs/2606.04460
 Crystalline on CyberGym
 
 https://github.com/synchopate/cybergym-logos
+
+CYBERGYM: EVALUATING AI AGENTS’ REAL-WORLD CYBERSECURITY CAPABILITIES AT SCALE
+
+https://arxiv.org/pdf/2506.02548
