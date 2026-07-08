@@ -33,3 +33,15 @@ https://github.com/synchopate/cybergym-logos
 CYBERGYM: EVALUATING AI AGENTS’ REAL-WORLD CYBERSECURITY CAPABILITIES AT SCALE
 
 https://arxiv.org/pdf/2506.02548
+
+Model system cards
+
+https://www.anthropic.com/system-cards
+
+Defense at AI speed: Microsoft’s new multi-model agentic security system tops leading industry benchmark
+
+https://www.microsoft.com/en-us/security/blog/2026/05/12/defense-at-ai-speed-microsofts-new-multi-model-agentic-security-system-tops-leading-industry-benchmark/
+
+MopMonk Agent
+
+https://github.com/MopMonkAI/MopMonkAgent
