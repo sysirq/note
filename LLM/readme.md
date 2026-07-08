@@ -45,3 +45,7 @@ https://www.microsoft.com/en-us/security/blog/2026/05/12/defense-at-ai-speed-mic
 MopMonk Agent
 
 https://github.com/MopMonkAI/MopMonkAgent
+
+ACT‐R: A cognitive architecture for modeling cognition
+
+https://www.researchgate.net/publication/329493100_ACT-R_A_cognitive_architecture_for_modeling_cognition
