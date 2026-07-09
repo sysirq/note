@@ -49,3 +49,7 @@ https://github.com/MopMonkAI/MopMonkAgent
 ACT‐R: A cognitive architecture for modeling cognition
 
 https://www.researchgate.net/publication/329493100_ACT-R_A_cognitive_architecture_for_modeling_cognition
+
+ACT‐R
+
+https://act-r.psy.cmu.edu
