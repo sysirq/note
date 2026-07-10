@@ -53,3 +53,11 @@ https://www.researchgate.net/publication/329493100_ACT-R_A_cognitive_architectur
 ACT‐R
 
 https://act-r.psy.cmu.edu
+
+认知架构（如SOAR、ACT-R）与AI Agent
+
+https://openeuler.csdn.net/6a0ddd2e10ee7a33f273fd69.html
+
+如何构建基于认知架构的AI Agent：从理论到工程实践
+
+https://blog.csdn.net/2301_76268839/article/details/161497247
