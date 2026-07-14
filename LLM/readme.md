@@ -65,3 +65,7 @@ https://blog.csdn.net/2301_76268839/article/details/161497247
 AI-Agent-Guide
 
 https://github.com/Scodive/AI-Agent-Guide
+
+Cognitive Architectures for Language Agents
+
+https://arxiv.org/abs/2309.02427
