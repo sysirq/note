@@ -77,3 +77,19 @@ https://zhuanlan.zhihu.com/p/634327548
 深入剖析ReAct的核心原理、技术架构
 
 https://zhuanlan.zhihu.com/p/1991816580384957616
+
+什么是 ReAct 智能体
+
+https://www.ibm.com/cn-zh/think/topics/react-agent?regionCode=cn&languageCode=zh&cm-history=cn-zh
+
+浅聊ReAct：Agent 的执行框架
+
+https://juejin.cn/post/7634063791206219776
+
+什么是思维树
+
+https://www.ibm.com/cn-zh/think/topics/tree-of-thoughts?regionCode=cn&languageCode=zh&cm-history=cn-zh
+
+思维树/TOT（Tree of Thoughts），让大型语言模型深思熟虑的解决问题
+
+https://zhuanlan.zhihu.com/p/634180290
