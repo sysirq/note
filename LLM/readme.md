@@ -69,3 +69,11 @@ https://github.com/Scodive/AI-Agent-Guide
 Cognitive Architectures for Language Agents
 
 https://arxiv.org/abs/2309.02427
+
+大模型与CoT经典论文阅读之——Zero-shot CoT, Manual CoT, AutoCoT
+
+https://zhuanlan.zhihu.com/p/634327548
+
+深入剖析ReAct的核心原理、技术架构
+
+https://zhuanlan.zhihu.com/p/1991816580384957616
