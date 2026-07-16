@@ -93,3 +93,7 @@ https://www.ibm.com/cn-zh/think/topics/tree-of-thoughts?regionCode=cn&languageCo
 思维树/TOT（Tree of Thoughts），让大型语言模型深思熟虑的解决问题
 
 https://zhuanlan.zhihu.com/p/634180290
+
+智能体LLM系统与记忆增强架构
+
+https://apxml.com/zh/courses/agentic-llm-memory-architectures
