@@ -101,3 +101,7 @@ https://apxml.com/zh/courses/agentic-llm-memory-architectures
 Hugging Face
 
 https://huggingface.co
+
+LlamaHub
+
+https://llamahub.ai
