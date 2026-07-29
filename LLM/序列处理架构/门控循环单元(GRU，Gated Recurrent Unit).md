@@ -2,6 +2,36 @@
 
 可以将 GRU 看作是 LSTM 的“精简版”。它吸取了 LSTM 核心的门控思想，但通过精简结构减少了参数量，从而在保持优秀长期记忆能力的同时，具备了更快的训练速度和更高的计算效率。
 
+LSTM：
+
+```
+三个门
+
+Forget
+Input
+Output
+
+两个状态：
+
+Cell State
+Hidden State
+```
+
+GRU:
+
+```
+两个门
+
+Update
+Reset
+
+一个状态：
+
+Hidden State
+```
+
+
+
 - 更新门：决定保留多少过去信息
 
 $$
