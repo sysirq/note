@@ -225,3 +225,84 @@ agent = create_deep_agent(
 - 整个 agent 进程跑在容器/VM 里
 - 通信与镜像要自己搭，更贴近「生产与本地一致」的部署
 
+# Interpreters
+
+Interpreters 是 Deep Agents 里的轻量可编程层：agent 在循环内写 JS/TS，由嵌入的 QuickJS 运行时执行，中间状态留在解释器里，只有最终结果回到模型上下文。它是「一次一次 tool call」和「完整 Sandbox」之间的中间方案。
+
+- 普通 tool calling：模型每一步都选工具、看结果、再选下一步
+- Sandbox：完整 OS + shell + 装包
+- 在隔离的 JS 运行时里写循环/分支/Promise.all，可选择性地从代码里调**白名单工具（PTC）、子代理（Dynamic subagents）**
+
+为什么需要它:
+
+- 模型一轮里可以发出一批 tool call，但那批tool call在发出时就固定了，无法在「看到第 3 个结果后再决定第 4 个参数」。
+
+Interpreter 把编排写进代码：
+
+- 循环、重试、分支、并行
+- 中间变量不进模型上下文 → 省 token、上下文更干净
+- 确定性更强（例如对 100 个文件各派一个 subagent）
+
+```
+pip install -U "deepagents[quickjs]"
+```
+
+```python
+from deepagents import create_deep_agent
+from langchain_quickjs import CodeInterpreterMiddleware
+
+agent = create_deep_agent(
+    model="google_genai:gemini-3.6-flash",
+    middleware=[CodeInterpreterMiddleware()],
+)
+```
+
+agent 自己写代码并调用，你一般不直接调解释器
+
+工作原理：
+
+```
+模型写 JS → 调用 eval
+       ↓
+QuickJS 在隔离上下文中执行
+       ↓（可选）await tools.xxx(...) / task(...)
+       ↓
+主机执行真实工具，结果回解释器
+       ↓
+最后表达式 + console 输出 → 回到模型上下文
+```
+
+### Programmatic Tool Calling（PTC）
+
+  ```python
+  agent = create_deep_agent(
+    model="openai:gpt-4o",
+    middleware=[CodeInterpreterMiddleware(ptc=["web_search", "task"])], 
+  )
+  ```
+
+需要显示指定可用工具，比如上面的：web_search、task。
+
+### Dynamic subagents
+
+怎么启用:
+
+- 有 subagents
+- 挂上 Code Interpreter 中间件
+
+eg:
+
+```python
+from deepagents import create_deep_agent
+from langchain_quickjs import CodeInterpreterMiddleware
+
+agent = create_deep_agent(
+    model="google_genai:gemini-3.6-flash",
+    subagents=[{
+        "name": "reviewer",
+        "description": "Reviews code for security issues, citing lines and severity",
+        "system_prompt": "You are a security-focused code reviewer. Report issues with line numbers and severity.",
+    }],
+    middleware=[CodeInterpreterMiddleware()],
+)
+```
