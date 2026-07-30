@@ -172,3 +172,56 @@ CompositeBackend 看路径前缀
         └── 其它          → StateBackend（线程内临时）
 ```
 
+# Permissions
+
+用一组规则告诉 agent：哪些路径能读、哪些能写、哪些直接拒绝、哪些要人审批——默认「没匹配到规则就允许」。
+
+```python
+from deepagents import FilesystemPermission, create_deep_agent
+
+
+# Read-only agent: deny all writes
+agent = create_deep_agent(
+    model=model,
+    backend=backend,
+    permissions=[
+        FilesystemPermission(
+            operations=["write"],
+            paths=["/**"],
+            mode="deny",
+        ),
+    ],
+)
+```
+
+| 覆盖                                                         | 不覆盖                                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 内置文件工具：`ls`、`read_file`、`glob`、`grep`、`write_file`、`edit_file`、`delete` | 自定义工具、MCP 工具（即使它们自己读盘）                     |
+|                                                              | **Sandbox / `execute`**：shell 可访问任意路径，路径权限挡不住 |
+
+**匹配规则：**
+
+1. 按**声明顺序**从上到下
+2. **第一条**同时匹配 operations + paths 的规则生效
+3. 没有任何规则匹配 → **允许**（宽松默认）
+
+路径会做规范化，减轻 .. 等穿越绕过
+
+# Sandboxes
+
+### Sandbox as tool
+
+```
+你的机器/服务器：LLM 循环、工具调度、API Key
+        ↓  tool call
+远程沙箱：read/write/execute 真正发生在这里
+```
+
+- Agent 逻辑在宿主机，命令在远程跑
+- Key 不必进沙箱，迭代 agent 逻辑更方便
+
+### Agent in sandbox
+
+- 整个 agent 进程跑在容器/VM 里
+- 通信与镜像要自己搭，更贴近「生产与本地一致」的部署
+
