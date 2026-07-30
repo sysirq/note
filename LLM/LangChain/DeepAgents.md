@@ -306,3 +306,40 @@ agent = create_deep_agent(
     middleware=[CodeInterpreterMiddleware()],
 )
 ```
+
+# Event Streaming
+
+Event Streaming（事件流）, 本质上是指：在 Deep Agent 执行过程中，把内部发生的各种事件实时暴露出来，而不是等 Agent 完整运行结束后一次性返回结果。
+
+它主要用于构建类似 ChatGPT、Claude Code、Cursor 这种实时交互体验：用户可以看到：
+- LLM 正在输出 token
+- Agent 正在调用工具
+- SubAgent 正在执行任务
+- 文件正在读写
+- 任务进度变化
+
+```python
+load_dotenv()
+
+api_key = os.getenv("LLM_API_KEY").strip()
+api_url = os.getenv("LLM_BASE_URL").strip() # Custom API URL for the OpenAI-compatible endpoint
+
+model = ChatOpenAI(openai_api_key=api_key, openai_api_base=api_url, model="claude-opus-4-8", temperature=0.7, use_responses_api=False)
+
+agent = create_deep_agent(
+    model=model
+)
+
+stream = agent.stream_events(
+    {
+        "messages": [{"role": "user", "content": "Write me a haiku about the sea"}],
+    },
+    version="v3",
+)
+
+for message in stream.messages:
+    print(message.text)
+
+```
+
+https://docs.langchain.com/oss/python/deepagents/event-streaming
