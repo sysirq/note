@@ -63,12 +63,21 @@ $$
 
 - softmax
 
+  $$
+  softmax(\frac{QK^T}{\sqrt{d_k}})
+  $$
+
   转化为概率
 
-- 最后乘以V
+- 最后V
 
-  根据关注比例，把其他词的信息拿过来。
-  
+  $$
+  Output=AttentionWeight \times V
+  $$
+
+
+  根据关注比例，把其他词的信息拿过来。eg: 0.05V我+0.10V喜欢+0.85V吃
+
 
 # 多头注意力(Multi-Head Attention)
 
