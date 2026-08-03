@@ -142,3 +142,19 @@ MultiHead(Q,K,V)
 =
 Concat(head_1,...,head_n)W_O
 $$
+
+# 位置编码
+
+我们需要一种方法将每个token的位置信息融入模型中。这通过位置编码 (positional encoding)来实现。
+
+最终输入嵌入 = token嵌入 + 位置编码
+
+数学表示
+
+$$
+X = E + PE
+$$
+
+- E: 词嵌入向量（Embedding）
+- PE:位置编码（Position Encoding）
+- X: Transformer真正输入
