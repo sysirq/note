@@ -158,3 +158,20 @@ $$
 - E: 词嵌入向量（Embedding）
 - PE:位置编码（Position Encoding）
 - X: Transformer真正输入
+
+### 正弦余弦位置编码
+
+这是原始 Transformer（Vaswani et al., 2017，《Attention Is All You Need》）中使用的位置编码方式。它是一种固定的、非学习的位置编码，通过正弦和余弦函数直接计算得到。
+
+$$
+PE(pos,2i)=sin(\frac{pos}{10000^{\frac{2i}{d_{model}}}})
+$$
+
+
+$$
+PE(pos,2i+1)=cos(\frac{pos}{10000^{\frac{2i}{d_{model}}}})
+$$
+
+- pos：当前token的位置
+- i：embedding的第几个维度
+- d_model：Transformer隐藏层维度
