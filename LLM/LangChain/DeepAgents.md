@@ -343,3 +343,47 @@ for message in stream.messages:
 ```
 
 https://docs.langchain.com/oss/python/deepagents/event-streaming
+
+# Skills
+
+典型目录结构：
+
+```
+skills/
+└── my-skill/
+    ├── SKILL.md          # 必须：元数据 + 指令
+    ├── scripts/          # 可选：可执行脚本
+    ├── references/       # 可选：详细参考文档
+    └── assets/           # 可选：模板、图片等资源
+```
+
+SKILL.md 格式示例：
+
+```
+---
+name: web-research
+description: 结构化的网页研究工作流，适用于需要全面搜集信息的任务
+---
+
+# Web Research Skill
+
+## When to Use
+- 用户要求研究某个主题
+- 需要多源信息交叉验证时
+
+## Instructions
+1. ...
+2. ...
+```
+
+```python
+from deepagents import create_deep_agent
+
+agent = create_deep_agent(
+    skills=["./skills/", "~/.deepagents/agent/skills/"],
+    # 其他参数...
+)
+```
+
+# Memory
+
