@@ -405,3 +405,94 @@ agent = create_deep_agent(
 )
 ```
 
+```python
+from deepagents import create_deep_agent
+from deepagents.backends import CompositeBackend, StateBackend, StoreBackend
+from langgraph.store.memory import InMemoryStore
+
+store = InMemoryStore()
+
+agent = create_deep_agent(
+    model="anthropic:claude-sonnet-4-6",
+    store=store,
+    backend=CompositeBackend(
+        default=StateBackend(),
+        routes={
+            "/memories/": StoreBackend(namespace=lambda _rt: ("memories",)),
+        },
+    ),
+    system_prompt="""When users tell you their preferences, save them to
+    /memories/user_preferences.txt so you remember them in future conversations.""",
+)
+```
+
+# Retrieval
+
+| 架构            | 描述                                   | 控制力 | 灵活性 | 延迟       | 典型场景               |
+| --------------- | -------------------------------------- | ------ | ------ | ---------- | ---------------------- |
+| **2-Step RAG**  | 固定流程：先检索 → 再生成              | 高     | 低     | 低且可预测 | FAQ、文档问答机器人    |
+| **Agentic RAG** | 代理自主决定「何时」「如何」检索       | 低     | 高     | 可变       | 多工具研究助手         |
+| **Hybrid RAG**  | 结合两者，加入验证、重写、自我校正步骤 | 中     | 中     | 可变       | 需要质量校验的领域问答 |
+
+# Context engineering
+
+- 启动上下文要精简：Memory 只放始终相关的内容，细节放 Skills
+- 重活交给子代理：多步、输出大的任务用 task 隔离
+- 充分利用文件系统：大结果写文件，而不是塞进对话
+- 明确告诉代理记忆结构：在 prompt 中说明 /memories/ 里有什么、如何使用
+- 合理排除不用的工具：通过 harness profile 的 excluded_tools 减小基础 prompt
+
+# Harness profiles
+
+rofiles（配置文件/档案） 是一套用于针对特定模型（Model Spec）或模型提供商（Provider）定制智能体行为的机制
+
+```python
+from deepagents import (
+    GeneralPurposeSubagentProfile,
+    HarnessProfile,
+    register_harness_profile,
+)
+
+register_harness_profile(
+    "openai:gpt-5.5",
+    HarnessProfile(
+        system_prompt_suffix="Respond in under 100 words.",
+        excluded_tools={"execute"},
+        excluded_middleware={"SummarizationMiddleware"},
+        general_purpose_subagent=GeneralPurposeSubagentProfile(enabled=False),
+    ),
+)
+```
+
+- system_prompt_suffix：追加在最终 system prompt 最后（主代理 + 子代理都会生效）
+- excluded_tools：从工具列表中移除指定工具（例如隐藏 execute 或全部文件系统工具）
+- excluded_middleware：排除某些默认中间件
+- general_purpose_subagent：控制自动添加的通用子代理（是否启用、如何配置）
+
+Profiles = 按模型自动生效的 harness 配置包，让你用同一套 create_deep_agent 代码，在不同模型上获得更优表现，而不用到处写 if-else。
+
+
+
+# Subagents
+
+主代理通过内置的 task 工具，把复杂或重型子任务交给拥有独立上下文窗口的子代理执行，子代理完成后只返回一份精炼结果，从而避免主代理的上下文被中间过程填满。
+
+```python
+from deepagents import create_deep_agent
+
+research_subagent = {
+    "name": "research-agent",                    # 必填，主代理用这个名字调用
+    "description": "Used to research in-depth questions",  # 必填，主代理据此决定是否委托
+    "system_prompt": "You are an expert researcher...",    # 必填，子代理自己的指令
+    "tools": [internet_search],                  # 可选，覆盖继承的工具
+    "model": "openai:gpt-5.5",                   # 可选，覆盖主代理模型
+    "skills": ["/skills/research/"],             # 可选，独立 Skills
+    "middleware": [...],                         # 可选
+    "interrupt_on": {...},                       # 可选，人机协同
+}
+
+agent = create_deep_agent(
+    model="google_genai:gemini-3.6-flash",
+    subagents=[research_subagent],
+)
+```
