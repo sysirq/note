@@ -22,3 +22,29 @@
 
 - WordPiece 广泛使用特殊的续接前缀（如 ##）来区分一个子词是位于词首还是词中/词尾。
   -  例如单词 "hiking" 可能会被分词为：["hik", "##ing"]，其中的 ## 明确指示 ing 是紧跟在前面词根后面的，而不是一个独立的单词。
+
+# 代码
+
+```python
+# 确保你已安装 transformers 和 torch
+# pip install transformers torch
+
+from transformers import BertTokenizer
+
+# 加载预训练的 BERT 分词器（它使用 WordPiece）
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+
+sentence = "WordPiece maximizes likelihood."
+
+# 对句子进行分词
+tokens = tokenizer.tokenize(sentence)
+
+print("分词结果:", tokens)
+```
+
+output:
+
+```
+分词结果: ['word', '##piece', 'maximize', '##s', 'likelihood', '.']
+```
+
