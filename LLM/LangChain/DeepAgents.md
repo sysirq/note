@@ -387,3 +387,21 @@ agent = create_deep_agent(
 
 # Memory
 
+```python
+from deepagents import create_deep_agent
+from deepagents.backends import CompositeBackend, StateBackend, StoreBackend
+from langgraph.store.memory import InMemoryStore
+
+agent = create_deep_agent(
+    memory=["/memories/AGENTS.md"],          # 始终加载的记忆文件
+    skills=["/skills/"],                     # 可选：按需技能
+    backend=CompositeBackend(
+        default=StateBackend(),              # 临时文件
+        routes={
+            "/memories/": StoreBackend(...)  # 持久化记忆
+        }
+    ),
+    store=InMemoryStore(),                   # 或真实持久化 Store
+)
+```
+
