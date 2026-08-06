@@ -40,15 +40,16 @@ model = init_chat_model(api_key=api_key, base_url=api_url,model="gpt-5.6-sol")
 
 - init_chat_model 参数：
 
-| 参数            | 类型            | 说明                                           |
-| --------------- | --------------- | ---------------------------------------------- |
-| **temperature** | `float`         | 控制输出随机性。值越小越确定，越大越有创造性。 |
-| **max_tokens**  | `int`           | 限制输出最大 token 数。有效控制输出的长度。    |
-| **timeout**     | `int` / `float` | 请求超时时间（秒）。                           |
-| **max_retries** | `int`           | 失败重试次数（默认通常为 6）。                 |
-| **api_key**     | `str`           | API 密钥（也可用环境变量）。                   |
-| **base_url**    | `str`           | 自定义 API 端点。                              |
-| **model**       | `str`           | 模型名称。                                     |
+| 参数               | 类型            | 说明                                           |
+| ------------------ | --------------- | ---------------------------------------------- |
+| **temperature**    | `float`         | 控制输出随机性。值越小越确定，越大越有创造性。 |
+| **max_tokens**     | `int`           | 限制输出最大 token 数。有效控制输出的长度。    |
+| **timeout**        | `int` / `float` | 请求超时时间（秒）。                           |
+| **max_retries**    | `int`           | 失败重试次数（默认通常为 6）。                 |
+| **api_key**        | `str`           | API 密钥（也可用环境变量）。                   |
+| **base_url**       | `str`           | 自定义 API 端点。                              |
+| **model**          | `str`           | 模型名称。                                     |
+| **model_provider** | `str`           | 单独指定提供商。e g: model_provider="openai",  |
 
 ### 调用
 
