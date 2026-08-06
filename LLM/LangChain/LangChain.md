@@ -85,3 +85,87 @@ response = model.invoke(conversation)
 print(response)  # AIMessage("J'adore créer des applications.")
 ```
 
+- Stream
+
+调用stream()返回一个迭代器，它按产生顺序输出数据块。您可以使用循环实时处理每个数据块：
+
+```python
+for chunk in model.stream("Why do parrots have colorful feathers?"):
+    print(chunk.text, end="|", flush=True)
+```
+
+output:
+
+```
+Par|rots| have| colorful| feathers| for| several| reasons|:
+
+|-| **|Communication| and| mate| selection|:**| Bright| colors| can| signal| health|,| age|,| species|,| and| reproductive| fitness|.| In| some| parro|ts|,| males| and| females| use| color| differences| to| recognize| suitable| mates|.
+|-| **|Species| recognition|:**| Dist|inct|ive| patterns| help| parro|ts| identify| members| of| their| own| species|,| especially| in| dense| forests| or| large| fl|ocks|.
+|-| **|Cam|ouflage|:**| Although| vivid| to| us|,| green| feathers| can| blend| into| leafy| environments|.| Other| colors| may| break| up| the| bird|’s| outline| among| flowers|,| fruits|,| and| foliage|.
+|-| **|Fe|ather| structure| and| pigments|:**| Yellow|,| red|,| and| orange| colors| mostly| come| from| pigments|,| while| blue| and| some| green| colors| are| produced| by| microscopic| structures| that| scatter| light|.| Par|rots| also| have| unusual| pigments| called| **|ps|itt|ac|of|ul|v|ins|**,| which| create| many| of| their| red|,| orange|,| and| yellow| hues|.
+|-| **|Individual| condition|:**| Feather| brightness| can| sometimes| reflect| nutrition| and| overall| health|.
+
+|So|,| par|rot| coloration| is| a| combination| of| genetics|,| feather| chemistry|,| light|-sc|attering| structures|,| and| evolutionary| pressures|.|||%      
+```
+
+- Batch
+
+批量请求处理
+
+```python
+responses = model.batch([
+    "Why do parrots have colorful feathers?",
+    "How do airplanes fly?",
+    "What is quantum computing?"
+])
+for response in responses:
+    print(response)
+    
+################################################################################################
+    
+for response in model.batch_as_completed([
+    "Why do parrots have colorful feathers?",
+    "How do airplanes fly?",
+    "What is quantum computing?"
+]):
+    print(response)
+```
+
+### 工具调用
+
+为了使定义的工具可供模型使用，必须通过bind_tools进行绑定。
+
+```python
+from langchain.tools import tool
+
+@tool
+def get_weather(location: str) -> str:
+    """Get the weather at a location."""
+    return f"It's sunny in {location}."
+
+
+model_with_tools = model.bind_tools([get_weather])
+
+response = model_with_tools.invoke("What's the weather like in Boston?")
+for tool_call in response.tool_calls:
+    # View tool calls made by the model
+    print(f"Tool: {tool_call['name']}")
+    print(f"Args: {tool_call['args']}")
+```
+
+### 结构化输出
+
+```python
+from pydantic import BaseModel, Field
+
+class Movie(BaseModel):
+    """A movie with details."""
+    title: str = Field(description="The title of the movie")
+    year: int = Field(description="The year the movie was released")
+    director: str = Field(description="The director of the movie")
+    rating: float = Field(description="The movie's rating out of 10")
+
+model_with_structure = model.with_structured_output(Movie)
+response = model_with_structure.invoke("Provide details about the movie Inception")
+print(response)  # Movie(title="Inception", year=2010, director="Christopher Nolan", rating=8.8)
+```
