@@ -50,3 +50,38 @@ model = init_chat_model(api_key=api_key, base_url=api_url,model="gpt-5.6-sol")
 | **base_url**    | `str`           | 自定义 API 端点。                              |
 | **model**       | `str`           | 模型名称。                                     |
 
+### 调用
+
+- invoke
+
+```python
+response = model.invoke("Why do parrots have colorful feathers?")
+print(response)
+
+################################################################################################
+
+conversation = [
+    {"role": "system", "content": "You are a helpful assistant that translates English to French."},
+    {"role": "user", "content": "Translate: I love programming."},
+    {"role": "assistant", "content": "J'adore la programmation."},
+    {"role": "user", "content": "Translate: I love building applications."}
+]
+
+response = model.invoke(conversation)
+print(response)  # AIMessage("J'adore créer des applications.")
+
+################################################################################################
+
+from langchain.messages import HumanMessage, AIMessage, SystemMessage
+
+conversation = [
+    SystemMessage("You are a helpful assistant that translates English to French."),
+    HumanMessage("Translate: I love programming."),
+    AIMessage("J'adore la programmation."),
+    HumanMessage("Translate: I love building applications.")
+]
+
+response = model.invoke(conversation)
+print(response)  # AIMessage("J'adore créer des applications.")
+```
+
