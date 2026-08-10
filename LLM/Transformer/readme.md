@@ -227,8 +227,8 @@ class TransformerModel(torch.nn.Module):
 
     def forward(self, src: torch.Tensor, tgt: torch.Tensor,
                 src_mask: torch.Tensor = None, tgt_mask: torch.Tensor = None) -> torch.Tensor:
-        src_emb = self.pos_encoder(self.src_tok_emb(src))
-        tgt_emb = self.pos_encoder(self.tgt_tok_emb(tgt))
+        src_emb = self.pos_encoder(self.src_tok_emb(src)*math.sqrt(self.d_model))
+        tgt_emb = self.pos_encoder(self.tgt_tok_emb(tgt)*math.sqrt(self.d_model))
 
         enc_output = src_emb
         for layer in self.encoder_layers:
