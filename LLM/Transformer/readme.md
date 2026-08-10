@@ -161,7 +161,7 @@ $$
 
 ### 正弦余弦位置编码
 
-这是原始 Transformer（Vaswani et al., 2017，《Attention Is All You Need》）中使用的位置编码方式。它是一种固定的、非学习的位置编码，通过正弦和余弦函数直接计算得到。
+这是原始 Transformer（Vaswani et al., 2017，《Attention Is All You Need》）中使用的位置编码方式。它是一种固定的、非学习的位置编码，通过正弦和余弦函数直接计算得到(高频维度捕捉相邻位置的细微变化，低频维度捕捉长距离的位置关系，多个频率组合形成唯一的位置表示)。
 
 $$
 PE(pos,2i)=sin(\frac{pos}{10000^{\frac{2i}{d_{model}}}})
