@@ -198,3 +198,46 @@ Attention(Q_{decoder},K_{encoder},V_{encoder})
 $$
 
 在这里，来自解码器上一层的输出被用来构建 Query（查询向量），而编码器的最终输出则被用来构建 Key（键向量） 和 Value（值向量）。这使得解码器在生成每一个目标词时，都能回过头去精准检索源文本中最相关的部分。
+
+# 最终Transformer
+
+```python
+import torch
+
+class TransformerModel(torch.nn.Module):
+    def __init__(self, src_vocab_size: int, tgt_vocab_size: int,
+                 d_model: int, nhead: int, num_encoder_layers: int,
+                 num_decoder_layers: int, dim_feedforward: int,
+                 dropout: float = 0.1, max_len: int = 5000):
+        super(TransformerModel, self).__init__()
+        self.d_model = d_model
+        self.src_tok_emb = torch.nn.Embedding(src_vocab_size, d_model)
+        self.tgt_tok_emb = torch.nn.Embedding(tgt_vocab_size, d_model)
+        self.pos_encoder = PositionalEncoding(d_model, max_len)
+
+        self.encoder_layers = torch.nn.ModuleList([
+            EncoderLayer(d_model, nhead, dim_feedforward, dropout)
+            for _ in range(num_encoder_layers)
+        ])
+        self.decoder_layers = torch.nn.ModuleList([
+            DecoderLayer(d_model, nhead, dim_feedforward, dropout)
+            for _ in range(num_decoder_layers)
+        ])
+        self.generator = torch.nn.Linear(d_model, tgt_vocab_size)
+
+    def forward(self, src: torch.Tensor, tgt: torch.Tensor,
+                src_mask: torch.Tensor = None, tgt_mask: torch.Tensor = None) -> torch.Tensor:
+        src_emb = self.pos_encoder(self.src_tok_emb(src))
+        tgt_emb = self.pos_encoder(self.tgt_tok_emb(tgt))
+
+        enc_output = src_emb
+        for layer in self.encoder_layers:
+            enc_output = layer(enc_output, src_mask)
+
+        dec_output = tgt_emb
+        for layer in self.decoder_layers:
+            dec_output = layer(dec_output, enc_output, src_mask, tgt_mask)
+
+        output = self.generator(dec_output)
+        return output
+```
