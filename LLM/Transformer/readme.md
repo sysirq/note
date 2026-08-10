@@ -173,7 +173,7 @@ PE(pos,2i+1)=cos(\frac{pos}{10000^{\frac{2i}{d_{model}}}})
 $$
 
 - pos：当前token的位置
-- i：embedding的第几个维度
+- i：embedding的第几个维度，取值范围为(0到 d_model/2 - 1 )
 - d_model：Transformer隐藏层维度
 
 # 编码器与解码器堆叠
