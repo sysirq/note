@@ -259,7 +259,7 @@ response = agent.invoke(
 print(response)  # "You are Bob!"
 ```
 
-在生产环节中，使用由数据库支持的checkpointer：
+在生产环境中，使用由数据库支持的checkpointer：
 
 ```python
 from langchain.agents import create_agent
