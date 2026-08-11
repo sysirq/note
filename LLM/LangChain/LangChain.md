@@ -170,3 +170,55 @@ model_with_structure = model.with_structured_output(Movie)
 response = model_with_structure.invoke("Provide details about the movie Inception")
 print(response)  # Movie(title="Inception", year=2010, director="Christopher Nolan", rating=8.8)
 ```
+
+# Messages
+
+| 类型               | 角色      | 用途                     | 关键属性                                                   |
+| ------------------ | --------- | ------------------------ | ---------------------------------------------------------- |
+| **SystemMessage**  | system    | 设定模型行为、角色、规则 | content                                                    |
+| **HumanMessage**   | user      | 用户输入                 | content（支持多模态）                                      |
+| **AIMessage**      | assistant | 模型输出                 | content、**tool_calls**、usage_metadata、response_metadata |
+| **ToolMessage**    | tool      | 工具执行结果             | content、**tool_call_id**（必须匹配）、name、artifact      |
+| **AIMessageChunk** | assistant | 流式输出的片段           | 支持 `+` 运算符合并成完整 AIMessage                        |
+
+```python
+messages = [
+    {"role": "system", "content": "You are a poetry expert"},
+    {"role": "user", "content": "Write a haiku about spring"},
+    {"role": "assistant", "content": "Cherry blossoms bloom..."}
+]
+response = model.invoke(messages)
+```
+
+```python
+from langchain.messages import SystemMessage, HumanMessage, AIMessage
+
+messages = [
+    SystemMessage("You are a poetry expert"),
+    HumanMessage("Write a haiku about spring"),
+    AIMessage("Cherry blossoms bloom...")
+]
+response = model.invoke(messages)
+print(type(response))   # <class 'langchain_core.messages.ai.AIMessage'>
+```
+
+# Tools
+
+### 定义tool
+
+```python
+from langchain.tools import tool
+
+@tool
+def search_database(query: str, limit: int = 10) -> str:
+    """Search the customer database for records matching the query.
+
+    Args:
+        query: Search terms to look for
+        limit: Maximum number of results to return
+    """
+    return f"Found {limit} results for '{query}'"
+model_with_tools = model.bind_tools([search_database])
+```
+
+类型提示是必需的，因为它们定义了工具的输入模式。文档字符串应提供信息且简洁，以帮助模型理解工具的目的。
