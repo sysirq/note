@@ -222,3 +222,60 @@ model_with_tools = model.bind_tools([search_database])
 ```
 
 类型提示是必需的，因为它们定义了工具的输入模式。文档字符串应提供信息且简洁，以帮助模型理解工具的目的。
+
+# Short-term memory
+
+为添加短期记忆（线程级持久化）到代理，您需要在创建代理时指定checkpointer，（同时也需要指定configurable）。
+
+```python
+from langchain.agents import create_agent
+from langgraph.checkpoint.memory import InMemorySaver  
+
+
+def get_user_info() -> str:
+    """Look up information about the current user."""
+    return "No user profile on file."
+
+
+agent = create_agent(
+    model="google_genai:gemini-3.6-flash",
+    tools=[get_user_info],
+    checkpointer=InMemorySaver(),
+)
+
+thread_config = {"configurable": {"thread_id": "1"}}
+response = agent.invoke(
+    {"messages": [{"role": "user", "content": "Hi! My name is Bob."}]},
+    thread_config,
+)["messages"][-1].content
+
+print(response)  # "Hi Bob! Nice to see you here. How are you doing?"
+
+response = agent.invoke(
+    {"messages": [{"role": "user", "content": "What's my name?"}]},
+    thread_config,
+)["messages"][-1].content
+
+print(response)  # "You are Bob!"
+```
+
+在生产环节中，使用由数据库支持的checkpointer：
+
+```python
+from langchain.agents import create_agent
+from langgraph.checkpoint.postgres import PostgresSaver  
+
+def get_user_info() -> str:
+    """Look up information about the current user."""
+    return "No user profile on file."
+
+DB_URI = "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable"
+with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
+    checkpointer.setup() # auto create tables in PostgreSQL
+    agent = create_agent(
+        "gpt-5.5",
+        tools=[get_user_info],
+        checkpointer=checkpointer,
+    )
+```
+
