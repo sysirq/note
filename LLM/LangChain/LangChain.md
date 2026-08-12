@@ -524,6 +524,3 @@ def validate_response(state: AgentState, runtime: Runtime) -> dict | None:
     """Remove messages containing sensitive words."""
     STOP_WORDS = ["password", "secret"]
 ```
-
-# Event Streaming
-
