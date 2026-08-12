@@ -525,3 +525,5 @@ def validate_response(state: AgentState, runtime: Runtime) -> dict | None:
     STOP_WORDS = ["password", "secret"]
 ```
 
+# Event Streaming
+
