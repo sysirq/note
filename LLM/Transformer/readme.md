@@ -208,7 +208,112 @@ eᵢⱼ = ((xᵢ W^Q)(xⱼ W^K + aᵢⱼ^K)^T)/(√(d_z))
 
 ### 旋转位置编码RoPE（Rotary Position Embedding）
 
+核心思想：在注意力分数计算之前，对查询 (Q) 和键 (K) 向量应用依赖于位置的旋转。通过旋转向量，让注意力中的 Q·Kᵀ 自动包含相对位置信息。
 
+原理：在 Query 和 Key 进入 Attention 之前，给它们注入绝对位置信息（不修改 Attention 框架），但当 Query 和 Key做内积计算注意力分数时，算出来的结果必须仅仅与它们的相对距离有关。
+
+- 前置知识：
+
+$$
+R(\theta)=
+\begin{bmatrix}
+\cos\theta & -\sin\theta\\
+\sin\theta & \cos\theta
+\end{bmatrix}
+$$
+
+表示把一个向量逆时针旋转
+$$
+\theta
+$$
+ 角度
+
+
+
+两次旋转可以合并：
+$$
+R(\beta)R(\alpha)=R(\alpha+\beta)
+$$
+
+转置等于反向旋转
+
+$$
+R(\theta)^T=R^{-1}(\theta)
+$$
+
+
+
+而逆旋转就是负角度：
+
+$$
+R(\theta)^T=R(-\theta)
+$$
+
+
+
+- 推导核心公式：
+
+目标：
+
+$$
+R_m^TR_n=R_{n-m}
+$$
+
+已知：
+
+$$
+R_m=R(m\omega)
+$$
+
+所以：
+
+$$
+R_m^T=R(-m\omega)
+$$
+
+因此：
+
+$$
+R_m^TR_n
+=
+R(-m\omega)R(n\omega)
+$$
+
+根据旋转叠加：
+
+$$
+R(a)R(b)=R(a+b)
+$$
+
+得到：
+
+$$
+R_m^TR_n
+=
+R(-m\omega+n\omega)
+$$
+
+整理：
+
+$$
+\boxed{
+R_m^TR_n=R((n-m)\omega)
+}
+$$
+
+定义：
+
+$$
+R_{n-m}=R((n-m)\omega)
+$$
+
+所以：
+
+$$
+\boxed{
+R_m^TR_n=R_{n-m}
+}
+$$
 
 # 编码器与解码器堆叠
 
