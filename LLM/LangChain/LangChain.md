@@ -524,3 +524,29 @@ def validate_response(state: AgentState, runtime: Runtime) -> dict | None:
     """Remove messages containing sensitive words."""
     STOP_WORDS = ["password", "secret"]
 ```
+
+# Middleware
+
+### Prebuilt middleware
+
+| 中间件                    | 核心功能                                                     |
+| ------------------------- | ------------------------------------------------------------ |
+| **Summarization**         | 接近 token 限制时自动总结对话历史，保留最近消息，压缩旧上下文 |
+| **Human-in-the-loop**     | 在工具调用前暂停，等待人类审批 / 编辑 / 拒绝（需 checkpointer） |
+| **Model call limit**      | 限制模型调用次数（thread / run 级别），防止无限循环或成本失控 |
+| **Tool call limit**       | 限制工具调用次数（全局或特定工具，支持 thread / run 限制）   |
+| **Model fallback**        | 主模型失败时自动切换到备用模型                               |
+| **PII detection**         | 检测并处理个人身份信息（email、信用卡等），支持 redact / mask / hash / block，可自定义检测器 |
+| **To-do list**            | 给 agent 增加任务规划与跟踪能力（自动提供 `write_todos` 工具） |
+| **LLM tool selector**     | 用另一个 LLM 先筛选相关工具，再交给主模型，减少无关工具干扰  |
+| **Tool error**            | 捕获工具执行异常，转为错误消息给模型，让其可恢复             |
+| **Tool retry**            | 工具调用失败时自动重试（指数退避）                           |
+| **Model retry**           | 模型调用失败时自动重试（指数退避）                           |
+| **LLM tool emulator**     | 用 LLM 模拟工具执行结果，便于测试 / 原型开发                 |
+| **Context editing**       | 管理上下文，清理旧的工具输出，保留最近 N 个结果              |
+| **Provider tool search**  | 把部分工具延迟到提供商服务端搜索（目前支持 Anthropic / OpenAI 部分模型） |
+| **Shell tool**            | 给 agent 暴露持久 shell 会话，执行命令（需注意安全策略）     |
+| **File search**           | 提供 Glob / Grep 等文件系统搜索工具                          |
+| **Filesystem**            | 给 agent 提供文件系统，用于存储上下文和长期记忆              |
+| **Subagent**              | 支持生成子 agent                                             |
+| **Rubric grading (Beta)** | 用 LLM-as-a-judge 按评分标准评估并迭代，直到满足要求         |
