@@ -550,3 +550,47 @@ def validate_response(state: AgentState, runtime: Runtime) -> dict | None:
 | **Filesystem**            | 给 agent 提供文件系统，用于存储上下文和长期记忆              |
 | **Subagent**              | 支持生成子 agent                                             |
 | **Rubric grading (Beta)** | 用 LLM-as-a-judge 按评分标准评估并迭代，直到满足要求         |
+
+### Custom middleware
+
+| 类型                       | 钩子                                                     | 运行时机              | 适用场景                   |
+| -------------------------- | -------------------------------------------------------- | --------------------- | -------------------------- |
+| **Node-style**（顺序执行） | `before_agent` `before_model` `after_model``after_agent` | 在特定执行点顺序运行  | 日志、验证、状态更新       |
+| **Wrap-style**（包装执行） | `wrap_model_call` `wrap_tool_call`                       | 围绕每次模型/工具调用 | 重试、缓存、转换、短路控制 |
+
+# Runtime
+
+create_agent 底层运行在 LangGraph 的 Runtime 之上，Runtime 对象提供了一次 agent 调用所需的关键上下文和依赖。
+
+Runtime包含的信息：
+
+- Context：静态信息（如 user id、数据库连接、其他依赖），用于依赖注入
+- Store：BaseStore 实例，用于长期记忆
+- Stream writer：用于通过 "custom" 流模式推送自定义信息
+- Execution info：当前执行身份与重试信息（thread ID、run ID、attempt number）
+- Server info：在 LangGraph Server 上运行时的服务端元数据（assistant ID、graph ID、已认证用户）
+
+访问方式：
+
+```python
+@dataclass
+class Context:
+    user_name: str
+
+agent = create_agent(
+    model="gpt-5-nano",
+    tools=[...],
+    context_schema=Context
+)
+
+@dynamic_prompt
+def dynamic_system_prompt(request: ModelRequest) -> str:
+    user_name = request.runtime.context.user_name
+    return f"You are a helpful assistant. Address the user as {user_name}.
+
+agent.invoke(
+    {"messages": [{"role": "user", "content": "What's my name?"}]},
+    context=Context(user_name="John Smith")
+)
+```
+
