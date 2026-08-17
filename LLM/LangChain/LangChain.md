@@ -594,3 +594,285 @@ agent.invoke(
 )
 ```
 
+# Context engineering
+
+**Context Engineering in Agents（LangChain 文档核心总结）**
+
+### 核心观点
+构建可靠 Agent 的最大难点不是模型本身不够强，而是**没有把正确的上下文以正确的格式传给 LLM**。  
+**Context Engineering** 就是：把正确的信息 + 工具 + 格式提供给模型，让它能可靠完成任务。这是 AI Engineer 的核心工作。
+
+### Agent 循环
+1. **Model Call**：带着 prompt 和工具调用 LLM，返回最终回复或工具请求  
+2. **Tool Execution**：执行工具并返回结果  
+
+循环直到模型决定结束。
+
+### 三类可控制的上下文
+
+| 类型 | 控制什么 | 瞬态 / 持久 |
+|------|----------|-------------|
+| **Model Context** | 进入模型的内容（System Prompt、Messages、Tools、Model、Response Format） | 瞬态 |
+| **Tool Context** | 工具能读/写的内容（State、Store、Runtime Context） | 持久 |
+| **Life-cycle Context** | 模型调用与工具执行之间的逻辑（摘要、护栏、日志等） | 持久 |
+
+**瞬态**：只影响当前这一次模型调用，不改变 State  
+**持久**：写入 State / Store，后续轮次都能看到
+
+### 三大数据源
+
+| 数据源 | 别名 | 作用域 | 典型用途 |
+|--------|------|--------|----------|
+| **Runtime Context** | 静态配置 | 单次对话 | User ID、API Key、权限、环境配置 |
+| **State** | 短期记忆 | 单次对话 | 当前消息、上传文件、认证状态、工具结果 |
+| **Store** | 长期记忆 | 跨对话 | 用户偏好、写作风格、历史洞察 |
+
+### Model Context（控制模型看到什么）
+
+通过 **middleware**（`@dynamic_prompt` 和 `@wrap_model_call`）动态调整：
+
+- **System Prompt**：根据消息数量、用户偏好（Store）、角色/环境（Runtime Context）动态生成
+- **Messages**：注入文件上下文、写作风格、合规规则等（默认瞬态）
+- **Tools**：按认证状态、用户偏好、角色权限动态过滤可用工具
+- **Model**：根据对话长度、用户偏好、成本层级动态切换模型
+- **Response Format**：根据对话阶段、用户角色返回不同结构化输出（Pydantic Schema）
+
+### Tool Context（工具的读写）
+
+工具既能**读**也能**写**：
+
+- **读**：State（当前状态）、Store（长期记忆）、Runtime Context（配置）
+- **写**：用 `Command` 更新 State；直接 `store.put()` 写入长期记忆
+
+### Life-cycle Context（生命周期中间件）
+
+在模型调用和工具执行之间插入逻辑，可：
+- 更新上下文（持久修改 State/Store）
+- 跳转生命周期步骤
+
+最常见例子：**SummarizationMiddleware**  
+当 token 超限时自动摘要旧消息，**永久替换** State 中的历史，只保留最近消息。
+
+### 最佳实践
+1. 从简单静态开始，按需加动态
+2. 一次只加一个 context engineering 功能，增量测试
+3. 监控 token、延迟、调用次数
+4. 优先使用内置中间件
+5. 明确区分瞬态（单次调用）与持久（写入 State）
+6. 把上下文策略写清楚
+
+**底层机制**：LangChain 的 **Middleware** 是实现 Context Engineering 的核心手段，允许在 Agent 生命周期任意步骤挂钩，更新上下文或跳转流程。
+
+
+# MCP(Model Context Protocol)
+
+**Model Context Protocol (MCP) — LangChain 文档总结**
+
+MCP 是一个开放协议，用于标准化应用程序如何向 LLM 提供工具和上下文。LangChain 通过 `langchain-mcp-adapters` 库让 Agent 直接使用 MCP 服务器上定义的工具。
+
+### 1. 快速开始
+
+安装：
+```bash
+pip install langchain-mcp-adapters
+```
+
+核心类：`MultiServerMCPClient`（默认**无状态**，每次工具调用都会新建 Session）。
+
+示例：连接多个 MCP 服务器（stdio + HTTP），获取工具后创建 Agent：
+
+```python
+from langchain_mcp_adapters.client import MultiServerMCPClient
+from langchain.agents import create_agent
+
+client = MultiServerMCPClient({
+    "math": {
+        "transport": "stdio",
+        "command": "python",
+        "args": ["/path/to/math_server.py"],
+    },
+    "weather": {
+        "transport": "http",
+        "url": "http://localhost:8000/mcp",
+    }
+})
+tools = await client.get_tools()
+agent = create_agent("claude-sonnet-4-6", tools)
+```
+
+### 2. 自定义 MCP 服务器
+
+使用 **FastMCP** 快速创建：
+
+```python
+from fastmcp import FastMCP
+
+mcp = FastMCP("Math")
+
+@mcp.tool()
+def add(a: int, b: int) -> int:
+    """Add two numbers"""
+    return a + b
+
+if __name__ == "__main__":
+    mcp.run(transport="stdio")
+```
+
+### 3. 传输方式（Transports）
+
+| 类型 | 说明 | 特点 |
+|------|------|------|
+| **HTTP**（streamable-http） | 远程服务器，支持 headers / 自定义 Auth | 适合远程部署 |
+| **stdio** | 启动本地子进程通信 | 本地工具常用，本身有状态，但 MultiServerMCPClient 默认仍按次创建 Session |
+
+### 4. 有状态会话（Stateful Sessions）
+
+默认每次工具调用都是新 Session。需要持久 Session 时：
+
+```python
+async with client.session("server_name") as session:
+    tools = await load_mcp_tools(session)
+    agent = create_agent(..., tools)
+```
+
+### 5. 核心功能
+
+#### Tools
+- `client.get_tools()` 获取工具并直接传给 Agent。
+- 工具错误默认以 `status="error"` 的 ToolMessage 返回给模型（不抛异常），方便 Agent 重试。
+- 支持 **Structured Content**（结构化数据放在 `artifact` 中）。
+- 支持 **Multimodal** 内容（图片 + 文本），通过 `content_blocks` 统一访问。
+
+#### Resources
+- 暴露文件、数据库记录等数据，转换为 LangChain `Blob`。
+- `client.get_resources()` 或 `load_mcp_resources(session)`。
+
+#### Prompts
+- 可复用的提示模板，转换为消息列表。
+- `client.get_prompt(server_name, prompt_name, arguments=...)`。
+
+### 6. 高级功能
+
+#### Tool Interceptors（拦截器）
+MCP 服务器无法直接访问 LangGraph 的 Runtime Context / State / Store。**拦截器**弥补这个缺口，提供类似中间件的能力：
+
+- 注入用户上下文、API Key
+- 读取 Store 偏好做个性化
+- 根据 State 做权限检查
+- 修改请求参数 / Headers
+- 返回 `Command` 更新状态或跳转
+- 重试、限流、日志等
+
+拦截器按“洋葱模型”叠加（列表第一个是最外层）。
+
+#### 其他高级能力
+- **Progress Notifications**：监听长任务进度。
+- **Logging**：接收服务器日志。
+- **Elicitation**：服务器在工具执行中途主动向用户请求额外输入（客户端通过回调处理 accept / decline / cancel）。
+
+### 7. 关键要点总结
+
+- **默认无状态**，需要持久上下文时用 `client.session()`。
+- 工具、资源、提示都能无缝接入 LangChain Agent。
+- **Interceptors** 是连接 MCP 与 LangGraph Runtime（State / Store / Context）的核心桥梁。
+- 支持结构化输出、多模态、进度、日志和交互式输入（Elicitation）。
+
+整体上，MCP 让你把外部工具/数据源标准化，LangChain 的 adapters 再把它们无缝变成 Agent 可用的 Tools / Resources / Prompts。
+
+# Long-term Memory
+
+**Long-term Memory（长期记忆）— LangChain 文档总结**
+
+长期记忆让 Agent 能够**跨对话、跨会话**存储和回忆信息。  
+与短期记忆（Short-term Memory，绑定到单个 thread）不同，长期记忆持久存在，随时可被召回。
+
+它建立在 **LangGraph Store** 之上，数据以 JSON 文档形式存储，按 **namespace + key** 组织。
+
+### 1. 基本用法
+
+创建 Store 并传给 `create_agent`：
+
+```python
+from langchain.agents import create_agent
+from langgraph.store.memory import InMemoryStore
+
+store = InMemoryStore()  # 生产环境建议用 DB-backed Store
+
+agent = create_agent(
+    "claude-sonnet-4-6",
+    tools=[],
+    store=store,
+)
+```
+
+**生产环境推荐**：使用 PostgresStore
+
+```python
+from langgraph.store.postgres import PostgresStore
+
+DB_URI = "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable"
+
+with PostgresStore.from_conn_string(DB_URI) as store:
+    store.setup()
+    agent = create_agent(..., store=store)
+```
+
+### 2. 记忆存储结构
+
+- 每条记忆是一个 **JSON 文档**
+- 通过 **namespace**（类似文件夹，常包含 user_id、org_id 等）和 **key**（类似文件名）组织
+- 支持按内容过滤 + 向量相似度搜索（需配置 embedding）
+
+示例：
+
+```python
+namespace = (user_id, application_context)
+store.put(namespace, "a-memory", {
+    "rules": ["User likes short, direct language", ...],
+    "my-key": "my-value"
+})
+
+item = store.get(namespace, "a-memory")
+items = store.search(namespace, filter={"my-key": "my-value"}, query="language preferences")
+```
+
+### 3. 在工具中读取长期记忆
+
+通过 `ToolRuntime` 访问 `runtime.store`：
+
+```python
+@tool
+def get_user_info(runtime: ToolRuntime[Context]) -> str:
+    """Look up user info."""
+    user_id = runtime.context.user_id
+    user_info = runtime.store.get(("users",), user_id)
+    return str(user_info.value) if user_info else "Unknown user"
+```
+
+调用时传入 `context=Context(user_id="user_123")`。
+
+### 4. 在工具中写入长期记忆
+
+同样通过 `runtime.store.put()`：
+
+```python
+@tool
+def save_user_info(user_info: UserInfo, runtime: ToolRuntime[Context]) -> str:
+    """Save user info."""
+    runtime.store.put(("users",), runtime.context.user_id, dict(user_info))
+    return "Successfully saved user info."
+```
+
+### 5. 关键要点
+
+| 对比项   | Short-term Memory  | Long-term Memory                   |
+| -------- | ------------------ | ---------------------------------- |
+| 作用域   | 单个 thread        | 跨 thread / 跨会话                 |
+| 底层     | Checkpoint / State | LangGraph Store                    |
+| 组织方式 | 消息历史           | namespace + key 的 JSON 文档       |
+| 典型用途 | 当前对话上下文     | 用户偏好、历史洞察、规则、长期知识 |
+
+- 工具是读写长期记忆的主要入口（通过 `runtime.store`）。
+- 生产环境务必使用持久化 Store（如 PostgresStore），`InMemoryStore` 仅适合开发测试。
+- 支持向量检索（配置 `IndexConfig` + embedding 函数）。
+- 更深入的记忆类型（语义、情景、程序）和写入策略，可参考 [Memory 概念指南](https://docs.langchain.com/oss/python/concepts/memory#long-term-memory)。
