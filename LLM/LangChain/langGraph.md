@@ -54,3 +54,13 @@
 ### Agents
 
 本质是：LLM + 工具的循环决策
+
+# Checkpointers
+
+ **每次 Super-step 结束时**，如果图配置了 Checkpointer（如 MemorySaver, SqliteSaver 等），LangGraph 就会自动拍摄当前全局状态的快照，这就是一个 **Checkpoint**。
+
+ 一个 Super-step 代表了图在当前状态下，**所有准备好运行的节点（Nodes）的集合**
+
+- 如果图的逻辑（即边/Edges）决定了只有一个节点应该运行，那么这个 Super-step 就只包含这一个节点。
+-  如果图使用了分支（Fan-out），导致多个节点可以同时运行，那么**所有这些并行的节点都在同一个 Super-step 中并发执行**。
+-  从一组节点过渡到下一组节点，就标志着一个 Super-step 的结束和下一个 Super-step 的开始。
