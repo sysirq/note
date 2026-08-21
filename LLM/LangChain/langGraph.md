@@ -86,3 +86,36 @@ config = {"configurable": {"thread_id": "1"}}
 list(graph.get_state_history(config)) # checkpoints将按时间顺序排列，最近的checkpoint /StateSnapshot 将在列表的第一位。
 ```
 
+### Checkpointer libraries
+
+- 内存版(开发测试)
+
+  ```python
+  from langgraph.checkpoint.memory import InMemorySaver 
+  
+  checkpointer = InMemorySaver()
+  graph = builder.compile(checkpointer=checkpointer)
+  ```
+
+- SQLite（本地持久化）
+
+  ```python
+  from langgraph.checkpoint.sqlite import SqliteSaver # pip install langgraph-checkpoint-sqlite
+  
+  with SqliteSaver.from_conn_string("checkpoints.db") as checkpointer:
+      graph = builder.compile(checkpointer=checkpointer)
+  ```
+
+- PostgreSQL（生产推荐）
+
+  ```python
+  from langgraph.checkpoint.postgres import PostgresSaver # pip install langgraph-checkpoint-postgres
+  
+  DB_URI = "postgresql://user:password@localhost:5432/langgraph"
+  
+  with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
+      checkpointer.setup()          # 首次使用必须运行，创建表
+      graph = builder.compile(checkpointer=checkpointer)
+  ```
+
+  
