@@ -64,3 +64,25 @@
 - 如果图的逻辑（即边/Edges）决定了只有一个节点应该运行，那么这个 Super-step 就只包含这一个节点。
 -  如果图使用了分支（Fan-out），导致多个节点可以同时运行，那么**所有这些并行的节点都在同一个 Super-step 中并发执行**。
 -  从一组节点过渡到下一组节点，就标志着一个 Super-step 的结束和下一个 Super-step 的开始。
+
+### Get and update state
+
+- Get state
+
+```python
+# get the latest state snapshot
+config = {"configurable": {"thread_id": "1"}}
+graph.get_state(config)
+
+# get a state snapshot for a specific checkpoint_id
+config = {"configurable": {"thread_id": "1", "checkpoint_id": "1ef663ba-28fe-6528-8002-5a559208592c"}}
+graph.get_state(config)
+```
+
+- Get state history：取给定线程的图的完整执行历史记录。
+
+```python
+config = {"configurable": {"thread_id": "1"}}
+list(graph.get_state_history(config)) # checkpoints将按时间顺序排列，最近的checkpoint /StateSnapshot 将在列表的第一位。
+```
+
