@@ -256,3 +256,58 @@ async def call_model(state: MessagesState, runtime: Runtime[Context]):
 ```
 
 如果您创建一个新的线程，只要用户ID相同，您仍然可以访问相同的记忆。
+
+# Fault Tolerance（容错机制）
+
+### Retries（重试）
+
+```python
+from langgraph.types import RetryPolicy, default_retry_on
+
+def custom_retry_on(exc: BaseException) -> bool:
+    if isinstance(exc, MyCustomError):
+        return False
+    return default_retry_on(exc)
+
+builder.add_node(
+    "call_api",
+    call_api,
+    retry_policy=RetryPolicy(max_attempts=3, retry_on=custom_retry_on),
+)
+```
+
+关键参数：
+
+- max_attempts：总尝试次数（默认 3）
+- initial_interval / backoff_factor / max_interval：指数退避
+- jitter：是否添加随机抖动
+- retry_on：哪些异常才重试（默认会跳过 ValueError、TypeError 等编程错误，HTTP 库只重试 5xx），或一个返回 True 的可调用对象，用于重试异常。
+
+节点里可以通过 runtime.execution_info.node_attempt 知道当前是第几次尝试，方便做 fallback。
+
+### Timeouts（超时）
+
+add_node中的timeout=参数限制了单个节点尝试运行的时间。传递一个数字（秒）、一个timedelta或一个TimeoutPolicy，用于设置单独的运行和空闲限制：
+
+```python
+from datetime import timedelta
+from langgraph.types import TimeoutPolicy
+
+# Simple wall-clock cap
+builder.add_node("call_model", call_model, timeout=60)
+builder.add_node("call_model", call_model, timeout=timedelta(minutes=2))
+
+# Separate run and idle limits
+builder.add_node(
+    "call_model",
+    call_model,
+    timeout=TimeoutPolicy(run_timeout=120, idle_timeout=30),
+)
+```
+
+- 只支持 async 节点（sync 节点会在 compile 时报错）
+- 两种超时：
+	- run_timeout: 总时间限制，eg:最多运行30秒
+	
+	- idle_timeout: 空闲时间限制，有进度信号就重置计时器，进度信号包括：写 state、stream 输出、子任务、LangChain 回调事件等。也可以用 runtime.heartbeat() 手动保活（需要设置refresh_on="heartbeat"）。
+- 超时后抛 NodeTimeoutError，这次 attempt 的写入会被清除，然后交给 RetryPolicy 决定是否重试。
