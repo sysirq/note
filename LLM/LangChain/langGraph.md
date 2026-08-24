@@ -156,6 +156,30 @@ output:
 {'namespace': ['1', 'memories'], 'key': 'b4142aca-91ec-4cee-b529-05f03c9ce7e5', 'value': {'food_preference': 'I like pizza'}, 'created_at': '2026-08-24T08:58:18.261816+00:00', 'updated_at': '2026-08-24T08:58:18.261958+00:00', 'score': None}
 ```
 
+类似结构：
+
+```
+Store
+
+user_123
+ |
+ └── memories
+        |
+        ├── memory_001
+        │       |
+        │       {
+        │          food:pizza
+        │       }
+        │
+        └── memory_002
+                {
+                  language:Chinese
+                }
+
+```
+
+
+
 ### 语义搜索
 
 - 配置 embedding 模型后，可以用自然语言查询记忆
@@ -201,7 +225,34 @@ memories = store.search(
     query="What does the user like to eat?",
     limit=3  # Return top 3 matches
 )
-
-
 ```
 
+### 在 LangGraph 中使用
+
+```python
+from dataclasses import dataclass
+from langgraph.runtime import Runtime
+
+@dataclass
+class Context:
+    user_id: str
+
+async def call_model(state: MessagesState, runtime: Runtime[Context]):
+    # Get the user id from the runtime context
+    user_id = runtime.context.user_id
+
+    # Namespace the memory
+    namespace = (user_id, "memories")
+
+    # Search based on the most recent message
+    memories = await runtime.store.asearch(
+        namespace,
+        query=state["messages"][-1].content,
+        limit=3
+    )
+    info = "\n".join([d.value["memory"] for d in memories])
+
+    # ... Use memories in the model call
+```
+
+如果您创建一个新的线程，只要用户ID相同，您仍然可以访问相同的记忆。
