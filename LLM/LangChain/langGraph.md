@@ -359,3 +359,21 @@ graph = (
 ```
 
 - 可以更新 state，也可以用 Command 跳转到其他节点（适合 Saga / 补偿模式）
+
+### Graph Defaults（全局默认）
+
+代替在每次add_node调用中重复相同的retry_policy=、error_handler=、timeout=或cache_policy=，使用set_node_defaults在一个位置配置graph的全局默认值：
+
+```python
+graph = (
+    StateGraph(State)
+    .set_node_defaults(error_handler=default_error_handler)
+    .add_node("step_a", step_a)                                     # uses default_error_handler
+    .add_node("step_b", step_b, error_handler=custom_error_handler) # uses custom_error_handler
+    .add_edge(START, "step_a")
+    .compile()
+)
+```
+
+- 节点级别的配置会覆盖默认值
+- 子图不会继承父图的 defaults
