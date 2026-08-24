@@ -311,3 +311,51 @@ builder.add_node(
 	
 	- idle_timeout: 空闲时间限制，有进度信号就重置计时器，进度信号包括：写 state、stream 输出、子任务、LangChain 回调事件等。也可以用 runtime.heartbeat() 手动保活（需要设置refresh_on="heartbeat"）。
 - 超时后抛 NodeTimeoutError，这次 attempt 的写入会被清除，然后交给 RetryPolicy 决定是否重试。
+
+### Error Handling（错误处理）
+
+error handler 在节点失败且所有重试耗尽后运行。它接收当前状态，可以使用命令更新它或将路由到不同的节点。这对于补偿流程（ Saga 模式）很有用，您希望优雅地恢复而不是终止整个图。
+
+Pass `error_handler=` to [`add_node`](https://reference.langchain.com/python/langgraph/graph/state/StateGraph/add_node):
+
+```python
+from langgraph.errors import NodeError
+from langgraph.types import Command, RetryPolicy
+from langgraph.graph import StateGraph, START
+from typing_extensions import TypedDict
+
+class State(TypedDict):
+    status: str
+
+def reserve_inventory(state: State) -> State:
+    return {"status": "reserved"}
+
+def charge_payment(state: State) -> State:
+    raise RuntimeError("payment timeout")
+
+def payment_error_handler(state: State, error: NodeError) -> Command:
+    return Command(
+        update={"status": f"compensated_after_{error.node}: {error.error}"},
+        goto="finalize",
+    )
+
+def finalize(state: State) -> State:
+    return state
+
+graph = (
+    StateGraph(State)
+    .add_node("reserve_inventory", reserve_inventory)
+    .add_node(
+        "charge_payment",
+        charge_payment,
+        retry_policy=RetryPolicy(max_attempts=3, retry_on=ConnectionError),
+        error_handler=payment_error_handler,
+    )
+    .add_node("finalize", finalize)
+    .add_edge(START, "reserve_inventory")
+    .add_edge("reserve_inventory", "charge_payment")
+    .compile()
+)
+```
+
+- 可以更新 state，也可以用 Command 跳转到其他节点（适合 Saga / 补偿模式）
