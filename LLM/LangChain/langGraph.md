@@ -120,3 +120,88 @@ list(graph.get_state_history(config)) # checkpoints将按时间顺序排列，�
 
 # Stores
 
+存储任意键值数据，可从任何线程访问。
+
+- 记忆用 namespace（元组，如 (user_id, "memories")）组织。
+
+### 核心操作
+
+- store.put(namespace, key, value)：存记忆
+- store.search(namespace)：取记忆（可加 limit、offset 分页），返回的是 Item 对象，包含 value、key、namespace、created_at、updated_at。
+
+eg:
+
+```python
+from langgraph.store.memory import InMemoryStore
+import uuid
+
+store = InMemoryStore()
+
+user_id = "1"
+namespace_for_memory = (user_id, "memories")
+
+memory_id = str(uuid.uuid4())
+
+memory = {"food_preference" : "I like pizza"}
+store.put(namespace_for_memory, memory_id, memory)
+
+memories = store.search(namespace_for_memory)
+
+print(memories[-1].dict())
+```
+
+output:
+
+```
+{'namespace': ['1', 'memories'], 'key': 'b4142aca-91ec-4cee-b529-05f03c9ce7e5', 'value': {'food_preference': 'I like pizza'}, 'created_at': '2026-08-24T08:58:18.261816+00:00', 'updated_at': '2026-08-24T08:58:18.261958+00:00', 'score': None}
+```
+
+### 语义搜索
+
+- 配置 embedding 模型后，可以用自然语言查询记忆
+- 可控制哪些字段被嵌入（fields 或 put 时的 index 参数）。
+- 支持不嵌入某些数据（index=False）。
+
+Eg:
+
+```python
+from langchain.embeddings import init_embeddings
+
+store = InMemoryStore(
+    index={
+        "embed": init_embeddings("openai:text-embedding-3-small"),  # Embedding provider
+        "dims": 1536,                              # Embedding dimensions
+        "fields": ["food_preference", "$"]              # Fields to embed
+    }
+)
+
+# Store with specific fields to embed
+store.put(
+    namespace_for_memory,
+    str(uuid.uuid4()),
+    {
+        "food_preference": "I love Italian cuisine",
+        "context": "Discussing dinner plans"
+    },
+    index=["food_preference"]  # Only embed "food_preferences" field
+)
+
+# Store without embedding (still retrievable, but not searchable)
+store.put(
+    namespace_for_memory,
+    str(uuid.uuid4()),
+    {"system_info": "Last updated: 2024-01-01"},
+    index=False
+)
+
+# Find memories about food preferences
+# (This can be done after putting memories into the store)
+memories = store.search(
+    namespace_for_memory,
+    query="What does the user like to eat?",
+    limit=3  # Return top 3 matches
+)
+
+
+```
+
