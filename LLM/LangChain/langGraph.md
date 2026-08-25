@@ -380,3 +380,32 @@ graph = (
 
 # Event streaming
 
+```python
+run = graph.stream_events(
+    input,
+    version="v3"
+)
+
+for message in run.messages:
+    for token in message.text:
+        print(token)
+```
+
+# Interrupts
+
+- interrupt() 函数：在节点任意位置调用，即可动态暂停图执行。
+- 调用后发生的事情：
+  - 图在当前位置挂起
+  - 状态通过 checkpointer 持久化保存
+  - 你传给 interrupt() 的值（任意 JSON 可序列化对象）会暴露给调用方
+  - 图无限等待，直到你用 Command(resume=...) 恢复
+- 与静态断点的区别：Interrupts 是动态、可条件触发的，写在业务逻辑里；静态断点是编译时固定的。
+
+前提条件：
+
+- 必须有 checkpointer（生产环境用持久化的，如数据库）
+- 必须指定 thread_id（config={"configurable": {"thread_id": "xxx"}}）——它是持久化游标
+
+需要注意的点：
+
+- resume 不是从暂停那一行继续！而是重新执行整个 node。
