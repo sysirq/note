@@ -525,3 +525,67 @@ print(fork_result["joke"])  # A joke about chickens, not socks
 
 # Memory
 
+### short-term memory
+
+短期记忆（线程级持久化）使代理能够跟踪多轮对话。
+
+```python
+from langgraph.checkpoint.memory import InMemorySaver  
+from langgraph.graph import StateGraph
+
+checkpointer = InMemorySaver()
+
+builder = StateGraph(...)
+graph = builder.compile(checkpointer=checkpointer)
+
+graph.invoke(
+    {"messages": [{"role": "user", "content": "hi! i am Bob"}]},
+    {"configurable": {"thread_id": "1"}},
+)
+```
+
+### long-term memory
+
+使用长期记忆来存储跨对话的用户特定或应用特定数据。
+
+```python
+from langgraph.store.memory import InMemoryStore  
+from langgraph.graph import StateGraph
+from dataclasses import dataclass
+from langgraph.runtime import Runtime
+from langgraph.graph import StateGraph, MessagesState, START
+import uuid
+
+@dataclass
+class Context:
+    user_id: str
+
+async def call_model(state: MessagesState, runtime: Runtime[Context]):
+    user_id = runtime.context.user_id  
+    namespace = (user_id, "memories")
+
+    # Search for relevant memories
+    memories = await runtime.store.asearch(
+        namespace, query=state["messages"][-1].content, limit=3
+    )
+    info = "\n".join([d.value["data"] for d in memories])
+
+    # ... Use memories in model call
+
+    # Store a new memory
+    await runtime.store.aput(
+        namespace, str(uuid.uuid4()), {"data": "User prefers dark mode"}
+    )
+
+builder = StateGraph(MessagesState, context_schema=Context)
+builder.add_node(call_model)
+builder.add_edge(START, "call_model")
+graph = builder.compile(store=store)
+
+# Pass context at invocation time
+graph.invoke(
+    {"messages": [{"role": "user", "content": "hi"}]},
+    {"configurable": {"thread_id": "1"}},
+    context=Context(user_id="1"),
+)
+```
