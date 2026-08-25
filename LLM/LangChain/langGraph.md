@@ -409,3 +409,119 @@ for message in run.messages:
 需要注意的点：
 
 - resume 不是从暂停那一行继续！而是重新执行整个 node。
+
+eg:
+
+```python
+from langgraph.types import Command
+
+stream_input = initial_input
+
+while True:
+    stream = graph.stream_events(stream_input, config=config, version="v3")
+
+    # 实时流式输出 token
+    for message in stream.messages:
+        for token in message.text:
+            print(token, end="", flush=True)
+
+    if not stream.interrupted:
+        final_state = stream.output
+        break
+
+    # 处理中断
+    interrupt_info = stream.interrupts[0].value
+    user_response = get_user_input(interrupt_info)
+    stream_input = Command(resume=user_response)
+```
+
+# Time travel
+
+本质是Checkpoint管理
+
+### Replay
+
+从某个历史 checkpoint 重新执行，该 checkpoint 之前的节点不重跑（结果已保存），之后的节点全部重执行（包括 LLM 调用、API、interrupt()）。
+
+```python
+from langgraph.graph import StateGraph, START
+from langgraph.checkpoint.memory import InMemorySaver
+from typing_extensions import TypedDict, NotRequired
+from langchain_core.utils.uuid import uuid7
+
+class State(TypedDict):
+    topic: NotRequired[str]
+    joke: NotRequired[str]
+
+
+def generate_topic(state: State):
+    return {"topic": "socks in the dryer"}
+
+
+def write_joke(state: State):
+    return {"joke": f"Why do {state['topic']} disappear? They elope!"}
+
+
+checkpointer = InMemorySaver()
+graph = (
+    StateGraph(State)
+    .add_node("generate_topic", generate_topic)
+    .add_node("write_joke", write_joke)
+    .add_edge(START, "generate_topic")
+    .add_edge("generate_topic", "write_joke")
+    .compile(checkpointer=checkpointer)
+)
+
+# Step 1: Run the graph
+config = {"configurable": {"thread_id": str(uuid7())}}
+result = graph.invoke({}, config)
+
+print(result)
+
+# Step 2: Find a checkpoint to replay from
+history = list(graph.get_state_history(config))
+# History is in reverse chronological order
+for state in history:
+    print(f"next={state.next}, checkpoint_id={state.config['configurable']['checkpoint_id']}")
+
+# Step 3: Replay from a specific checkpoint
+# Find the checkpoint before write_joke
+before_joke = next(s for s in history if s.next == ("write_joke",))
+replay_result = graph.invoke(None, before_joke.config)
+# write_joke re-executes (runs again), generate_topic does not
+print(result)
+```
+
+output:
+
+```
+{'topic': 'socks in the dryer', 'joke': 'Why do socks in the dryer disappear? They elope!'}
+next=(), checkpoint_id=1f1a06d4-c8f9-6808-8002-87a314b38a78
+next=('write_joke',), checkpoint_id=1f1a06d4-c8f8-6dae-8001-b654a242621b
+next=('generate_topic',), checkpoint_id=1f1a06d4-c8f7-6666-8000-e2c5fa2a3f21
+next=('__start__',), checkpoint_id=1f1a06d4-c8f5-6d3e-bfff-4f90d78ab670
+{'topic': 'socks in the dryer', 'joke': 'Why do socks in the dryer disappear? They elope!'}
+```
+
+### Fork
+
+从某个历史 checkpoint 分叉出新分支，并修改状态。用 update_state 创建新 checkpoint（原历史不受影响），然后从新分支继续执行。
+
+```python
+# Find checkpoint before write_joke
+history = list(graph.get_state_history(config))
+before_joke = next(s for s in history if s.next == ("write_joke",))
+
+# Fork: update state to change the topic
+fork_config = graph.update_state(
+    before_joke.config,
+    values={"topic": "chickens"},
+)
+
+# Resume from the fork — write_joke re-executes with the new topic
+fork_result = graph.invoke(None, fork_config)
+print(fork_result["joke"])  # A joke about chickens, not socks
+```
+
+# Memory
+
