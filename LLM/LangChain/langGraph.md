@@ -377,3 +377,6 @@ graph = (
 
 - 节点级别的配置会覆盖默认值
 - 子图不会继承父图的 defaults
+
+# Event streaming
+
