@@ -623,3 +623,135 @@ graph.invoke(
 - 没有状态保存，也无法使用 `interrupt()` 或持久执行。
 - 开销最小，性能最好。
 - **最适合**：不需要任何暂停/恢复能力，只想简单调用子图的场景。
+
+# Application structure
+
+```
+my-app/
+├── my_agent/                 # 所有项目代码放这里
+│   ├── utils/                # 工具函数
+│   │   ├── __init__.py
+│   │   ├── tools.py          # 工具定义
+│   │   ├── nodes.py          # 节点函数
+│   │   └── state.py          # 状态定义
+│   ├── __init__.py
+│   └── agent.py              # 构建图的代码
+├── .env                      # 环境变量
+├── requirements.txt          # 或 pyproject.toml
+└── langgraph.json            # LangGraph 配置文件
+```
+
+langgraph.json
+
+```
+{
+  "dependencies": ["langchain_openai", "./your_package"],
+  "graphs": {
+    "my_agent": "./your_package/your_file.py:agent"
+  },
+  "env": "./.env"
+}
+```
+
+- dependencies：指定需要的包和本地包
+- graphs：定义要暴露的图（名称 → 路径:变量）
+- env：环境变量文件路径
+
+# test
+
+
+### 基本测试模式
+
+由于很多图依赖状态，建议在每个测试前重新创建图，并使用新的 checkpointer 实例进行编译。
+
+```python
+def create_graph() -> StateGraph:
+    class MyState(TypedDict):
+        my_key: str
+
+    graph = StateGraph(MyState)
+    graph.add_node("node1", lambda state: {"my_key": "hello from node1"})
+    graph.add_node("node2", lambda state: {"my_key": "hello from node2"})
+    graph.add_edge(START, "node1")
+    graph.add_edge("node1", "node2")
+    graph.add_edge("node2", END)
+    return graph
+
+def test_basic_agent_execution() -> None:
+    checkpointer = MemorySaver()
+    graph = create_graph()
+    compiled_graph = graph.compile(checkpointer=checkpointer)
+    result = compiled_graph.invoke(
+        {"my_key": "initial_value"},
+        config={"configurable": {"thread_id": "1"}}
+    )
+    assert result["my_key"] == "hello from node2"
+```
+
+### 测试单个节点
+
+编译后的图可以通过 graph.nodes 访问每个节点，直接调用单个节点进行测试（会绕过 checkpointer）。
+
+```python
+def test_individual_node_execution() -> None:
+    checkpointer = MemorySaver()
+    graph = create_graph()
+    compiled_graph = graph.compile(checkpointer=checkpointer)
+    
+    # 只测试 node1
+    result = compiled_graph.nodes["node1"].invoke(
+        {"my_key": "initial_value"},
+    )
+    assert result["my_key"] == "hello from node1"
+```
+
+### 部分执行测试
+
+对于复杂图，可以只测试其中一段路径，而不跑完整流程。利用持久化机制模拟“暂停”状态：
+
+- 用 checkpointer 编译图
+- 使用 update_state(..., as_node="某个节点") 把状态设置到你想开始的位置之前
+- 调用 invoke(None, ..., interrupt_after="结束节点") 从该位置继续执行，并在指定节点后停止
+
+```python
+def test_partial_execution_from_node2_to_node3() -> None:
+    checkpointer = MemorySaver()
+    graph = create_graph()
+    compiled_graph = graph.compile(checkpointer=checkpointer)
+    
+    # 模拟状态已经执行完 node1
+    compiled_graph.update_state(
+        config={"configurable": {"thread_id": "1"}},
+        values={"my_key": "initial_value"},
+        as_node="node1",          # 从 node1 之后继续
+    )
+    
+    result = compiled_graph.invoke(
+        None,                     # 恢复执行
+        config={"configurable": {"thread_id": "1"}},
+        interrupt_after="node3",  # 执行到 node3 后停止
+    )
+    assert result["my_key"] == "hello from node3"
+```
+
+# Agent Chat UI
+
+Agent Chat UI 是一个基于 Next.js 的开源聊天界面，专门用于与任何 LangChain / LangGraph Agent 进行交互。
+
+```bash
+# 创建新项目
+npx create-agent-chat-app --project-name my-chat-ui
+cd my-chat-ui
+
+# 安装依赖并启动
+pnpm install
+pnpm dev
+```
+
+启动后需要配置，才能连接到 Agent:
+
+- Graph ID：你的图名称（在 langgraph.json 的 graphs 里定义的）
+- Deployment URL：
+	- 本地开发：http://localhost:2024
+	- 本地开发：http://localhost:2024
+- LangSmith API Key（可选）：连接本地服务器时不需要 
