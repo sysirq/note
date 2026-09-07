@@ -105,3 +105,7 @@ https://huggingface.co
 LlamaHub
 
 https://llamahub.ai
+
+happy-llm
+
+https://github.com/datawhalechina/happy-llm
