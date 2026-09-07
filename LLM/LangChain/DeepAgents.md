@@ -496,3 +496,34 @@ agent = create_deep_agent(
     subagents=[research_subagent],
 )
 ```
+
+# Hook
+
+| Hook | When it runs | Style |
+|------|-------------|-------|
+| `@before_agent` | Before agent starts (once) | Node |
+| `@before_model` | Before each LLM call | Node |
+| `@after_model` | After each LLM response | Node |
+| `@after_agent` | After agent completes (once) | Node |
+| `@wrap_model_call` | Around each LLM call | Wrap |
+| `@wrap_tool_call` | Around each tool call | Wrap |
+
+Eg:
+
+```python
+from langchain.agents.middleware import wrap_tool_call
+
+@wrap_tool_call
+def log_tool_calls(request, handler):
+    """Log every tool call the agent makes."""
+    tool_name = request.tool_call["name"]
+    tool_args = request.tool_call["args"]
+    print(f"🔧 [Tool Call] {tool_name}")
+    print(f"   Args: {tool_args}")
+
+    result = handler(request)
+
+    print(f"✅ [Tool Done] {tool_name}\n")
+    return result
+```
+
