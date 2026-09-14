@@ -109,3 +109,7 @@ https://llamahub.ai
 happy-llm
 
 https://github.com/datawhalechina/happy-llm
+
+open-kritt
+
+https://github.com/Kritt-ai/open-kritt
