@@ -49,3 +49,55 @@ BinaryModel 是整个系统的共享知识库（shared knowledge base）。它�
 Observation（客观观测）、Hypothesis（假设推测） 与 Finding（实证结论） 构成了整个系统认知状态机（Cognitive State Machine）的三大核心基石。
 
 它们模拟了科学研究与人类资深安全专家的思维逻辑：“看客观事实” → “提科学假说” → “用实验验证” → “定事实结论”。
+
+### D-Mail
+
+D-Mail 机制是一个极具极客浪漫色彩的设计，其灵感直接来源于经典科幻动漫《命运石之门》（Steins;Gate）中的“D-Mail（向过去发送邮件）”概念。
+
+ 在进行复杂的二进制逆向工程时，LLM 很容易犯错（例如：误把一个日志函数当作核心密码校验函数，然后围绕它深入分析了 15 步）。
+   * 传统做法： 要么让 LLM 在错路上继续错下去，要么让用户手动重置对话清空所有记忆。
+   * D-Mail 做法： 智能体自己意识到“方向全错”，它主动调用 send_dmail 工具，指定回到第 3 步的检查点，并留下遗言：“别去查 0x401000 了，那是日志函数，真正的校验函数在
+     0x402340！”。系统会自动截断历史，把教训灌输给过去的自己，然后带着新知识重新上路。
+
+```python
+        try:
+            result = await step(
+                provider=provider,
+                system=agent.system_prompt,
+                messages=messages,
+                tools=tools_specs if tools_specs else None,
+                tool_dispatch=tool_registry.dispatch,
+                on_part=_on_text_part,
+                on_tool_call=_on_tool_call_part,
+                on_tool_result=_on_tool_result_part,
+                on_thinking=_on_thinking_part,
+            )
+        except BackToTheFuture as dmail:
+            logger.info(
+                "D-Mail received! Reverting to checkpoint %d", dmail.checkpoint_id
+            )
+            # 1. 触发回调通知 UI / 日志
+            if on_dmail:
+                on_dmail(dmail.checkpoint_id, dmail.message)
+           
+            # 2. 瞬间回滚上下文到过去的那一步（抹杀之后所有的错误尝试
+            await context.revert_to(dmail.checkpoint_id)
+            
+            # 3. 将来自未来的信件注入系统提示中
+            await context.append_system(
+                f"[D-Mail from your future self]: {dmail.message}\n\n"
+                "Use this knowledge to avoid repeating the same work. "
+                "Continue with the task, applying what you now know."
+            )
+            continue # <--- 带着未来记忆，从那个时间点继续执行！
+        except Exception as e:
+            logger.error(
+                "Agent %s: unrecoverable error at step %d: %s",
+                agent.name,
+                step_no,
+                e,
+                exc_info=True,
+            )
+            return TurnOutcome.ERROR
+```
+
