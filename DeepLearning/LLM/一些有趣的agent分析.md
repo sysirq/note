@@ -101,3 +101,28 @@ D-Mail 机制是一个极具极客浪漫色彩的设计，其灵感直接来源�
             return TurnOutcome.ERROR
 ```
 
+# redamon
+
+地址：https://github.com/samugit83/redamon
+
+基于LangGraph编写
+
+状态节点：
+
+```python
+        builder.add_node("initialize", _initialize)
+        builder.add_node("think", _think)
+        builder.add_node("execute_tool", _execute_tool)
+        builder.add_node("execute_plan", _execute_plan)
+        builder.add_node("await_approval", _await_approval)
+        builder.add_node("process_approval", _process_approval)
+        builder.add_node("await_question", _await_question)
+        builder.add_node("process_answer", _process_answer)
+        builder.add_node("generate_response", _generate_response)
+        builder.add_node("await_tool_confirmation", _await_tool_confirmation)
+        builder.add_node("process_tool_confirmation", _process_tool_confirmation)
+        builder.add_node("deploy_fireteam", _deploy_fireteam)
+        builder.add_node("fireteam_collect", _fireteam_collect)
+        builder.add_node("process_fireteam_confirmation", _process_fireteam_confirmation)
+```
+
