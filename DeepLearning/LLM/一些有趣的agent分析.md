@@ -126,3 +126,10 @@ D-Mail 机制是一个极具极客浪漫色彩的设计，其灵感直接来源�
         builder.add_node("process_fireteam_confirmation", _process_fireteam_confirmation)
 ```
 
+如何判断是否进入死胡同：
+
+- 完全不看 LLM 的自述，只看系统真实的资产收集列表有没有长度增加等
+
+如何从死胡同恢复：
+
+- 系统强行剥夺大模型的工具调用权，强制触发独立 LLM 调用执行 Deep Think。为了防止大模型在深思时“换汤不换药”，代码引入了 Jaccard 相似度查重算法，将大模型新规划的优先级列表与上一版规划计算 Jaccard 相似度，如果新计划与老失败计划相似度 >= 0.6 (60%)，将此警告钉在 Prompt 头部，重新生成。
