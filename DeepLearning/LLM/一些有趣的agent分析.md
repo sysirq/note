@@ -133,3 +133,15 @@ D-Mail 机制是一个极具极客浪漫色彩的设计，其灵感直接来源�
 如何从死胡同恢复：
 
 - 系统强行剥夺大模型的工具调用权，强制触发独立 LLM 调用执行 Deep Think。为了防止大模型在深思时“换汤不换药”，代码引入了 Jaccard 相似度查重算法，将大模型新规划的优先级列表与上一版规划计算 Jaccard 相似度，如果新计划与老失败计划相似度 >= 0.6 (60%)，将此警告钉在 Prompt 头部，重新生成。
+
+
+
+当 RedAmon 遇到死路时，代码执行链路是极其严密的：
+
+- 1.  工具执行完毕 ➔ 物理数据无增量 (detect_state_growth = False)
+- 2.  LLM 试图自夸 "我找到了新东西" ➔ 被 audit_productivity_claim 拦截，强制降为 "no_progress"
+- 3. 停滞计数器累加 ➔ compute_productivity_score 飙升进入 Red/Critical
+- 4. think_node 启动硬干预:
+    - 1. 方案 A: 强制执行 Deep Think，用 Jaccard 算法查重，拒绝同义词改写
+    - 2. 方案 B: 物理阻断当前命令，迫使模型调用 switch_skill 换赛道
+    - 3. 方案 C: LATS（语言智能体树搜索，Language Agent Tree Search） 将当前节点标为 pruned，自动回退到父节点走兄弟路线。
